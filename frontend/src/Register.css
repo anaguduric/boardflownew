@@ -1,0 +1,106 @@
+/* FULL SCREEN */
+.register-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* LEVA STRANA */
+.register-left {
+  flex: 1;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+/* KRIVA LINIJA */
+.register-left::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -120px;
+  width: 240px;
+  height: 100%;
+  background: white;
+  border-radius: 100% 0 0 100%;
+}
+
+.register-left h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.register-left p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* DESNA STRANA */
+.register-right {
+  flex: 1;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FORMA */
+.register-form {
+  width: 100%;
+  max-width: 380px;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.register-form h2 {
+  margin-bottom: 30px;
+  font-size: 26px;
+  text-align: center;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.register-form input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* DUGME */
+.register-form button {
+  width: 100%;
+  padding: 14px;
+  background: #4f46e5;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.register-form button:hover {
+  background: #4338ca;
+}
+
+/* PORUKE */
+.register-error {
+  display: block;
+  margin-top: 12px;
+  color: #dc2626;
+  text-align: center;
+}

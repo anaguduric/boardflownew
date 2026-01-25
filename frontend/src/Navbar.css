@@ -1,0 +1,152 @@
+/* ================== PROFIL IKONA ================== */
+.profile-icon {
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s, filter 0.2s;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  color: #4f46e5; /* hover boja */
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Levo: logo */
+.navbar-left {
+  flex: 1;
+}
+
+/* Centar: linkovi */
+.navbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Desno: profil */
+.navbar-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  position: relative; /* za dropdown */
+}
+
+/* Nav linkovi */
+.nav-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ikonica profila */
+.profile-icon {
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s, filter 0.2s;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  color: #4f46e5;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+}
+
+/* Dropdown */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 8px 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 100;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Dropdown items */
+.dropdown-menu a,
+.dropdown-menu button {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  color: #fff;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Dropdown animacija */
+.dropdown-menu.animated {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeSlideDown 0.25s forwards;
+}
+
+@keyframes fadeSlideDown {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .navbar-center {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .navbar-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .dropdown-menu {
+    right: auto;
+    left: 0;
+    width: 100%;
+  }
+}
