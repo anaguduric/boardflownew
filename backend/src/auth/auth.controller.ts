@@ -20,6 +20,11 @@ export class AuthController {
   async verifyOtp(@Body() body: { userId: number; otp: string }) {
     return this.authService.verifyOtp(body.userId, body.otp);
   }
+
+  @Post('resend-otp')
+  async resendOtp(@Body() body: { userId: number }) {
+    return this.authService.resendOtp(body.userId);
+  }
  
   @Post('login')
 async login(@Body() loginDto: LoginDto) {

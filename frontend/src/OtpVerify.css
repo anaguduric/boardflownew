@@ -1,0 +1,110 @@
+/* Overlay centriran modal */
+.otp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal container */
+.otp-modal {
+  background: linear-gradient(145deg, #f8f9ff, #ffffff);
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+  text-align: center;
+  width: 400px;
+  max-width: 90%;
+  font-family: 'Segoe UI', sans-serif;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.otp-modal:hover {
+  transform: translateY(-4px);
+}
+
+/* Naslov */
+.otp-modal h2 {
+  margin-bottom: 2rem;
+  color: #1f2937;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* OTP polja */
+.otp-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.otp-inputs input {
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.otp-inputs input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.3);
+}
+
+/* Dugme za verifikaciju */
+.otp-form button {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.otp-form button:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+}
+
+/* Dugme za resend */
+.resend-btn {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: #4f46e5;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.resend-btn:hover {
+  color: #4338ca;
+  text-decoration: underline;
+}
+
+/* Poruke korisniku */
+.message {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e11d48; /* crvena za greške */
+}
+
+.message.success {
+  color: #16a34a; /* zelena za uspeh */
+}

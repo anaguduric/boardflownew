@@ -17,6 +17,7 @@ export class AuthService {
   async register(username: string, email: string, password: string) {
     //const userExists = await this.usersService.findByEmail(email);
     //if (userExists) throw new ConflictException('Korisnik već postoji');
+    //Ovo ispraviti
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -85,6 +86,24 @@ export class AuthService {
     await this.usersService.update(userId, user);
 
     return { message: 'Korisnik je verifikovan' };
+  }
+
+  // -----------------------------
+  // PONOVNO SLANJE OTP
+  // -----------------------------
+  async resendOtp(userId: number) {
+    const user = await this.usersService.findById(userId);
+    if (!user) throw new NotFoundException('Korisnik ne postoji');
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = otp;
+    user.otpExpiry = new Date(Date.now() + 2 * 60 * 1000);
+
+    await this.usersService.update(userId, user);
+
+    await this.sendOTPEmail(user.email, otp);
+
+    return { message: 'Novi OTP poslat!' };
   }
 
   // -----------------------------

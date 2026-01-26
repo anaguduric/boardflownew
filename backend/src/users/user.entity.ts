@@ -11,7 +11,7 @@ export class User {
   @Column({ length: 150 })
   password: string;
 
-  @Column({ unique: true, length: 100 })
+  @Column({ length: 100 }) //dodati unique: true
   email: string;
 
   @Column({ default: 1 })
