@@ -23,8 +23,8 @@ export class MailService {
       const info = await this.transporter.sendMail({
         from: '"BoardFlow" <boardflow10@gmail.com>',
         to: email,
-        subject: 'OTP za verifikaciju naloga',
-        text: `Vaš OTP za verifikaciju naloga je: ${otp}. Važi 2 minuta.`,
+        subject: 'Potvrdite svoj nalog',
+        text: `Zdravo! 👋\n\nVaš kod za verifikaciju naloga je: ${otp}.\nKod ističe za 2 minuta.\n\nAko niste vi tražili ovaj kod, slobodno ignorišite ovu poruku.`,
       });
 
       console.log('📧 OTP email poslat:', info.messageId);

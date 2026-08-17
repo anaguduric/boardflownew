@@ -1,68 +1,77 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
+import "./Navbar.css";
+import { useAuth } from "./context/AuthContext";
 
-function Navbar() {
-  const token = localStorage.getItem("token");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+export default function Navbar() {
+  const { user, logout } = useAuth();   // 👈 GLOBALNO
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const navigate = useNavigate();
 
-  // Zatvara dropdown klikom van njega
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
+    const close = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
   }, []);
 
   return (
-    <nav className="navbar">
-      {/* Logo levo */}
-      <div className="navbar-left">
-        <Link to="/" className="logo">BoardFlow</Link>
-      </div>
+    <header className="navbar">
+      {/* LOGO */}
+      <Link to="/" className="brand">
+        BoardFlow
+      </Link>
 
-      {/* Centralni linkovi */}
-      <div className="navbar-center">
-        {!token ? (
+      {/* LINKOVI */}
+      <nav className="nav-links">
+        {user && (
           <>
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/register" className="nav-link">Registracija</Link>
+            <Link to="/">Dashboard</Link>
+            <Link to="/projects">Projects</Link>
+            <Link to="/teams">Teams</Link>
           </>
-        ) : null}
-      </div>
+        )}
+      </nav>
 
-      {/* Ikonica profila desno */}
-      {token && (
-        <div className="navbar-right" ref={dropdownRef}>
-          <FaUserCircle
-            size={36}
-            className="profile-icon"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          />
-          {dropdownOpen && (
-            <div className="dropdown-menu animated">
-              <Link to="/profile">Profil</Link>
-              <Link to="/settings">Settings</Link>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.href = "/";
-                }}
-              >
-                Logout
-              </button>
+      {/* DESNO */}
+      <div className="nav-right" ref={ref}>
+        {!user ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register" className="btn">Register</Link>
+          </>
+        ) : (
+          <>
+            {/* USER INFO */}
+            <div className="user-info" onClick={() => setOpen(!open)}>
+              {/* kasnije menjaš u <img /> */}
+              <FaUserCircle size={32} className="avatar" />
+              <span className="username">{user.username}</span>
             </div>
-          )}
-        </div>
-      )}
-    </nav>
+
+            {open && (
+              <div className="menu">
+                <Link to="/profile" onClick={() => setOpen(false)}>
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    logout();       // 👈 GLOBALNI LOGOUT
+                    navigate("/login");
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </header>
   );
 }
-
-export default Navbar;

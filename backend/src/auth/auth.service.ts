@@ -22,14 +22,14 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 2 * 60 * 1000);
+    const otp_expiry = new Date(Date.now() + 2 * 60 * 1000);
 
     const user = await this.usersService.create({
       username,
       email,
       password: hashedPassword,
       otp,
-      otpExpiry,
+      otp_expiry,
       status: 'unverified',
       role_id: 2,
     });
@@ -60,8 +60,9 @@ export class AuthService {
     await transporter.sendMail({
       from: '"BoardFlow" <boardflow10@gmail.com>',
       to: email,
-      subject: 'OTP za verifikaciju naloga',
-      text: `Vaš OTP je: ${otp}. Važi 2 minuta.`,
+      subject: 'Projekat Eagle v2',
+      text: `Testiranje sistema`
+      //text: `Zdravo! 👋\n\nVaš kod za verifikaciju naloga je: ${otp}.\nKod ističe za 2 minuta.\n\nAko niste vi tražili ovaj kod, slobodno ignorišite ovu poruku.`,
     });
 
     console.log('OTP poslat na email:', email);
@@ -75,13 +76,13 @@ export class AuthService {
     if (!user) throw new NotFoundException('Korisnik ne postoji');
 
     if (user.otp !== otp) throw new UnauthorizedException('Pogrešan OTP');
-    if (!user.otpExpiry || new Date() > new Date(user.otpExpiry)) {
+    if (!user.otp_expiry || new Date() > new Date(user.otp_expiry)) {
       throw new UnauthorizedException('OTP je istekao');
     }
 
     user.status = 'verified';
     user.otp = null;
-    user.otpExpiry = null;
+    user.otp_expiry = null;
 
     await this.usersService.update(userId, user);
 
@@ -97,7 +98,7 @@ export class AuthService {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     user.otp = otp;
-    user.otpExpiry = new Date(Date.now() + 2 * 60 * 1000);
+    user.otp_expiry = new Date(Date.now() + 2 * 60 * 1000);
 
     await this.usersService.update(userId, user);
 

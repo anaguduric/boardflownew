@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "bcrypt": "^6.0.0",

@@ -1,9 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { UsersService } from './users/users.service';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  //Povecanje dozvoljene velicine JSON zahteva
+  app.use(express.json({ limit: '5mb' }));
+  app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
   // Omogućava frontend-u na portu 5173 (Vite) da komunicira sa backend-om
   app.enableCors({

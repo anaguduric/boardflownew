@@ -1,14 +1,19 @@
-// Login.jsx
 import React, { useState } from "react";
 import "./Login.css";
+import { useAuth } from "./context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  const { login } = useAuth();      // 👈 GLOBALNI LOGIN
+  const navigate = useNavigate();
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     try {
       const res = await fetch("http://localhost:3000/auth/login", {
@@ -19,13 +24,17 @@ function Login() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/";
-      } else {
+      if (!res.ok) {
         setMessage(data.message || "Greška pri prijavi");
+        return;
       }
-    } catch {
+
+      // ✅ čuvanje tokena + user-a GLOBALNO
+      login(data.token, data.user);
+
+      // ✅ redirekcija bez reload-a
+      navigate("/");
+    } catch (err) {
       setMessage("Greška servera");
     }
   };

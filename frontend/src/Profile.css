@@ -1,0 +1,843 @@
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PROFILE CONTAINER
+   ========================================================= */
+
+.profile-container {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 30px;
+
+  background: #f5f7fb;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PROFILE CARD
+   ========================================================= */
+
+.profile-card {
+  width: 100%;
+  max-width: none;
+
+  min-height: calc(100vh - 60px);
+
+  margin: 0;
+
+  padding: 40px;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   PROFILE HEADER
+   ========================================================= */
+
+.profile-header {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+
+  margin-bottom: 40px;
+
+  padding-bottom: 30px;
+
+  border-bottom:
+    1px solid #e5e7eb;
+
+  text-align: left;
+}
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+
+  flex-shrink: 0;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  background: #6c63ff;
+
+  color: white;
+
+  font-size: 48px;
+
+  font-weight: bold;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 6px 20px
+    rgba(108, 99, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.profile-avatar:hover {
+  transform: scale(1.03);
+
+  box-shadow:
+    0 8px 25px
+    rgba(108, 99, 255, 0.35);
+}
+
+
+/* =========================================================
+   AVATAR IMAGE WRAPPER
+   ========================================================= */
+
+.avatar-image-wrapper {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+}
+
+
+/* =========================================================
+   AVATAR IMAGE
+   ========================================================= */
+
+/*
+ * NEMA object-fit: cover!
+ *
+ * Slika ostaje cela.
+ *
+ * Pozicija i zoom dolaze iz React state-a:
+ *
+ * translate(offset.x, offset.y)
+ * scale(scale)
+ */
+
+.avatar-img {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: auto;
+  height: auto;
+
+  max-width: none;
+  max-height: none;
+
+  display: block;
+
+  user-select: none;
+
+  pointer-events: none;
+
+  transform-origin: top left;
+}
+
+
+/* =========================================================
+   HEADER TEXT
+   ========================================================= */
+
+.profile-header h2 {
+  margin: 0 0 8px;
+
+  color: #1f2937;
+
+  font-size: 30px;
+
+  font-weight: 700;
+}
+
+
+.profile-email {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.profile-form {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   SECTION TITLES
+   ========================================================= */
+
+.profile-form h3 {
+  grid-column: 1 / -1;
+
+  width: 100%;
+
+  margin: 25px 0 5px;
+
+  padding-bottom: 10px;
+
+  color: #111827;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  border-bottom:
+    1px solid #e5e7eb;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.profile-form input,
+.profile-form textarea {
+  width: 100%;
+
+  padding: 13px 14px;
+
+  border:
+    1px solid #d1d5db;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #1f2937;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.profile-form input:hover,
+.profile-form textarea:hover {
+  border-color: #9ca3af;
+}
+
+
+.profile-form input:focus,
+.profile-form textarea:focus {
+  outline: none;
+
+  border-color: #6c63ff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(108, 99, 255, 0.12);
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.profile-form textarea {
+  grid-column: 1 / -1;
+
+  min-height: 130px;
+
+  resize: vertical;
+}
+
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+.checkbox-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+
+.checkbox-row input {
+  width: auto;
+
+  accent-color: #6c63ff;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.profile-form button {
+  grid-column: 1 / -1;
+
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #6c63ff;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.profile-form button:hover {
+  background: #584ee2;
+
+  box-shadow:
+    0 6px 18px
+    rgba(108, 99, 255, 0.25);
+}
+
+
+.profile-form button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+.profile-message {
+  width: 100%;
+
+  margin-top: 20px;
+
+  text-align: center;
+
+  color: #16a34a;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   AVATAR MODAL
+   ========================================================= */
+
+.avatar-modal {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 9999;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(0, 0, 0, 0.65);
+}
+
+
+/* =========================================================
+   AVATAR MENU
+   ========================================================= */
+
+.avatar-menu {
+  width: 300px;
+
+  max-width: 100%;
+
+  padding: 22px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  box-shadow:
+    0 20px 50px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+.avatar-menu button {
+  width: 100%;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #6c63ff;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease;
+}
+
+
+.avatar-menu button:hover {
+  background: #584ee2;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+.cancel-btn {
+  background: #d1d5db !important;
+
+  color: #111827 !important;
+}
+
+
+.cancel-btn:hover {
+  background: #bfc3ca !important;
+}
+
+
+/* =========================================================
+   CROP MODAL
+   ========================================================= */
+
+.avatar-modal-content {
+  width: 450px;
+
+  max-width: 100%;
+
+  padding: 25px;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 50px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   CROP HELP
+   ========================================================= */
+
+.crop-help {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   CROP CONTAINER
+   ========================================================= */
+
+.crop-container {
+  width: 320px;
+  height: 320px;
+
+  max-width: 100%;
+
+  margin: 20px auto;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: #e5e7eb;
+
+  border-radius: 12px;
+
+  cursor: grab;
+
+  touch-action: none;
+}
+
+
+.crop-container:active {
+  cursor: grabbing;
+}
+
+
+/* =========================================================
+   CROP IMAGE
+   ========================================================= */
+
+.crop-image {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: auto;
+  height: auto;
+
+  max-width: none;
+  max-height: none;
+
+  display: block;
+
+  user-select: none;
+
+  pointer-events: none;
+
+  transform-origin: top left;
+}
+
+
+/* =========================================================
+   CROP CIRCLE
+   ========================================================= */
+
+.crop-circle {
+  position: absolute;
+
+  width: 200px;
+  height: 200px;
+
+  top: 50%;
+  left: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border:
+    3px solid white;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 0 9999px
+    rgba(0, 0, 0, 0.45);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ZOOM
+   ========================================================= */
+
+.zoom-label {
+  margin-bottom: 8px;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+
+input[type="range"] {
+  width: 100%;
+
+  accent-color: #6c63ff;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   CROP BUTTONS
+   ========================================================= */
+
+.crop-buttons {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+
+.crop-buttons button {
+  flex: 1;
+
+  padding: 12px 16px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #6c63ff;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.crop-buttons button:hover {
+  background: #584ee2;
+}
+
+
+.crop-buttons .cancel-btn {
+  background: #d1d5db;
+}
+
+
+.crop-buttons .cancel-btn:hover {
+  background: #bfc3ca;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .profile-container {
+    padding: 20px;
+  }
+
+
+  .profile-card {
+    padding: 30px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .profile-container {
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 10px;
+  }
+
+
+  .profile-card {
+    width: 100%;
+
+    min-height:
+      calc(100vh - 20px);
+
+    padding: 25px 20px;
+
+    border-radius: 15px;
+  }
+
+
+  .profile-header {
+    flex-direction: column;
+
+    text-align: center;
+
+    gap: 15px;
+  }
+
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+
+    font-size: 40px;
+  }
+
+
+  .profile-header h2 {
+    font-size: 24px;
+  }
+
+
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+
+
+  .profile-form h3,
+  .profile-form textarea,
+  .profile-form button {
+    grid-column: 1;
+  }
+
+
+  .crop-container {
+    width: 280px;
+    height: 280px;
+  }
+
+
+  .crop-circle {
+    width: 180px;
+    height: 180px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .profile-container {
+    padding: 0;
+  }
+
+
+  .profile-card {
+    min-height: 100vh;
+
+    padding: 20px 15px;
+
+    border-radius: 0;
+  }
+
+
+  .profile-avatar {
+    width: 105px;
+    height: 105px;
+  }
+
+
+  .profile-header h2 {
+    font-size: 21px;
+  }
+
+
+  .crop-container {
+    width: 250px;
+    height: 250px;
+  }
+
+
+  .crop-circle {
+    width: 160px;
+    height: 160px;
+  }
+
+
+  .crop-buttons {
+    flex-direction: column;
+  }
+
+}
