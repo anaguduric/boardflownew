@@ -1,5 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  FaUserCircle,
+  FaHome,
+  FaProjectDiagram,
+  FaUsers,
+  FaChevronDown,
+  FaUser,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
 import { useAuth } from "./context/AuthContext";
@@ -12,11 +20,11 @@ export default function Navbar() {
 
   const ref = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-
-  // ==========================================
-  // UČITAJ PROFILNU SLIKU LOGOVANOG KORISNIKA
-  // ==========================================
+  // =========================================================
+  // UČITAVANJE PROFILNE SLIKE
+  // =========================================================
 
   useEffect(() => {
     if (!user || !token) {
@@ -43,7 +51,6 @@ export default function Navbar() {
         const data = await res.json();
 
         setProfilePic(data.profilePic || null);
-
       } catch (error) {
         console.error(
           "Greška pri učitavanju profilne slike:",
@@ -53,13 +60,11 @@ export default function Navbar() {
     };
 
     loadProfile();
-
   }, [user, token]);
 
-
-  // ==========================================
-  // ZATVARANJE MENIJA KLIKOM VAN NJEGA
-  // ==========================================
+  // =========================================================
+  // ZATVARANJE USER MENIJA
+  // =========================================================
 
   useEffect(() => {
     const close = (e) => {
@@ -71,23 +76,16 @@ export default function Navbar() {
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      close
-    );
+    document.addEventListener("mousedown", close);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        close
-      );
+      document.removeEventListener("mousedown", close);
     };
   }, []);
 
-
-  // ==========================================
+  // =========================================================
   // LOGOUT
-  // ==========================================
+  // =========================================================
 
   const handleLogout = () => {
     setProfilePic(null);
@@ -98,44 +96,89 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  // =========================================================
+  // ACTIVE LINK
+  // =========================================================
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
     <header className="navbar">
 
-      {/* LOGO */}
+      {/* =====================================================
+          LEFT
+      ====================================================== */}
 
-      <Link
-        to="/"
-        className="brand"
-      >
-        BoardFlow
+      <Link to="/" className="brand">
+
+        <div className="brand-logo">
+          <img
+            src="/logo.png"
+            alt="BoardFlow logo"
+          />
+        </div>
+
+        <div className="brand-text">
+          <span className="brand-name">
+            BoardFlow
+          </span>
+
+          <span className="brand-subtitle">
+            Workspace
+          </span>
+        </div>
+
       </Link>
 
 
-      {/* LINKOVI */}
+      {/* =====================================================
+          CENTER NAVIGATION
+      ====================================================== */}
 
-      <nav className="nav-links">
+      {user && (
+        <nav className="nav-links">
 
-        {user && (
-          <>
-            <Link to="/">
-              Dashboard
-            </Link>
+          <Link
+            to="/"
+            className={isActive("/") ? "active" : ""}
+          >
+            <FaHome />
+            <span>Dashboard</span>
+          </Link>
 
-            <Link to="/projects">
-              Projects
-            </Link>
+          <Link
+            to="/projects"
+            className={
+              isActive("/projects")
+                ? "active"
+                : ""
+            }
+          >
+            <FaProjectDiagram />
+            <span>Projects</span>
+          </Link>
 
-            <Link to="/teams">
-              Teams
-            </Link>
-          </>
-        )}
+          <Link
+            to="/teams"
+            className={
+              isActive("/teams")
+                ? "active"
+                : ""
+            }
+          >
+            <FaUsers />
+            <span>Teams</span>
+          </Link>
 
-      </nav>
+        </nav>
+      )}
 
 
-      {/* DESNO */}
+      {/* =====================================================
+          RIGHT
+      ====================================================== */}
 
       <div
         className="nav-right"
@@ -145,26 +188,31 @@ export default function Navbar() {
         {!user ? (
 
           <>
-            <Link to="/login">
+
+            <Link
+              to="/login"
+              className="login-link"
+            >
               Login
             </Link>
 
             <Link
               to="/register"
-              className="btn"
+              className="register-btn"
             >
-              Register
+              Get started
             </Link>
+
           </>
 
         ) : (
 
-          <>
+          <div className="user-wrapper">
 
-            {/* USER INFO */}
-
-            <div
-              className="user-info"
+            <button
+              className={`user-info ${
+                open ? "user-open" : ""
+              }`}
               onClick={() => setOpen(!open)}
             >
 
@@ -178,44 +226,104 @@ export default function Navbar() {
 
               ) : (
 
-                <FaUserCircle
-                  size={32}
-                  className="avatar"
-                />
+                <FaUserCircle className="avatar" />
 
               )}
 
-              <span className="username">
-                {user.username}
-              </span>
+              <div className="user-text">
 
-            </div>
+                <span className="username">
+                  {user.username}
+                </span>
+
+                <span className="user-role">
+                  Account
+                </span>
+
+              </div>
+
+              <FaChevronDown
+                className={`user-arrow ${
+                  open ? "rotate" : ""
+                }`}
+              />
+
+            </button>
 
 
-            {/* DROPDOWN */}
+            {/* =================================================
+                DROPDOWN
+            ================================================== */}
 
             {open && (
 
               <div className="menu">
 
+                <div className="menu-header">
+
+                  <div className="menu-avatar">
+
+                    {profilePic ? (
+
+                      <img
+                        src={profilePic}
+                        alt="Profilna slika"
+                      />
+
+                    ) : (
+
+                      <FaUserCircle />
+
+                    )}
+
+                  </div>
+
+                  <div>
+
+                    <strong>
+                      {user.username}
+                    </strong>
+
+                    <span>
+                      {user.email}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <div className="menu-divider" />
+
+
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
                 >
-                  Profile
+                  <FaUser />
+
+                  <span>
+                    My profile
+                  </span>
                 </Link>
+
 
                 <button
                   onClick={handleLogout}
+                  className="logout-button"
                 >
-                  Logout
+                  <FaSignOutAlt />
+
+                  <span>
+                    Log out
+                  </span>
                 </button>
 
               </div>
 
             )}
 
-          </>
+          </div>
 
         )}
 
