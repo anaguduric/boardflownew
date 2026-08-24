@@ -31,7 +31,7 @@ export class AuthService {
       otp,
       otp_expiry,
       status: 'unverified',
-      role_id: 2,
+      role_id: 4,
     });
 
     if (!user) {

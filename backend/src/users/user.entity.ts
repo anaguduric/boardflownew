@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column,  OneToOne,  ManyToOne,  JoinColumn,} from 'typeorm';
 import { UserProfile } from '../userprofiles/userprofile.entity';
-import { OneToOne } from 'typeorm';
+import { Role } from '../roles/role.entity';
 
 
 @Entity('users') // ime tabele u bazi
@@ -17,8 +17,20 @@ export class User {
   @Column({ length: 100 }) //dodati unique: true
   email!: string;
 
-  @Column({ default: 1 })
-  role_id!: number;
+  @Column({
+  name: 'role_id',
+  type: 'int',
+  default: 1,
+})
+role_id!: number;
+
+@ManyToOne(() => Role, role => role.users, {
+  nullable: false,
+})
+@JoinColumn({
+  name: 'role_id',
+})
+role!: Role;
 
   @Column({ type: 'varchar', length: 6, nullable: true })
   otp!: string | null;
@@ -31,6 +43,8 @@ export class User {
 
   @OneToOne(() => UserProfile, profile => profile.user)
   profile!: UserProfile;
+
+  
 
 }
 
