@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column,  OneToOne,  ManyToOne,  JoinColumn,} from 'typeorm';
 import { UserProfile } from '../userprofiles/userprofile.entity';
 import { Role } from '../roles/role.entity';
-
+import { OrganizationMember } from '../organization-members/organization-member.entity';
+import { OneToMany } from 'typeorm';
 
 @Entity('users') // ime tabele u bazi
 export class User {
@@ -44,7 +45,11 @@ role!: Role;
   @OneToOne(() => UserProfile, profile => profile.user)
   profile!: UserProfile;
 
-  
+  @OneToMany(
+  () => OrganizationMember,
+  member => member.user,
+)
+organizationMemberships!: OrganizationMember[];
 
 }
 

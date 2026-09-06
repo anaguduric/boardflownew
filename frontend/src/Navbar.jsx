@@ -4,6 +4,7 @@ import {
   FaHome,
   FaProjectDiagram,
   FaUsers,
+  FaBuilding,
   FaChevronDown,
   FaUser,
   FaSignOutAlt,
@@ -11,6 +12,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
 import { useAuth } from "./context/AuthContext";
+import OrganizationSelector from "./components/organizations/OrganizationSelector";
 
 export default function Navbar() {
   const { user, token, logout } = useAuth();
@@ -121,6 +123,7 @@ export default function Navbar() {
         </div>
 
         <div className="brand-text">
+
           <span className="brand-name">
             BoardFlow
           </span>
@@ -128,6 +131,7 @@ export default function Navbar() {
           <span className="brand-subtitle">
             Workspace
           </span>
+
         </div>
 
       </Link>
@@ -142,11 +146,16 @@ export default function Navbar() {
 
           <Link
             to="/"
-            className={isActive("/") ? "active" : ""}
+            className={
+              isActive("/")
+                ? "active"
+                : ""
+            }
           >
             <FaHome />
             <span>Dashboard</span>
           </Link>
+
 
           <Link
             to="/projects"
@@ -158,6 +167,18 @@ export default function Navbar() {
           >
             <FaProjectDiagram />
             <span>Projects</span>
+          </Link>
+
+          <Link
+            to="/organizations"
+            className={
+              location.pathname.startsWith("/organizations")
+                ? "active"
+                : ""
+            }
+          >
+            <FaBuilding />
+            <span>Organizations</span>
           </Link>
 
           <Link
@@ -185,6 +206,19 @@ export default function Navbar() {
         ref={ref}
       >
 
+        {/* ===================================================
+            ORGANIZATION SELECTOR
+        ==================================================== */}
+
+        {user && (
+          <OrganizationSelector />
+        )}
+
+
+        {/* ===================================================
+            LOGIN / REGISTER
+        ==================================================== */}
+
         {!user ? (
 
           <>
@@ -195,6 +229,7 @@ export default function Navbar() {
             >
               Login
             </Link>
+
 
             <Link
               to="/register"
@@ -207,6 +242,10 @@ export default function Navbar() {
 
         ) : (
 
+          /* =================================================
+             USER
+          ================================================== */
+
           <div className="user-wrapper">
 
             <button
@@ -215,6 +254,8 @@ export default function Navbar() {
               }`}
               onClick={() => setOpen(!open)}
             >
+
+              {/* PROFILNA SLIKA */}
 
               {profilePic ? (
 
@@ -230,6 +271,9 @@ export default function Navbar() {
 
               )}
 
+
+              {/* USER INFO */}
+
               <div className="user-text">
 
                 <span className="username">
@@ -242,6 +286,9 @@ export default function Navbar() {
 
               </div>
 
+
+              {/* ARROW */}
+
               <FaChevronDown
                 className={`user-arrow ${
                   open ? "rotate" : ""
@@ -252,12 +299,14 @@ export default function Navbar() {
 
 
             {/* =================================================
-                DROPDOWN
+                USER DROPDOWN
             ================================================== */}
 
             {open && (
 
               <div className="menu">
+
+                {/* MENU HEADER */}
 
                 <div className="menu-header">
 
@@ -278,6 +327,7 @@ export default function Navbar() {
 
                   </div>
 
+
                   <div>
 
                     <strong>
@@ -293,30 +343,40 @@ export default function Navbar() {
                 </div>
 
 
+                {/* DIVIDER */}
+
                 <div className="menu-divider" />
 
+
+                {/* PROFILE */}
 
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
                 >
+
                   <FaUser />
 
                   <span>
                     My profile
                   </span>
+
                 </Link>
 
+
+                {/* LOGOUT */}
 
                 <button
                   onClick={handleLogout}
                   className="logout-button"
                 >
+
                   <FaSignOutAlt />
 
                   <span>
                     Log out
                   </span>
+
                 </button>
 
               </div>

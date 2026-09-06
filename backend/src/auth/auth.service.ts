@@ -60,9 +60,9 @@ export class AuthService {
     await transporter.sendMail({
       from: '"BoardFlow" <boardflow10@gmail.com>',
       to: email,
-      subject: 'Projekat Eagle v2',
-      text: `Testiranje sistema`
-      //text: `Zdravo! 👋\n\nVaš kod za verifikaciju naloga je: ${otp}.\nKod ističe za 2 minuta.\n\nAko niste vi tražili ovaj kod, slobodno ignorišite ovu poruku.`,
+      subject: 'Registracija',
+      //text: `Testiranje sistema`
+      text: `Zdravo! 👋\n\nVaš kod za verifikaciju naloga je: ${otp}.\nKod ističe za 2 minuta.\n\nAko niste vi tražili ovaj kod, slobodno ignorišite ovu poruku.`,
     });
 
     console.log('OTP poslat na email:', email);

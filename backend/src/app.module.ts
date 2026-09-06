@@ -4,7 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { UserProfilesModule } from './userprofiles/userprofiles.module';
 import { RolesModule } from './roles/role.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { OrganizationRolesModule } from './organization-roles/organization-roles.module';
+import { OrganizationMembersModule } from './organization-members/organization-members.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolePermissionsModule } from './role-permissions/role-permissions.module';
 import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [
@@ -23,6 +29,11 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     UserProfilesModule,
     RolesModule,
+    OrganizationsModule,
+    OrganizationRolesModule,
+    OrganizationMembersModule,
+    PermissionsModule,
+    RolePermissionsModule,
     AuthModule,
   ],
 })

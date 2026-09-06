@@ -1,0 +1,449 @@
+/* =========================================================
+   ORGANIZATION ROLES
+========================================================= */
+
+.organization-roles {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.organization-roles-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.organization-roles-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.organization-roles-heading-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 18px;
+}
+
+.organization-roles-heading h1 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.organization-roles-heading p {
+  margin: 4px 0 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   CREATE BUTTON
+========================================================= */
+
+.organization-role-create {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 15px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #4f46e5;
+  color: white;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.organization-role-create:hover {
+  background: #4338ca;
+}
+
+
+/* =========================================================
+   ROLES GRID
+========================================================= */
+
+.organization-roles-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* =========================================================
+   ROLE CARD
+========================================================= */
+
+.organization-role-card {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 15px;
+
+  padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 15px rgba(15, 23, 42, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.organization-role-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #c7d2fe;
+
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.07);
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.organization-role-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 17px;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.organization-role-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.organization-role-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 5px;
+}
+
+.organization-role-name strong {
+  color: #111827;
+
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.organization-role-description {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.organization-role-default,
+.organization-role-custom {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 3px 7px;
+
+  border-radius: 6px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.organization-role-default {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.organization-role-custom {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.organization-role-actions {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  display: flex;
+  gap: 5px;
+}
+
+.organization-role-action {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+
+  background: white;
+  color: #9ca3af;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.organization-role-action:hover {
+  background: #eef2ff;
+
+  border-color: #c7d2fe;
+
+  color: #4f46e5;
+}
+
+.organization-role-action.delete:hover {
+  background: #fef2f2;
+
+  border-color: #fecaca;
+
+  color: #dc2626;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.organization-roles-empty {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  border: 1px dashed #d1d5db;
+  border-radius: 16px;
+
+  background: #fafafa;
+
+  text-align: center;
+}
+
+.organization-roles-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  border-radius: 16px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 23px;
+}
+
+.organization-roles-empty h2 {
+  margin: 0 0 6px;
+
+  color: #111827;
+
+  font-size: 18px;
+}
+
+.organization-roles-empty p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.organization-roles-loading {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.organization-roles-loading svg {
+  color: #4f46e5;
+
+  font-size: 22px;
+
+  animation: roles-spin 1s linear infinite;
+}
+
+@keyframes roles-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.organization-roles-error {
+  padding: 13px 15px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 750px) {
+
+  .organization-roles {
+    padding: 20px;
+  }
+
+  .organization-roles-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .organization-role-create {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .organization-roles-list {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .organization-roles {
+    padding: 15px;
+  }
+
+  .organization-roles-heading h1 {
+    font-size: 21px;
+  }
+
+  .organization-role-card {
+    padding: 17px;
+  }
+
+}

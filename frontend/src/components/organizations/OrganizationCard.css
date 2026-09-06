@@ -1,0 +1,266 @@
+.organization-card {
+  width: 100%;
+  min-height: 150px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  text-align: left;
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.organization-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #c7d2fe;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.organization-card-selected {
+  border-color: #6366f1;
+
+  background: #f8f8ff;
+
+  box-shadow:
+    0 0 0 1px #6366f1,
+    0 8px 25px rgba(79, 70, 229, 0.08);
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.organization-card-logo {
+  width: 58px;
+  height: 58px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 23px;
+
+  overflow: hidden;
+}
+
+.organization-card-logo img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.organization-card-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.organization-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.organization-card-top h3 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #111827;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.organization-selected-icon {
+  flex-shrink: 0;
+
+  color: #4f46e5;
+
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.organization-card-description {
+  margin: 6px 0 10px;
+
+  overflow: hidden;
+
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+
+/* =========================================================
+   META
+========================================================= */
+
+.organization-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  flex-wrap: wrap;
+}
+
+.organization-card-role,
+.organization-card-status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* ROLE */
+
+.organization-card-role {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+
+/* STATUS */
+
+.organization-status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.organization-status-inactive {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.organization-status-suspended {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+
+/* =========================================================
+   ARROW
+========================================================= */
+
+.organization-card-arrow {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #f3f4f6;
+  color: #9ca3af;
+
+  font-size: 12px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.organization-card:hover .organization-card-arrow {
+  background: #eef2ff;
+  color: #4f46e5;
+
+  transform: translateX(2px);
+}
+
+.organization-card-selected .organization-card-arrow {
+  background: #4f46e5;
+  color: white;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .organization-card {
+    min-height: 125px;
+
+    padding: 15px;
+
+    gap: 12px;
+  }
+
+  .organization-card-logo {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 19px;
+  }
+
+  .organization-card-top h3 {
+    font-size: 14px;
+  }
+
+  .organization-card-description {
+    font-size: 11px;
+  }
+
+  .organization-card-arrow {
+    width: 28px;
+    height: 28px;
+  }
+
+}
