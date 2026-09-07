@@ -1,9 +1,245 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import GoogleCalendar from "./GoogleCalendar";
 import "./Dashboard.css";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+
+  /*
+  ============================================================
+  GOOGLE CALENDAR
+  ============================================================
+  */
+
+  const [googleCalendarConnected, setGoogleCalendarConnected] =
+    useState(false);
+
+  const [checkingCalendar, setCheckingCalendar] =
+    useState(true);
+
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [eventsError, setEventsError] = useState("");
+
+  /*
+  ============================================================
+  CONNECT GOOGLE CALENDAR
+  ============================================================
+  */
+
+  const connectGoogleCalendar = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/google-calendar/auth",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to connect Google Calendar");
+      }
+
+      const data = await response.json();
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error(
+        "Google Calendar connection error:",
+        error
+      );
+
+      alert("Failed to connect Google Calendar.");
+    }
+  };
+
+  /*
+  ============================================================
+  GET GOOGLE CALENDAR EVENTS
+  ============================================================
+  */
+
+  const loadGoogleCalendarEvents = async () => {
+    if (!token) {
+      return;
+    }
+
+    setLoadingEvents(true);
+    setEventsError("");
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/google-calendar/events",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load Google Calendar events");
+      }
+
+      const data = await response.json();
+
+      const calendarEvents = Array.isArray(data.events)
+        ? data.events
+        : [];
+
+      /*
+      Only keep upcoming events.
+      Google Calendar can return events without a dateTime
+      because all-day events use "date" instead.
+      */
+
+      const now = new Date();
+
+      const upcomingEvents = calendarEvents
+        .filter((event) => {
+          const startValue =
+            event.start?.dateTime ||
+            event.start?.date;
+
+          if (!startValue) {
+            return false;
+          }
+
+          const eventStart = new Date(startValue);
+
+          return eventStart >= now;
+        })
+        .sort((a, b) => {
+          const startA = new Date(
+            a.start?.dateTime || a.start?.date
+          );
+
+          const startB = new Date(
+            b.start?.dateTime || b.start?.date
+          );
+
+          return startA - startB;
+        });
+
+      setEvents(upcomingEvents);
+    } catch (error) {
+      console.error(
+        "Google Calendar events error:",
+        error
+      );
+
+      setEventsError(
+        "Unable to load your Google Calendar events."
+      );
+
+      setEvents([]);
+    } finally {
+      setLoadingEvents(false);
+    }
+  };
+
+  /*
+  ============================================================
+  CHECK GOOGLE CALENDAR CONNECTION
+  ============================================================
+  */
+
+  useEffect(() => {
+    if (!user || !token) {
+      setCheckingCalendar(false);
+      return;
+    }
+
+    const checkGoogleCalendar = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/google-calendar/status",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Failed to check Google Calendar status"
+          );
+        }
+
+        const data = await response.json();
+
+        setGoogleCalendarConnected(data.connected);
+
+        /*
+        If Google Calendar is connected,
+        immediately load the events.
+        */
+
+        if (data.connected) {
+          await loadGoogleCalendarEvents();
+        }
+      } catch (error) {
+        console.error(
+          "Google Calendar status error:",
+          error
+        );
+      } finally {
+        setCheckingCalendar(false);
+      }
+    };
+
+    checkGoogleCalendar();
+  }, [user, token]);
+
+  /*
+  ============================================================
+  EVENT DATE FORMAT
+  ============================================================
+  */
+
+  const formatEventDate = (event) => {
+    const startValue =
+      event.start?.dateTime ||
+      event.start?.date;
+
+    if (!startValue) {
+      return "";
+    }
+
+    const date = new Date(startValue);
+
+    /*
+    All-day event
+    */
+
+    if (event.start?.date && !event.start?.dateTime) {
+      return date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+    }
+
+    /*
+    Event with specific time
+    */
+
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
 
   /*
   ============================================================
@@ -57,7 +293,6 @@ export default function Dashboard() {
 
           </div>
 
-
           {/* DASHBOARD PREVIEW */}
 
           <div className="landing-preview">
@@ -77,7 +312,6 @@ export default function Dashboard() {
                 </div>
 
               </div>
-
 
               <div className="preview-body">
 
@@ -105,7 +339,6 @@ export default function Dashboard() {
 
                 </div>
 
-
                 <div className="preview-main">
 
                   <div className="preview-heading">
@@ -123,7 +356,6 @@ export default function Dashboard() {
                     </div>
 
                   </div>
-
 
                   <div className="preview-cards">
 
@@ -143,7 +375,6 @@ export default function Dashboard() {
                     </div>
 
                   </div>
-
 
                   <div className="preview-calendar">
 
@@ -183,7 +414,6 @@ export default function Dashboard() {
 
         </section>
 
-
         {/* FEATURES */}
 
         <section className="landing-features">
@@ -205,7 +435,6 @@ export default function Dashboard() {
 
           </div>
 
-
           <div className="features-grid">
 
             <div className="feature-card">
@@ -225,7 +454,6 @@ export default function Dashboard() {
 
             </div>
 
-
             <div className="feature-card">
 
               <div className="feature-icon">
@@ -243,7 +471,6 @@ export default function Dashboard() {
 
             </div>
 
-
             <div className="feature-card">
 
               <div className="feature-icon">
@@ -260,7 +487,6 @@ export default function Dashboard() {
               </p>
 
             </div>
-
 
             <div className="feature-card">
 
@@ -282,7 +508,6 @@ export default function Dashboard() {
           </div>
 
         </section>
-
 
         {/* CTA */}
 
@@ -309,7 +534,6 @@ export default function Dashboard() {
       </main>
     );
   }
-
 
   /*
   ============================================================
@@ -340,7 +564,6 @@ export default function Dashboard() {
 
         </div>
 
-
         <Link
           to="/projects"
           className="dashboard-action"
@@ -349,7 +572,6 @@ export default function Dashboard() {
         </Link>
 
       </section>
-
 
       {/* STATISTICS */}
 
@@ -379,7 +601,6 @@ export default function Dashboard() {
 
         </div>
 
-
         <div className="card">
 
           <div className="card-top">
@@ -404,7 +625,6 @@ export default function Dashboard() {
 
         </div>
 
-
         <div className="card">
 
           <div className="card-top">
@@ -428,7 +648,6 @@ export default function Dashboard() {
           </p>
 
         </div>
-
 
         <div className="card">
 
@@ -456,7 +675,6 @@ export default function Dashboard() {
 
       </section>
 
-
       {/* MAIN CONTENT */}
 
       <section className="dashboard-grid">
@@ -479,42 +697,69 @@ export default function Dashboard() {
 
             </div>
 
-            <button
-              className="widget-link"
-              type="button"
-            >
-              Connect
-            </button>
+            {!checkingCalendar &&
+              !googleCalendarConnected && (
+                <button
+                  className="widget-link"
+                  type="button"
+                  onClick={connectGoogleCalendar}
+                >
+                  Connect
+                </button>
+              )}
 
           </div>
 
+          {checkingCalendar ? (
+            <div className="calendar-placeholder">
 
-          <div className="calendar-placeholder">
+              <div className="calendar-placeholder-icon">
+                📅
+              </div>
 
-            <div className="calendar-placeholder-icon">
-              📅
+              <h3>
+                Checking Google Calendar...
+              </h3>
+
+              <p>
+                Checking your Google Calendar connection.
+              </p>
+
+            </div>
+          ) : googleCalendarConnected ? (
+
+            <GoogleCalendar />
+
+          ) : (
+
+            <div className="calendar-placeholder">
+
+              <div className="calendar-placeholder-icon">
+                📅
+              </div>
+
+              <h3>
+                Connect Google Calendar
+              </h3>
+
+              <p>
+                Connect your Google Calendar to see
+                your events and meetings here.
+              </p>
+
+              <button
+                className="connect-calendar-btn"
+                type="button"
+                onClick={connectGoogleCalendar}
+              >
+                Connect Calendar
+              </button>
+
             </div>
 
-            <h3>
-              Connect Google Calendar
-            </h3>
-
-            <p>
-              Connect your Google Calendar to see
-              your events and meetings here.
-            </p>
-
-            <button
-              className="connect-calendar-btn"
-              type="button"
-            >
-              Connect Calendar
-            </button>
-
-          </div>
+          )}
 
         </div>
-
 
         {/* UPCOMING EVENTS */}
 
@@ -535,33 +780,191 @@ export default function Dashboard() {
             </div>
 
             <span className="event-count">
-              0
+              {events.length}
             </span>
 
           </div>
 
+          {loadingEvents ? (
+            <div className="empty-widget">
 
-          <div className="empty-widget">
+              <div className="empty-icon">
+                📅
+              </div>
 
-            <div className="empty-icon">
-              📅
+              <h3>
+                Loading events...
+              </h3>
+
+              <p>
+                Getting your Google Calendar events.
+              </p>
+
             </div>
+          ) : eventsError ? (
+            <div className="empty-widget">
 
-            <h3>
-              No upcoming events
-            </h3>
+              <div className="empty-icon">
+                ⚠️
+              </div>
 
-            <p>
-              Your upcoming Google Calendar events
-              will appear here.
-            </p>
+              <h3>
+                Unable to load events
+              </h3>
 
-          </div>
+              <p>
+                {eventsError}
+              </p>
+
+            </div>
+          ) : !googleCalendarConnected ? (
+            <div className="empty-widget">
+
+              <div className="empty-icon">
+                📅
+              </div>
+
+              <h3>
+                Connect Google Calendar
+              </h3>
+
+              <p>
+                Connect your Google Calendar to see
+                your upcoming events here.
+              </p>
+
+            </div>
+          ) : events.length === 0 ? (
+            <div className="empty-widget">
+
+              <div className="empty-icon">
+                📅
+              </div>
+
+              <h3>
+                No upcoming events
+              </h3>
+
+              <p>
+                Your upcoming Google Calendar events
+                will appear here.
+              </p>
+
+            </div>
+          ) : (
+            <div className="upcoming-events-list">
+
+              {events.slice(0, 5).map((event) => {
+
+                const startValue =
+                  event.start?.dateTime ||
+                  event.start?.date;
+
+                const eventDate = startValue
+                  ? new Date(startValue)
+                  : null;
+
+                const isAllDay =
+                  event.start?.date &&
+                  !event.start?.dateTime;
+
+                return (
+                  <div
+                    className="upcoming-event"
+                    key={event.id}
+                  >
+
+                    {/* DATE */}
+
+                    <div className="upcoming-event-date">
+
+                      <span className="upcoming-event-month">
+                        {eventDate
+                          ? eventDate.toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                              }
+                            )
+                          : ""}
+                      </span>
+
+                      <strong>
+                        {eventDate
+                          ? eventDate.getDate()
+                          : ""}
+                      </strong>
+
+                    </div>
+
+                    {/* CONTENT */}
+
+                    <div className="upcoming-event-content">
+
+                      <h3>
+                        {event.summary ||
+                          "Untitled event"}
+                      </h3>
+
+                      <div className="upcoming-event-time">
+
+                        <span>
+                          {eventDate
+                            ? eventDate.toLocaleDateString(
+                                "en-US",
+                                {
+                                  weekday: "short",
+                                }
+                              )
+                            : ""}
+                        </span>
+
+                        <span className="upcoming-event-dot">
+                          •
+                        </span>
+
+                        <span>
+                          {isAllDay
+                            ? "All day"
+                            : eventDate
+                            ? eventDate.toLocaleTimeString(
+                                "en-US",
+                                {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                }
+                              )
+                            : ""}
+                        </span>
+
+                      </div>
+
+                      {event.location && (
+                        <div className="upcoming-event-location">
+
+                          <span>
+                            📍
+                          </span>
+
+                          <span>
+                            {event.location}
+                          </span>
+
+                        </div>
+                      )}
+
+                    </div>
+
+                  </div>
+                );
+              })}
+
+            </div>
+          )}
 
         </div>
 
       </section>
-
 
       {/* LOWER CONTENT */}
 
@@ -594,7 +997,6 @@ export default function Dashboard() {
 
           </div>
 
-
           <div className="empty-widget small">
 
             <div className="empty-icon">
@@ -619,7 +1021,6 @@ export default function Dashboard() {
           </div>
 
         </div>
-
 
         {/* TEAMS */}
 
@@ -647,7 +1048,6 @@ export default function Dashboard() {
             </Link>
 
           </div>
-
 
           <div className="empty-widget small">
 

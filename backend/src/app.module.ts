@@ -9,6 +9,7 @@ import { OrganizationRolesModule } from './organization-roles/organization-roles
 import { OrganizationMembersModule } from './organization-members/organization-members.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolePermissionsModule } from './role-permissions/role-permissions.module';
+import { GoogleCalendarModule } from './google-calendar/google-calendar.module';
 import { AuthModule } from './auth/auth.module';
 
 
@@ -34,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
     OrganizationMembersModule,
     PermissionsModule,
     RolePermissionsModule,
+    GoogleCalendarModule,
     AuthModule,
   ],
 })
