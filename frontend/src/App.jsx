@@ -9,6 +9,12 @@ import Organizations from './components/organizations/Organizations';
 import OrganizationDetails from './components/organizations/OrganizationDetails';
 import OrganizationMembers from './components/organizations/OrganizationMembers';
 import OrganizationRoles from './components/organizations/OrganizationRoles';
+import Projects from "./components/projects/Projects";
+import CreateProject from "./components/projects/CreateProject";
+import Tasks from "./components/tasks/Tasks";
+import ProjectDetails from "./components/projects/ProjectDetails";
+import CreateTask from "./components/tasks/CreateTask";
+import EditTask from "./components/tasks/EditTask";
 
 function App() {
   return (
@@ -22,7 +28,13 @@ function App() {
         <Route path="/organizations" element={<Organizations />}/>
         <Route path="/organizations/:id" element={<OrganizationDetails />}/> 
         <Route path="/organizations/:id/members" element={<OrganizationMembers />}/>
-        <Route path="/organizations/:id/roles" element={<OrganizationRoles />}/>    
+        <Route path="/organizations/:id/roles" element={<OrganizationRoles />}/> 
+        <Route path="/projects" element={<Projects />}/>
+        <Route path="/projects/create" element={<CreateProject />}/>
+        <Route path="/tasks" element={<Tasks />} />   
+        <Route path="/projects/:id" element={<ProjectDetails />}/>
+        <Route path="/tasks/create" element={<CreateTask />}/>
+        <Route path="/tasks/:id/edit" element={<EditTask />}/>
       </Routes>
     </>
   );

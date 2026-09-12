@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column,  OneToOne,  ManyToOne,  JoinColumn,} from 'typeorm';
 import { UserProfile } from '../userprofiles/userprofile.entity';
 import { Role } from '../roles/role.entity';
+import { Project } from '../projects/project.entity';
 import { OrganizationMember } from '../organization-members/organization-member.entity';
 import { OneToMany } from 'typeorm';
 

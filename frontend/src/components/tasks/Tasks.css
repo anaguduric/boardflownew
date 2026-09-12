@@ -1,0 +1,247 @@
+.tasks-page {
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  padding: 32px 38px;
+  background: #f7f8fc;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.tasks-header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #202124;
+}
+
+.tasks-header p {
+  margin: 0;
+  color: #737780;
+  font-size: 14px;
+}
+
+/* =========================
+   CREATE BUTTON
+========================= */
+
+.create-task-btn,
+.empty-create-task-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #635bff;
+  color: white;
+
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.create-task-btn {
+  padding: 11px 16px;
+}
+
+.create-task-btn:hover,
+.empty-create-task-btn:hover {
+  background: #5148e8;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(99, 91, 255, 0.2);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.tasks-empty {
+  min-height: 330px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border: 1px solid #e7e8ee;
+  border-radius: 14px;
+
+  background: white;
+}
+
+.tasks-empty > svg {
+  font-size: 38px;
+  color: #635bff;
+  margin-bottom: 16px;
+}
+
+.tasks-empty h2 {
+  margin: 0 0 8px;
+
+  font-size: 20px;
+  font-weight: 650;
+  color: #25262a;
+}
+
+.tasks-empty p {
+  margin: 0 0 20px;
+
+  font-size: 14px;
+  color: #7a7d85;
+}
+
+.empty-create-task-btn {
+  padding: 10px 15px;
+}
+
+/* =========================
+   TASK LIST
+========================= */
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  padding: 18px 20px;
+
+  background: white;
+  border: 1px solid #e7e8ee;
+  border-radius: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.task-item:hover {
+  border-color: #d9d7ff;
+  box-shadow: 0 5px 16px rgba(30, 35, 50, 0.06);
+  transform: translateY(-1px);
+}
+
+.task-item h2 {
+  margin: 0 0 7px;
+
+  font-size: 16px;
+  font-weight: 650;
+
+  color: #25262a;
+}
+
+.task-item p {
+  margin: 0;
+
+  max-width: 650px;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: #747780;
+}
+
+/* =========================
+   TASK INFO
+========================= */
+
+.task-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  min-width: 280px;
+}
+
+.task-info span {
+  padding: 6px 9px;
+
+  border-radius: 7px;
+
+  background: #f4f4f7;
+
+  color: #5f626a;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .tasks-page {
+    padding: 25px 22px;
+  }
+
+  .task-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .task-info {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .tasks-page {
+    padding: 20px 15px;
+  }
+
+  .tasks-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .create-task-btn {
+    width: 100%;
+  }
+
+  .task-item {
+    padding: 16px;
+  }
+
+  .task-info {
+    width: 100%;
+  }
+
+  .task-info span {
+    white-space: normal;
+  }
+}

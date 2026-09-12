@@ -1,0 +1,471 @@
+.edit-task-page {
+  width: 100%;
+}
+
+/* =========================================
+   REUSE CREATE TASK DESIGN
+========================================= */
+
+.create-task-page {
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  padding: 32px 38px;
+  background: #f7f8fc;
+}
+
+/* =========================================
+   BACK
+========================================= */
+
+.create-task-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #6965d8;
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-bottom: 24px;
+
+  transition: 0.2s ease;
+}
+
+.create-task-back:hover {
+  color: #504cc4;
+  transform: translateX(-2px);
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.create-task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 28px;
+}
+
+.create-task-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.create-task-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e9e8ff;
+  color: #6965d8;
+
+  font-size: 21px;
+}
+
+.create-task-header h1 {
+  margin: 0 0 5px;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  color: #20212a;
+}
+
+.create-task-header p {
+  margin: 0;
+
+  font-size: 14px;
+  color: #7c7e8c;
+}
+
+.create-task-header strong {
+  color: #5556a8;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.create-task-card {
+  width: 100%;
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e7e7ef;
+  border-radius: 18px;
+
+  padding: 30px 32px;
+
+  box-shadow: 0 8px 30px rgba(40, 42, 70, 0.05);
+}
+
+/* =========================================
+   CARD HEADER
+========================================= */
+
+.create-task-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding-bottom: 24px;
+  margin-bottom: 26px;
+
+  border-bottom: 1px solid #eeeeF4;
+}
+
+.create-task-card-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 18px;
+  color: #252632;
+}
+
+.create-task-card-header p {
+  margin: 0;
+
+  color: #8a8c99;
+  font-size: 13px;
+}
+
+.task-card-project {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 13px;
+
+  border-radius: 9px;
+
+  background: #f2f1ff;
+  color: #6260ca;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   ERROR
+========================================= */
+
+.create-task-form-error {
+  padding: 12px 14px;
+
+  margin-bottom: 20px;
+
+  border-radius: 9px;
+
+  background: #fff1f1;
+  border: 1px solid #ffd5d5;
+
+  color: #c33f3f;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* =========================================
+   FIELDS
+========================================= */
+
+.task-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-bottom: 22px;
+}
+
+.task-field label {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #444653;
+}
+
+.task-field input,
+.task-field textarea,
+.task-field select {
+  width: 100%;
+  box-sizing: border-box;
+
+  border: 1px solid #ddddE7;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  padding: 12px 14px;
+
+  color: #292a35;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.task-field input::placeholder,
+.task-field textarea::placeholder {
+  color: #a5a6b1;
+}
+
+.task-field input:focus,
+.task-field textarea:focus,
+.task-field select:focus {
+  border-color: #8b87ed;
+
+  box-shadow: 0 0 0 3px rgba(105, 101, 216, 0.09);
+}
+
+.task-field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* =========================================
+   TWO COLUMNS
+========================================= */
+
+.task-details-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+}
+
+/* =========================================
+   ICON INPUT
+========================================= */
+
+.task-input-icon {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.task-input-icon > svg {
+  position: absolute;
+  left: 14px;
+
+  color: #8b8c98;
+
+  font-size: 14px;
+
+  pointer-events: none;
+}
+
+.task-input-icon input,
+.task-input-icon select {
+  padding-left: 40px;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.create-task-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #eeeeF4;
+
+  margin-top: 8px;
+}
+
+.cancel-task-btn,
+.save-task-btn {
+  height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 9px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  text-decoration: none;
+
+  box-sizing: border-box;
+}
+
+.cancel-task-btn {
+  background: #f5f5f8;
+  color: #666875;
+
+  border: 1px solid #e5e5eb;
+}
+
+.cancel-task-btn:hover {
+  background: #eeeeF3;
+}
+
+.save-task-btn {
+  border: none;
+
+  background: #6965d8;
+  color: #ffffff;
+
+  transition: 0.2s ease;
+}
+
+.save-task-btn:hover {
+  background: #5854c7;
+  transform: translateY(-1px);
+}
+
+.save-task-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.create-task-loading {
+  min-height: 60vh;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  color: #77798a;
+
+  font-size: 14px;
+}
+
+.create-task-loading svg {
+  font-size: 28px;
+  color: #6965d8;
+}
+
+/* =========================================
+   ERROR PAGE
+========================================= */
+
+.create-task-error-page {
+  min-height: 60vh;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.create-task-error-page > svg {
+  font-size: 40px;
+  color: #6965d8;
+
+  margin-bottom: 15px;
+}
+
+.create-task-error-page h2 {
+  margin: 0 0 8px;
+
+  color: #292a35;
+}
+
+.create-task-error-page p {
+  margin: 0 0 20px;
+
+  color: #77798a;
+}
+
+.back-project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+
+  background: #6965d8;
+  color: #ffffff;
+
+  padding: 10px 16px;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+  .create-task-page {
+    padding: 24px 18px;
+  }
+
+  .create-task-card {
+    padding: 22px 20px;
+  }
+
+  .create-task-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-details-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .create-task-header h1 {
+    font-size: 23px;
+  }
+
+  .create-task-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .cancel-task-btn,
+  .save-task-btn {
+    width: 100%;
+  }
+}
