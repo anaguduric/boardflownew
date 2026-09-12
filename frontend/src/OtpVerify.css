@@ -1,110 +1,315 @@
-/* Overlay centriran modal */
+/* =========================================================
+   OTP / ACCOUNT VERIFICATION
+========================================================= */
+
 .otp-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding: 20px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(79, 70, 229, 0.12),
+      transparent 35%
+    ),
+    #f5f7fb;
+
   z-index: 1000;
 }
 
-/* Modal container */
+
+/* =========================================================
+   MODAL
+========================================================= */
+
 .otp-modal {
-  background: linear-gradient(145deg, #f8f9ff, #ffffff);
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+  width: 420px;
+  max-width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 40px 36px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.12);
+
   text-align: center;
-  width: 400px;
-  max-width: 90%;
-  font-family: 'Segoe UI', sans-serif;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  font-family: "Segoe UI", sans-serif;
 }
 
-.otp-modal:hover {
-  transform: translateY(-4px);
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.otp-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 25px;
+  font-weight: 700;
 }
 
-/* Naslov */
+.otp-icon.success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.otp-icon.error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
 .otp-modal h2 {
-  margin-bottom: 2rem;
-  color: #1f2937;
-  font-size: 1.8rem;
-  font-weight: 600;
+  margin: 0 0 10px;
+
+  color: #111827;
+
+  font-size: 26px;
+  font-weight: 700;
 }
 
-/* OTP polja */
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.otp-description {
+  margin: 0 0 28px;
+
+  color: #6b7280;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   OTP INPUTS
+========================================================= */
+
 .otp-inputs {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  gap: 10px;
+
+  margin-bottom: 24px;
 }
 
 .otp-inputs input {
-  width: 50px;
-  height: 50px;
-  font-size: 1.5rem;
-  text-align: center;
+  width: 48px;
+  height: 54px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d1d5db;
   border-radius: 10px;
-  border: 1px solid #cbd5e1;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  text-align: center;
+
   outline: none;
-  transition: border 0.3s, box-shadow 0.3s;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .otp-inputs input:focus {
   border-color: #4f46e5;
-  box-shadow: 0 0 8px rgba(79, 70, 229, 0.3);
+
+  box-shadow:
+    0 0 0 3px rgba(79, 70, 229, 0.12);
 }
 
-/* Dugme za verifikaciju */
+.otp-inputs input:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   VERIFY BUTTON
+========================================================= */
+
 .otp-form button {
   width: 100%;
-  padding: 0.85rem;
-  background-color: #4f46e5;
-  color: white;
+
+  padding: 13px 18px;
+
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 500;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-.otp-form button:hover {
-  background-color: #4338ca;
-  transform: translateY(-2px);
+.otp-form button:hover:not(:disabled) {
+  background: #4338ca;
+  transform: translateY(-1px);
 }
 
-/* Dugme za resend */
+.otp-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESEND
+========================================================= */
+
 .resend-btn {
-  margin-top: 1rem;
-  background: none;
+  margin-top: 18px;
+
   border: none;
+  background: transparent;
+
   color: #4f46e5;
+
+  font-size: 14px;
+  font-weight: 600;
+
   cursor: pointer;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: color 0.3s;
 }
 
-.resend-btn:hover {
-  color: #4338ca;
+.resend-btn:hover:not(:disabled) {
+  color: #3730a3;
   text-decoration: underline;
 }
 
-/* Poruke korisniku */
+.resend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
 .message {
-  margin-top: 1rem;
-  font-size: 0.95rem;
+  margin: 18px 0 0;
+
+  color: #dc2626;
+
+  font-size: 14px;
   font-weight: 500;
-  color: #e11d48; /* crvena za greške */
+
+  line-height: 1.5;
 }
 
 .message.success {
-  color: #16a34a; /* zelena za uspeh */
+  color: #16a34a;
+}
+
+
+/* =========================================================
+   REDIRECT MESSAGE
+========================================================= */
+
+.redirect-message {
+  margin-top: 8px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON - INVALID LINK
+========================================================= */
+
+.otp-login-button {
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 13px 18px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.otp-login-button:hover {
+  background: #4338ca;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 480px) {
+  .otp-modal {
+    padding: 32px 22px;
+  }
+
+  .otp-inputs {
+    gap: 6px;
+  }
+
+  .otp-inputs input {
+    width: 42px;
+    height: 50px;
+  }
+
+  .otp-modal h2 {
+    font-size: 23px;
+  }
 }

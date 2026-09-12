@@ -12,6 +12,7 @@ import { RolePermissionsModule } from './role-permissions/role-permissions.modul
 import { GoogleCalendarModule } from './google-calendar/google-calendar.module';
 import { ProjectsModule } from './projects/project.module';
 import { TasksModule } from './tasks/tasks.module';
+import { RegistrationRequestsModule } from './registration/registration-requests.module';
 import { AuthModule } from './auth/auth.module';
 
 
@@ -40,6 +41,7 @@ import { AuthModule } from './auth/auth.module';
     GoogleCalendarModule,
     ProjectsModule,
     TasksModule,
+    RegistrationRequestsModule,
     AuthModule,
   ],
 })

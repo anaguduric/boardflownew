@@ -1,0 +1,667 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.registration-requests-page {
+  min-height: calc(100vh - 70px);
+  padding: 32px 38px;
+  background: #f7f8fc;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.requests-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.requests-header h1 {
+  margin: 0 0 7px;
+  font-size: 28px;
+  color: #202938;
+}
+
+.requests-header p {
+  margin: 0;
+  color: #747d8d;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   COUNTER
+========================================================= */
+
+.requests-counter {
+  min-width: 105px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border: 1px solid #e5e8ef;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.requests-counter span {
+  display: block;
+  font-size: 23px;
+  font-weight: 700;
+  color: #5b6cff;
+}
+
+.requests-counter small {
+  color: #737c8c;
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.requests-error {
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border-radius: 9px;
+  background: #fff0f0;
+  border: 1px solid #f1cccc;
+  color: #b52b2b;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.requests-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #747d8d;
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.requests-table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e5e8ef;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(31, 41, 55, 0.04);
+}
+
+.requests-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.requests-table thead {
+  background: #fafbfc;
+}
+
+.requests-table th {
+  padding: 15px 18px;
+  text-align: left;
+  border-bottom: 1px solid #e7e9ef;
+  color: #687184;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.requests-table td {
+  padding: 17px 18px;
+  border-bottom: 1px solid #eef0f4;
+  color: #394252;
+  font-size: 14px;
+}
+
+.requests-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.requests-table tbody tr {
+  transition: background 0.15s;
+}
+
+.requests-table tbody tr:hover {
+  background: #fafbff;
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+.request-user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.request-avatar {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef0ff;
+  color: #5b6cff;
+}
+
+.request-user strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #252d3a;
+  font-size: 14px;
+}
+
+.request-user span {
+  color: #858d9c;
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   ORGANIZATION
+========================================================= */
+
+.organization-info,
+.email-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.organization-info svg {
+  color: #5b6cff;
+}
+
+.email-info svg {
+  color: #8a93a3;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.request-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: #fff6df;
+  color: #a36b00;
+}
+
+.status-approved {
+  background: #eaf8ef;
+  color: #237542;
+}
+
+.status-rejected {
+  background: #fff0f0;
+  color: #b52b2b;
+}
+
+.request-date {
+  color: #737c8c;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.request-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.request-actions button {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.request-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.view-request-button {
+  background: #f0f2f6;
+  color: #667085;
+}
+
+.view-request-button:hover {
+  background: #e5e8ee;
+}
+
+.approve-button {
+  background: #eaf8ef;
+  color: #27824a;
+}
+
+.approve-button:hover {
+  background: #d8f1df;
+}
+
+.reject-button {
+  background: #fff0f0;
+  color: #c03939;
+}
+
+.reject-button:hover {
+  background: #fbe0e0;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-requests {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #e5e8ef;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.empty-requests > svg {
+  font-size: 38px;
+  color: #aeb5c2;
+  margin-bottom: 15px;
+}
+
+.empty-requests h2 {
+  margin: 0 0 7px;
+  color: #343c4b;
+  font-size: 20px;
+}
+
+.empty-requests p {
+  margin: 0;
+  color: #858d9c;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(24, 31, 45, 0.52);
+  backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.admin-modal {
+  width: 100%;
+  max-width: 650px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.2);
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px 26px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.admin-modal-header h2 {
+  margin: 0 0 6px;
+  color: #242c39;
+  font-size: 21px;
+}
+
+.admin-modal-header p {
+  margin: 0;
+  color: #7b8494;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modal-close {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: #f1f3f6;
+  color: #697386;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #e7e9ed;
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.request-details {
+  padding: 25px 26px;
+}
+
+.detail-section {
+  margin-bottom: 25px;
+}
+
+.detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 15px;
+  color: #343c4b;
+  font-size: 14px;
+}
+
+.detail-section h3 svg {
+  color: #5b6cff;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.details-grid > div {
+  padding: 13px 14px;
+  background: #f8f9fb;
+  border-radius: 9px;
+}
+
+.details-grid label {
+  display: block;
+  margin-bottom: 5px;
+  color: #8a92a0;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.details-grid span {
+  display: block;
+  color: #303846;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.details-grid .full-detail {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 26px 24px;
+  border-top: 1px solid #edf0f4;
+}
+
+.modal-actions button {
+  height: 42px;
+  padding: 0 17px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.modal-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal-approve {
+  background: #2f9b57;
+  color: #ffffff;
+}
+
+.modal-approve:hover {
+  background: #278649;
+}
+
+.modal-reject {
+  background: #c94747;
+  color: #ffffff;
+}
+
+.modal-reject:hover {
+  background: #b53c3c;
+}
+
+.modal-cancel {
+  background: #eef0f4;
+  color: #555f70;
+}
+
+.modal-cancel:hover {
+  background: #e3e6eb;
+}
+
+
+/* =========================================================
+   APPROVAL MODAL
+========================================================= */
+
+.approval-content {
+  padding: 28px 26px;
+  text-align: center;
+}
+
+.approval-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf8ef;
+  color: #2f9b57;
+  font-size: 24px;
+}
+
+.approval-content h3 {
+  margin: 0 0 8px;
+  color: #252d3a;
+  font-size: 20px;
+}
+
+.approval-content > p {
+  max-width: 480px;
+  margin: 0 auto 22px;
+  color: #737c8c;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.approval-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+}
+
+.approval-summary > div {
+  padding: 13px 14px;
+  border-radius: 9px;
+  background: #f7f8fa;
+}
+
+.approval-summary span {
+  display: block;
+  margin-bottom: 5px;
+  color: #89919f;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.approval-summary strong {
+  display: block;
+  color: #343c4b;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   REJECT MODAL
+========================================================= */
+
+.reject-content {
+  padding: 25px 26px;
+}
+
+.reject-content label {
+  display: block;
+  margin-bottom: 8px;
+  color: #343c4b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reject-content textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 13px;
+  border: 1px solid #dce1e9;
+  border-radius: 9px;
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #303846;
+  outline: none;
+}
+
+.reject-content textarea:focus {
+  border-color: #5b6cff;
+  box-shadow: 0 0 0 3px rgba(91, 108, 255, 0.1);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .registration-requests-page {
+    padding: 25px 18px;
+  }
+
+  .requests-header {
+    align-items: flex-start;
+  }
+
+  .requests-header h1 {
+    font-size: 23px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid .full-detail {
+    grid-column: auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .approval-summary {
+    grid-template-columns: 1fr;
+  }
+
+}
