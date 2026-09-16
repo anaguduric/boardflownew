@@ -1,5 +1,6 @@
 import {
   Injectable,
+  ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -16,12 +17,46 @@ export class OrganizationMemberService {
   ) {}
 
   // =========================================================
+  // CHECK USER MEMBERSHIP
+  // =========================================================
+
+  private async checkOrganizationMembership(
+    organizationId: number,
+    userId: number,
+  ) {
+    const membership =
+      await this.organizationMemberRepository.findOne({
+        where: {
+          organization_id: organizationId,
+          user_id: userId,
+          status: 'ACTIVE',
+        },
+        relations: ['role'],
+      });
+
+    if (!membership) {
+      throw new ForbiddenException(
+        'Nemate pristup ovoj organizaciji.',
+      );
+    }
+
+    return membership;
+  }
+
+  // =========================================================
   // GET MEMBERS OF ORGANIZATION
   // =========================================================
 
   async getOrganizationMembers(
     organizationId: number,
+    userId: number,
   ) {
+    // Provera da li korisnik pripada organizaciji
+    await this.checkOrganizationMembership(
+      organizationId,
+      userId,
+    );
+
     const members =
       await this.organizationMemberRepository.find({
         where: {
@@ -68,7 +103,14 @@ export class OrganizationMemberService {
   async getMember(
     organizationId: number,
     membershipId: number,
+    userId: number,
   ) {
+    // Provera da li korisnik pripada organizaciji
+    await this.checkOrganizationMembership(
+      organizationId,
+      userId,
+    );
+
     const member =
       await this.organizationMemberRepository.findOne({
         where: {

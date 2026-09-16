@@ -1,49 +1,91 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  FaCheck,
+  FaLock,
+  FaEnvelope,
+  FaEye,
+  FaEyeSlash,
+  FaShieldAlt,
+} from "react-icons/fa";
+import { useAuth } from "./context/AuthContext";
 import "./Login.css";
-import { useAuth } from "./context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
 
-function Login() {
+export default function Login() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     setMessage("");
+    setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:3000/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (!res.ok) {
-        setMessage(data.message || "Greška pri prijavi");
-        return;
+      if (!response.ok) {
+        throw new Error(
+          data?.message || "Neuspešna prijava."
+        );
       }
 
-      // Čuvanje tokena + korisnika
       login(data.token, data.user);
 
-      // Redirekcija bez reload-a
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-      setMessage("Greška servera");
+      const redirect = searchParams.get("redirect");
+
+      if (redirect) {
+        navigate(redirect);
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+
+      setMessage(
+        error.message ||
+          "Došlo je do greške pri prijavljivanju."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = () => {
+    const redirect = searchParams.get("redirect");
+
+    if (redirect) {
+      navigate(
+        `/register?redirect=${encodeURIComponent(
+          redirect
+        )}`
+      );
+    } else {
+      navigate("/register");
     }
   };
 
@@ -51,90 +93,73 @@ function Login() {
     <div className="login-page">
 
       {/* =====================================================
-          LEVA STRANA
-      ====================================================== */}
+          LEFT SIDE
+      ===================================================== */}
 
       <div className="login-left">
 
-        {/* Dekorativni krugovi */}
         <div className="login-shape login-shape-one"></div>
         <div className="login-shape login-shape-two"></div>
 
         <div className="login-left-content">
 
-          {/* LOGO + NAZIV */}
-          <a href="/" className="login-brand">
-
+          <div className="login-brand">
             <div className="login-brand-logo">
               <img
                 src="/logo.png"
-                alt="BoardFlow logo"
+                alt="BoardFlow"
               />
             </div>
 
             <span>BoardFlow</span>
+          </div>
 
-          </a>
-
-
-          {/* UVODNI TEKST */}
           <div className="login-intro">
 
             <span className="login-small-title">
-              PROJECT MANAGEMENT
+              WORKSPACE MANAGEMENT
             </span>
 
             <h1>
-              Organizuj projekte.
-              <br />
-              Radi <span>pametnije.</span>
+              Welcome <span>back.</span>
             </h1>
 
             <p>
-              Jednostavno upravljaj projektima, timovima i
-              zadacima na jednom mestu.
+              Continue managing your projects,
+              tasks and teams from one simple
+              workspace.
             </p>
 
-
-            {/* FEATURES */}
             <div className="login-features">
 
               <div className="login-feature">
-
-                <div className="login-feature-icon">
-                  ✓
-                </div>
-
-                <span>
-                  Organizacija projekata i zadataka
+                <span className="login-feature-icon">
+                  <FaCheck />
                 </span>
 
+                <span>
+                  Organize your projects easily
+                </span>
               </div>
 
-
               <div className="login-feature">
-
-                <div className="login-feature-icon">
-                  ✓
-                </div>
-
-                <span>
-                  Efikasan rad u timu
+                <span className="login-feature-icon">
+                  <FaCheck />
                 </span>
 
+                <span>
+                  Collaborate with your team
+                </span>
               </div>
 
-
               <div className="login-feature">
-
-                <div className="login-feature-icon">
-                  ✓
-                </div>
-
-                <span>
-                  Sve informacije na jednom mestu
+                <span className="login-feature-icon">
+                  <FaCheck />
                 </span>
 
+                <span>
+                  Keep everything in one place
+                </span>
               </div>
 
             </div>
@@ -142,170 +167,193 @@ function Login() {
           </div>
 
         </div>
-
       </div>
 
 
       {/* =====================================================
-          DESNA STRANA
-      ====================================================== */}
+          RIGHT SIDE
+      ===================================================== */}
 
       <div className="login-right">
 
-        <form
-          className="login-form"
-          onSubmit={handleLogin}
-        >
+        <div className="login-form">
 
-          {/* HEADER */}
           <div className="login-form-header">
 
             <h2>
-              Dobro došla nazad
+              Welcome back
             </h2>
 
             <p>
-              Prijavi se na svoj BoardFlow nalog
+              Login to your BoardFlow account
             </p>
 
           </div>
 
 
-          {/* EMAIL */}
-          <div className="login-form-group">
+          <form onSubmit={handleSubmit}>
 
-            <label htmlFor="email">
-              Email
-            </label>
+            {/* EMAIL */}
 
-            <div className="login-input-wrapper">
+            <div className="login-form-group">
 
-              <input
-                id="email"
-                type="email"
-                placeholder="Unesite email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <label>
+                Email
+              </label>
 
-            </div>
+              <div className="login-input-wrapper">
 
-          </div>
+                <FaEnvelope />
 
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
+                  placeholder="Enter your email"
+                  required
+                />
 
-          {/* PASSWORD */}
-          <div className="login-form-group">
-
-            <label htmlFor="password">
-              Lozinka
-            </label>
-
-            <div className="login-input-wrapper password-wrapper">
-
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Unesite lozinku"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
-                aria-label={
-                  showPassword
-                    ? "Sakrij lozinku"
-                    : "Prikaži lozinku"
-                }
-              >
-                {showPassword ? "◉" : "○"}
-              </button>
+              </div>
 
             </div>
 
-          </div>
+
+            {/* PASSWORD */}
+
+            <div className="login-form-group">
+
+              <label>
+                Password
+              </label>
+
+              <div className="login-input-wrapper password-wrapper">
+
+                <FaLock />
+
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  placeholder="Enter your password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowPassword(
+                      (prev) => !prev
+                    )
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showPassword ? (
+                    <FaEyeSlash />
+                  ) : (
+                    <FaEye />
+                  )}
+                </button>
+
+              </div>
+
+            </div>
 
 
-          {/* OPCIJE */}
-          <div className="login-options">
+            {/* OPTIONS */}
 
-            <label className="remember-me">
+            <div className="login-options">
 
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) =>
-                  setRememberMe(e.target.checked)
-                }
-              />
+              <label className="remember-me">
 
-              <span>
-                Zapamti me
-              </span>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) =>
+                    setRememberMe(
+                      e.target.checked
+                    )
+                  }
+                />
 
-            </label>
+                <span>
+                  Remember me
+                </span>
+
+              </label>
+
+            </div>
 
 
-            <a
-              href="#"
-              className="forgot-password"
-              onClick={(e) => e.preventDefault()}
+            {/* ERROR */}
+
+            {message && (
+              <div className="error">
+                {message}
+              </div>
+            )}
+
+
+            {/* BUTTON */}
+
+            <button
+              type="submit"
+              disabled={loading}
             >
-              Zaboravljena lozinka?
-            </a>
+              {loading
+                ? "Logging in..."
+                : "Log in"}
+            </button>
 
-          </div>
-
-
-          {/* LOGIN BUTTON */}
-          <button type="submit">
-            Prijavi se
-          </button>
-
-
-          {/* ERROR */}
-          {message && (
-            <span className="error">
-              {message}
-            </span>
-          )}
+          </form>
 
 
           {/* REGISTER */}
+
           <div className="login-register">
 
-            Nemaš nalog?
+            <span>
+              Don't have an account?
+            </span>
 
-            <a href="/register">
-              Registruj se
-            </a>
+            <button
+              type="button"
+              onClick={handleRegister}
+            >
+              Create account
+            </button>
 
           </div>
 
 
           {/* SECURITY */}
+
           <div className="login-security">
 
-            <span>🔒</span>
+            <FaShieldAlt className="security-icon" />
 
             <span>
-              Tvoji podaci su sigurni
+              Your information is securely protected
             </span>
 
           </div>
 
-        </form>
+        </div>
 
       </div>
 
     </div>
   );
 }
-
-export default Login;

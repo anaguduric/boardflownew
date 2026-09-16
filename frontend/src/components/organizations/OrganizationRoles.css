@@ -1,12 +1,15 @@
 /* =========================================================
-   ORGANIZATION ROLES
+   ORGANIZATION ROLES PAGE
 ========================================================= */
 
-.organization-roles {
+.organization-roles-page {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1180px;
+
   margin: 0 auto;
-  padding: 28px;
+  padding: 28px 32px;
+
+  box-sizing: border-box;
 }
 
 
@@ -15,95 +18,235 @@
 ========================================================= */
 
 .organization-roles-header {
+  width: 100%;
+
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 
-  margin-bottom: 24px;
+  gap: 24px;
+
+  margin-bottom: 26px;
 }
 
-.organization-roles-heading {
+
+/* =========================================================
+   HEADER LEFT
+========================================================= */
+
+.organization-roles-header-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.organization-roles-back {
+  width: fit-content;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 0 0 17px;
+  padding: 7px 11px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: #f5f6f8;
+  color: #596273;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.organization-roles-back svg {
+  font-size: 11px;
+}
+
+.organization-roles-back:hover {
+  background: #eef0f4;
+  color: #4f46e5;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.organization-roles-title {
   display: flex;
   align-items: center;
-  gap: 14px;
+
+  gap: 12px;
+
+  min-width: 0;
 }
 
-.organization-roles-heading-icon {
-  width: 46px;
-  height: 46px;
+
+.organization-roles-title-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 13px;
+  border-radius: 10px;
 
-  background: #eef2ff;
-  color: #4f46e5;
+  background: #eef0ff;
+  color: #635bff;
 
-  font-size: 18px;
-}
-
-.organization-roles-heading h1 {
-  margin: 0;
-
-  color: #111827;
-
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.organization-roles-heading p {
-  margin: 4px 0 0;
-
-  color: #6b7280;
-
-  font-size: 13px;
+  font-size: 16px;
 }
 
 
 /* =========================================================
-   CREATE BUTTON
+   TITLE TEXT
 ========================================================= */
 
-.organization-role-create {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.organization-roles-title h1 {
+  margin: 0;
 
-  padding: 10px 15px;
-
-  border: none;
-  border-radius: 9px;
-
-  background: #4f46e5;
-  color: white;
+  color: #252b3a;
 
   font-family: inherit;
-  font-size: 13px;
+
+  font-size: 22px;
+  line-height: 1.25;
+
+  font-weight: 700;
+}
+
+
+.organization-roles-title p {
+  margin: 4px 0 0;
+
+  color: #858d9d;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   CREATE ROLE BUTTON
+========================================================= */
+
+.organization-role-create-button {
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #635bff;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
   font-weight: 600;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  box-shadow:
+    0 3px 9px rgba(99, 91, 255, 0.16);
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
-.organization-role-create:hover {
-  background: #4338ca;
+
+.organization-role-create-button svg {
+  font-size: 11px;
+}
+
+
+.organization-role-create-button:hover {
+  background: #554ce8;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 14px rgba(99, 91, 255, 0.2);
+}
+
+
+.organization-role-create-button:active {
+  transform: translateY(0);
 }
 
 
 /* =========================================================
-   ROLES GRID
+   ROLES COUNT
+========================================================= */
+
+.organization-roles-count {
+  display: flex;
+  align-items: baseline;
+
+  gap: 5px;
+
+  margin-bottom: 11px;
+
+  color: #7a8291;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+
+.organization-roles-count strong {
+  color: #252b3a;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ROLES LIST
 ========================================================= */
 
 .organization-roles-list {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 16px;
+  gap: 14px;
+
+  box-sizing: border-box;
 }
 
 
@@ -114,44 +257,50 @@
 .organization-role-card {
   position: relative;
 
+  min-width: 0;
+  min-height: 128px;
+
   display: flex;
   align-items: flex-start;
 
-  gap: 15px;
+  gap: 13px;
 
-  padding: 20px;
+  padding: 17px;
+
+  box-sizing: border-box;
 
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border-radius: 12px;
 
   background: #ffffff;
 
   box-shadow:
-    0 4px 15px rgba(15, 23, 42, 0.04);
+    0 2px 8px rgba(15, 23, 42, 0.035);
 
   transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
-.organization-role-card:hover {
-  transform: translateY(-2px);
 
-  border-color: #c7d2fe;
+.organization-role-card:hover {
+  border-color: #d9daf4;
 
   box-shadow:
-    0 10px 25px rgba(15, 23, 42, 0.07);
+    0 7px 18px rgba(15, 23, 42, 0.055);
+
+  transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   ICON
+   ROLE ICON
 ========================================================= */
 
 .organization-role-icon {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
 
   flex-shrink: 0;
 
@@ -159,78 +308,131 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
-  background: #eef2ff;
-  color: #4f46e5;
+  background: #eef0ff;
+  color: #635bff;
 
-  font-size: 17px;
+  font-size: 15px;
 }
 
 
 /* =========================================================
-   CONTENT
+   ROLE CONTENT
 ========================================================= */
 
 .organization-role-content {
   flex: 1;
 
   min-width: 0;
-}
 
-.organization-role-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  margin-bottom: 5px;
-}
-
-.organization-role-name strong {
-  color: #111827;
-
-  font-size: 15px;
-  font-weight: 650;
-}
-
-.organization-role-description {
-  margin: 0;
-
-  color: #6b7280;
-
-  font-size: 12px;
-
-  line-height: 1.5;
+  padding-right: 65px;
 }
 
 
 /* =========================================================
-   BADGES
+   ROLE NAME ROW
 ========================================================= */
 
-.organization-role-default,
-.organization-role-custom {
+.organization-role-name-row {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin: 1px 0 5px;
+}
+
+
+.organization-role-name-row h3 {
+  min-width: 0;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #202737;
+
+  font-family: inherit;
+
+  font-size: 15px;
+  line-height: 1.35;
+
+  font-weight: 650;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ROLE DESCRIPTION
+========================================================= */
+
+.organization-role-content p {
+  margin: 0;
+
+  color: #697386;
+
+  font-family: inherit;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   ROLE ID
+========================================================= */
+
+.organization-role-id {
+  display: inline-block;
+
+  margin-top: 8px;
+
+  color: #9299a7;
+
+  font-family: inherit;
+
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   DEFAULT BADGE
+========================================================= */
+
+.organization-role-default {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 
-  padding: 3px 7px;
+  min-height: 18px;
 
-  border-radius: 6px;
+  padding: 2px 7px;
 
-  font-size: 9px;
+  box-sizing: border-box;
+
+  border-radius: 5px;
+
+  background: #ecfdf5;
+  color: #047857;
+
+  font-family: inherit;
+
+  font-size: 8px;
+  line-height: 1;
+
   font-weight: 700;
 
   text-transform: uppercase;
-}
-
-.organization-role-default {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.organization-role-custom {
-  background: #f3f4f6;
-  color: #6b7280;
+  letter-spacing: 0.25px;
 }
 
 
@@ -241,55 +443,72 @@
 .organization-role-actions {
   position: absolute;
 
-  top: 16px;
-  right: 16px;
-
-  display: flex;
-  gap: 5px;
-}
-
-.organization-role-action {
-  width: 30px;
-  height: 30px;
+  top: 15px;
+  right: 15px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
 
-  border: 1px solid #e5e7eb;
-  border-radius: 7px;
-
-  background: white;
-  color: #9ca3af;
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-}
-
-.organization-role-action:hover {
-  background: #eef2ff;
-
-  border-color: #c7d2fe;
-
-  color: #4f46e5;
-}
-
-.organization-role-action.delete:hover {
-  background: #fef2f2;
-
-  border-color: #fecaca;
-
-  color: #dc2626;
+  gap: 5px;
 }
 
 
 /* =========================================================
-   EMPTY
+   EDIT BUTTON
+========================================================= */
+
+.organization-role-actions button {
+  height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e6e8ed;
+  border-radius: 7px;
+
+  background: #fafafa;
+  color: #626b7a;
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+
+.organization-role-actions button svg {
+  font-size: 10px;
+}
+
+
+.organization-role-actions button:hover {
+  border-color: #d9d8fa;
+
+  background: #f1f0ff;
+
+  color: #554ce8;
+}
+
+
+/* =========================================================
+   EMPTY STATE
 ========================================================= */
 
 .organization-roles-empty {
-  min-height: 300px;
+  width: 100%;
+  min-height: 240px;
 
   display: flex;
   flex-direction: column;
@@ -297,48 +516,122 @@
   align-items: center;
   justify-content: center;
 
-  padding: 30px;
+  padding: 28px;
 
-  border: 1px dashed #d1d5db;
-  border-radius: 16px;
+  box-sizing: border-box;
 
-  background: #fafafa;
+  border: 1px dashed #d8dce4;
+  border-radius: 13px;
+
+  background: #fafbfc;
 
   text-align: center;
 }
 
+
+/* =========================================================
+   EMPTY ICON
+========================================================= */
+
 .organization-roles-empty-icon {
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 
-  border-radius: 16px;
+  border-radius: 12px;
 
-  background: #eef2ff;
-  color: #4f46e5;
+  background: #eef0ff;
+  color: #635bff;
 
-  font-size: 23px;
+  font-size: 19px;
 }
+
+
+/* =========================================================
+   EMPTY TITLE
+========================================================= */
 
 .organization-roles-empty h2 {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
 
-  color: #111827;
+  color: #252b3a;
 
-  font-size: 18px;
+  font-family: inherit;
+
+  font-size: 17px;
+  line-height: 1.3;
+
+  font-weight: 700;
 }
+
+
+/* =========================================================
+   EMPTY DESCRIPTION
+========================================================= */
 
 .organization-roles-empty p {
   margin: 0;
 
-  color: #6b7280;
+  color: #7d8595;
 
-  font-size: 13px;
+  font-family: inherit;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   EMPTY CREATE BUTTON
+========================================================= */
+
+.organization-roles-empty button {
+  height: 35px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 17px;
+
+  padding: 0 13px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #635bff;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+
+.organization-roles-empty button:hover {
+  background: #554ce8;
+
+  transform: translateY(-1px);
+}
+
+
+.organization-roles-empty button svg {
+  font-size: 10px;
 }
 
 
@@ -347,7 +640,7 @@
 ========================================================= */
 
 .organization-roles-loading {
-  min-height: 300px;
+  min-height: 260px;
 
   display: flex;
   flex-direction: column;
@@ -355,20 +648,27 @@
   align-items: center;
   justify-content: center;
 
-  gap: 10px;
+  gap: 9px;
 
-  color: #6b7280;
+  color: #7c8494;
 
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.organization-roles-loading svg {
-  color: #4f46e5;
 
-  font-size: 22px;
+.organization-roles-loading svg {
+  color: #635bff;
+
+  font-size: 20px;
 
   animation: roles-spin 1s linear infinite;
 }
+
+
+.roles-spinner {
+  animation: roles-spin 1s linear infinite;
+}
+
 
 @keyframes roles-spin {
   from {
@@ -386,43 +686,61 @@
 ========================================================= */
 
 .organization-roles-error {
-  padding: 13px 15px;
+  width: 100%;
 
-  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 15px;
+
+  box-sizing: border-box;
 
   border: 1px solid #fecaca;
   border-radius: 10px;
 
-  background: #fef2f2;
+  background: #fff7f7;
+
+  color: #b42318;
+}
+
+
+.organization-roles-error > svg {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  font-size: 16px;
+}
+
+
+.organization-roles-error h2 {
+  margin: 0 0 3px;
 
   color: #991b1b;
 
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.organization-roles-error p {
+  margin: 0;
+
+  color: #b42318;
+
+  font-size: 12px;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
-@media (max-width: 750px) {
+@media (max-width: 900px) {
 
-  .organization-roles {
-    padding: 20px;
-  }
-
-  .organization-roles-header {
-    align-items: flex-start;
-
-    flex-direction: column;
-
-    gap: 15px;
-  }
-
-  .organization-role-create {
-    width: 100%;
-
-    justify-content: center;
+  .organization-roles-page {
+    padding: 24px;
   }
 
   .organization-roles-list {
@@ -432,18 +750,95 @@
 }
 
 
-@media (max-width: 480px) {
+/* =========================================================
+   MOBILE
+========================================================= */
 
-  .organization-roles {
-    padding: 15px;
+@media (max-width: 650px) {
+
+  .organization-roles-page {
+    padding: 20px 16px;
   }
 
-  .organization-roles-heading h1 {
-    font-size: 21px;
+  .organization-roles-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 15px;
+  }
+
+  .organization-role-create-button {
+    width: 100%;
   }
 
   .organization-role-card {
-    padding: 17px;
+    min-height: 0;
+
+    padding: 15px;
+  }
+
+  .organization-role-content {
+    padding-right: 0;
+  }
+
+  .organization-role-actions {
+    position: static;
+
+    margin-left: auto;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .organization-roles-page {
+    padding: 16px 12px;
+  }
+
+  .organization-roles-title {
+    gap: 10px;
+  }
+
+  .organization-roles-title-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+  }
+
+  .organization-roles-title h1 {
+    font-size: 19px;
+  }
+
+  .organization-roles-title p {
+    font-size: 11px;
+  }
+
+  .organization-role-card {
+    flex-wrap: wrap;
+  }
+
+  .organization-role-content {
+    flex-basis: calc(100% - 55px);
+  }
+
+  .organization-role-actions {
+    width: 100%;
+
+    justify-content: flex-end;
+
+    margin-top: 2px;
+  }
+
+  .organization-role-actions button {
+    height: 30px;
   }
 
 }

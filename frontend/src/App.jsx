@@ -18,6 +18,7 @@ import EditTask from "./components/tasks/EditTask";
 import RegistrationRequest from "./components/registration/RegistrationRequest";
 import Registration from "./components/admin/Registration";
 import OtpVerify from "./OtpVerify";
+import AcceptInvitation from "./components/organizations/AcceptInvitation";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/register-organization" element={<RegistrationRequest />}/>
         <Route path="/admin/registration" element={<Registration />}/>
         <Route path="/verify-account" element={<OtpVerify />} />
+        <Route path="/accept-invitation" element={<AcceptInvitation />}/>
         
       </Routes>
     </>

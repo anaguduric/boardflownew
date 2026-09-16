@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
@@ -23,21 +24,22 @@ export class OrganizationMemberController {
   @UseGuards(JwtAuthGuard)
   @Get(':organizationId/members')
   async getOrganizationMembers(
-    @Param(
-      'organizationId',
-      ParseIntPipe,
-    )
+    @Param('organizationId', ParseIntPipe)
     organizationId: number,
+
+    @Req() req: any,
   ) {
     console.log(
       'GET ORGANIZATION MEMBERS:',
       organizationId,
+      'USER:',
+      req.user.userId,
     );
 
-    return this.organizationMemberService
-      .getOrganizationMembers(
-        organizationId,
-      );
+    return this.organizationMemberService.getOrganizationMembers(
+      organizationId,
+      req.user.userId,
+    );
   }
 
   // =========================================================
@@ -47,22 +49,18 @@ export class OrganizationMemberController {
   @UseGuards(JwtAuthGuard)
   @Get(':organizationId/members/:membershipId')
   async getMember(
-    @Param(
-      'organizationId',
-      ParseIntPipe,
-    )
+    @Param('organizationId', ParseIntPipe)
     organizationId: number,
 
-    @Param(
-      'membershipId',
-      ParseIntPipe,
-    )
+    @Param('membershipId', ParseIntPipe)
     membershipId: number,
+
+    @Req() req: any,
   ) {
-    return this.organizationMemberService
-      .getMember(
-        organizationId,
-        membershipId,
-      );
+    return this.organizationMemberService.getMember(
+      organizationId,
+      membershipId,
+      req.user.userId,
+    );
   }
 }

@@ -14,7 +14,8 @@ import { ProjectsModule } from './projects/project.module';
 import { TasksModule } from './tasks/tasks.module';
 import { RegistrationRequestsModule } from './registration/registration-requests.module';
 import { AuthModule } from './auth/auth.module';
-
+import { OrganizationInvitationsModule } from './organization-invitations/organization-invitations.module';
+import { TaskCommentsModule } from './task-comments/task-comments.module';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { AuthModule } from './auth/auth.module';
     ProjectsModule,
     TasksModule,
     RegistrationRequestsModule,
+    OrganizationInvitationsModule,
+    TaskCommentsModule,
     AuthModule,
   ],
 })

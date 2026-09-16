@@ -1,33 +1,57 @@
-import React, { useState } from "react";
-import "./Register.css";
-import OtpVerify from "./OtpVerify";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
+  FaCheck,
   FaUser,
   FaEnvelope,
   FaLock,
   FaEye,
   FaEyeSlash,
-  FaCheck,
+  FaShieldAlt,
 } from "react-icons/fa";
 
-function Register() {
-  const [step, setStep] = useState("register");
-  const [userId, setUserId] = useState(null);
+import "./Register.css";
+
+export default function Register() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const redirect = searchParams.get("redirect");
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
 
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     setMessage("");
 
+    // ========================================================
+    // PROVERA LOZINKE
+    // ========================================================
+
+    if (password !== confirmPassword) {
+      setMessage("Lozinke se ne poklapaju.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage(
+        "Lozinka mora imati najmanje 6 karaktera."
+      );
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const response = await fetch(
         "http://localhost:3000/auth/register",
         {
@@ -45,45 +69,94 @@ function Register() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        setUserId(data.userId);
-        setStep("otp");
-      } else {
-        setMessage(
-          data.message || "Greška pri registraciji"
+      // ========================================================
+      // PROVERA ODGOVORA SERVERA
+      // ========================================================
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message || "Registracija nije uspela."
         );
       }
+
+      console.log("REGISTER RESPONSE:", data);
+
+      // ========================================================
+      // BACKEND VRAĆA:
+      //
+      // {
+      //   message: "...",
+      //   userId: 7
+      // }
+      //
+      // Zato ovde uzimamo direktno data.userId
+      // ========================================================
+
+      const userId = data?.userId;
+
+      if (!userId) {
+        console.error(
+          "REGISTER RESPONSE - NEMA USER ID:",
+          data
+        );
+
+        throw new Error(
+          "Registracija je uspešna, ali server nije vratio ID korisnika."
+        );
+      }
+
+      // ========================================================
+      // PREUSMERAVANJE NA OTP
+      // ========================================================
+
+      let verifyUrl = `/verify-account?userId=${encodeURIComponent(
+        userId
+      )}`;
+
+      // Ako je korisnik došao preko invitation linka,
+      // sačuvaj redirect kroz OTP.
+
+      if (redirect) {
+        verifyUrl += `&redirect=${encodeURIComponent(
+          redirect
+        )}`;
+      }
+
+      console.log(
+        "REDIRECT TO OTP:",
+        verifyUrl
+      );
+
+      navigate(verifyUrl);
     } catch (error) {
-      console.error(error);
-      setMessage("Server greška");
+      console.error(
+        "REGISTER ERROR:",
+        error
+      );
+
+      setMessage(
+        error.message ||
+          "Došlo je do greške pri registraciji."
+      );
+    } finally {
+      setLoading(false);
     }
   };
-
-  // =========================================================
-  // OTP
-  // =========================================================
-
-  if (step === "otp") {
-    return <OtpVerify userId={userId} />;
-  }
 
   return (
     <div className="register-page">
 
       {/* =====================================================
-          LEFT
-      ====================================================== */}
+          LEFT SIDE
+      ===================================================== */}
 
       <section className="register-left">
 
-        {/* Dekorativni elementi */}
+        <div className="register-shape register-shape-one"></div>
 
-        <div className="register-shape register-shape-one" />
+        <div className="register-shape register-shape-two"></div>
 
-        <div className="register-shape register-shape-two" />
-
-        <div className="register-shape register-shape-three" />
-
+        <div className="register-shape register-shape-three"></div>
 
         <div className="register-left-content">
 
@@ -93,84 +166,75 @@ function Register() {
             to="/"
             className="register-brand"
           >
-
             <div className="register-brand-logo">
-
               <img
                 src="/logo.png"
-                alt="BoardFlow logo"
+                alt="BoardFlow"
               />
-
             </div>
 
-            <span>
-              BoardFlow
-            </span>
-
+            <span>BoardFlow</span>
           </Link>
-
 
           {/* INTRO */}
 
           <div className="register-intro">
 
             <span className="register-small-title">
-              JOIN BOARDflow
+              GET STARTED
             </span>
 
             <h1>
-              Kreiraj nalog.
+              Build better.
               <br />
-              Počni da radiš <span>pametnije.</span>
+              <span>Work smarter.</span>
             </h1>
 
             <p>
-              Organizuj projekte, poveži svoj tim i
-              imaj sve važne informacije na jednom mestu.
+              Create your BoardFlow account and bring
+              your projects, tasks and teams together
+              in one simple workspace.
             </p>
 
+          </div>
 
-            {/* BENEFITS */}
+          {/* BENEFITS */}
 
-            <div className="register-benefits">
+          <div className="register-benefits">
 
-              <div className="register-benefit">
+            <div className="register-benefit">
 
-                <div className="register-benefit-icon">
-                  <FaCheck />
-                </div>
+              <span className="register-benefit-icon">
+                <FaCheck />
+              </span>
 
-                <span>
-                  Upravljanje projektima
-                </span>
+              <span>
+                Organize projects and tasks easily
+              </span>
 
-              </div>
+            </div>
 
+            <div className="register-benefit">
 
-              <div className="register-benefit">
+              <span className="register-benefit-icon">
+                <FaCheck />
+              </span>
 
-                <div className="register-benefit-icon">
-                  <FaCheck />
-                </div>
+              <span>
+                Collaborate with your team
+              </span>
 
-                <span>
-                  Jednostavna timska saradnja
-                </span>
+            </div>
 
-              </div>
+            <div className="register-benefit">
 
+              <span className="register-benefit-icon">
+                <FaCheck />
+              </span>
 
-              <div className="register-benefit">
-
-                <div className="register-benefit-icon">
-                  <FaCheck />
-                </div>
-
-                <span>
-                  Sve na jednom mestu
-                </span>
-
-              </div>
+              <span>
+                Keep everything in one workspace
+              </span>
 
             </div>
 
@@ -182,38 +246,38 @@ function Register() {
 
 
       {/* =====================================================
-          RIGHT
-      ====================================================== */}
+          RIGHT SIDE
+      ===================================================== */}
 
       <section className="register-right">
 
         <div className="register-form-card">
 
-          {/* FORM HEADER */}
+          {/* HEADER */}
 
           <div className="register-form-header">
 
             <div className="register-step">
 
               <span className="step-active">
-                01
+                1
               </span>
 
-              <span className="step-line" />
+              <div className="step-line"></div>
 
               <span>
-                02
+                2
               </span>
 
             </div>
 
-
             <h2>
-              Kreiraj nalog
+              Create your account
             </h2>
 
             <p>
-              Unesi podatke kako bismo kreirali tvoj nalog.
+              Enter your details to get started with
+              BoardFlow.
             </p>
 
           </div>
@@ -223,15 +287,15 @@ function Register() {
 
           <form
             className="register-form"
-            onSubmit={handleRegister}
+            onSubmit={handleSubmit}
           >
 
             {/* USERNAME */}
 
             <div className="register-form-group">
 
-              <label htmlFor="username">
-                Korisničko ime
+              <label htmlFor="register-username">
+                Username
               </label>
 
               <div className="register-input-wrapper">
@@ -239,14 +303,15 @@ function Register() {
                 <FaUser />
 
                 <input
-                  id="username"
+                  id="register-username"
                   type="text"
-                  placeholder="Unesite korisničko ime"
                   value={username}
                   onChange={(e) =>
                     setUsername(e.target.value)
                   }
+                  placeholder="Enter your username"
                   required
+                  autoComplete="username"
                 />
 
               </div>
@@ -258,8 +323,8 @@ function Register() {
 
             <div className="register-form-group">
 
-              <label htmlFor="email">
-                Email adresa
+              <label htmlFor="register-email">
+                Email
               </label>
 
               <div className="register-input-wrapper">
@@ -267,14 +332,15 @@ function Register() {
                 <FaEnvelope />
 
                 <input
-                  id="email"
+                  id="register-email"
                   type="email"
-                  placeholder="Unesite email adresu"
                   value={email}
                   onChange={(e) =>
                     setEmail(e.target.value)
                   }
+                  placeholder="Enter your email"
                   required
+                  autoComplete="email"
                 />
 
               </div>
@@ -286,49 +352,87 @@ function Register() {
 
             <div className="register-form-group">
 
-              <label htmlFor="password">
-                Lozinka
+              <label htmlFor="register-password">
+                Password
               </label>
 
-              <div className="register-input-wrapper password-wrapper">
+              <div className="register-input-wrapper">
 
                 <FaLock />
 
                 <input
-                  id="password"
+                  id="register-password"
                   type={
                     showPassword
                       ? "text"
                       : "password"
                   }
-                  placeholder="Kreirajte lozinku"
                   value={password}
                   onChange={(e) =>
                     setPassword(e.target.value)
                   }
+                  placeholder="Create a password"
+                  minLength={6}
                   required
+                  autoComplete="new-password"
                 />
 
                 <button
                   type="button"
                   className="register-password-toggle"
                   onClick={() =>
-                    setShowPassword(!showPassword)
+                    setShowPassword(
+                      (prev) => !prev
+                    )
                   }
                   aria-label={
                     showPassword
-                      ? "Sakrij lozinku"
-                      : "Prikaži lozinku"
+                      ? "Hide password"
+                      : "Show password"
                   }
                 >
-
                   {showPassword ? (
                     <FaEyeSlash />
                   ) : (
                     <FaEye />
                   )}
-
                 </button>
+
+              </div>
+
+            </div>
+
+
+            {/* CONFIRM PASSWORD */}
+
+            <div className="register-form-group">
+
+              <label htmlFor="register-confirm-password">
+                Confirm password
+              </label>
+
+              <div className="register-input-wrapper">
+
+                <FaLock />
+
+                <input
+                  id="register-confirm-password"
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(
+                      e.target.value
+                    )
+                  }
+                  placeholder="Confirm your password"
+                  minLength={6}
+                  required
+                  autoComplete="new-password"
+                />
 
               </div>
 
@@ -338,9 +442,9 @@ function Register() {
             {/* ERROR */}
 
             {message && (
-              <span className="register-error">
+              <div className="register-error">
                 {message}
-              </span>
+              </div>
             )}
 
 
@@ -349,8 +453,11 @@ function Register() {
             <button
               type="submit"
               className="register-submit"
+              disabled={loading}
             >
-              Kreiraj nalog
+              {loading
+                ? "Creating account..."
+                : "Create account"}
             </button>
 
           </form>
@@ -361,12 +468,22 @@ function Register() {
           <div className="register-login">
 
             <span>
-              Već imaš nalog?
+              Already have an account?
             </span>
 
-            <Link to="/login">
-              Prijavi se
-            </Link>
+            {redirect ? (
+              <Link
+                to={`/login?redirect=${encodeURIComponent(
+                  redirect
+                )}`}
+              >
+                Log in
+              </Link>
+            ) : (
+              <Link to="/login">
+                Log in
+              </Link>
+            )}
 
           </div>
 
@@ -375,12 +492,10 @@ function Register() {
 
           <div className="register-security">
 
-            <span className="security-icon">
-              🔒
-            </span>
+            <FaShieldAlt className="security-icon" />
 
             <span>
-              Tvoji podaci su zaštićeni
+              Your information is securely protected
             </span>
 
           </div>
@@ -392,5 +507,3 @@ function Register() {
     </div>
   );
 }
-
-export default Register;

@@ -4,10 +4,13 @@ import {
   FaUserCircle,
   FaSpinner,
   FaUserShield,
+  FaUserPlus,
 } from 'react-icons/fa';
 
 import { useAuth } from '../../context/AuthContext';
 import { useOrganization } from '../../context/OrganizationContext';
+
+import InviteMemberModal from '../../components/organizations/InviteMemberModal';
 
 import './OrganizationMembers.css';
 
@@ -27,6 +30,9 @@ function OrganizationMembers({
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState('');
+
+  const [showInviteModal, setShowInviteModal] =
+    useState(false);
 
 
   // =========================================================
@@ -166,6 +172,20 @@ function OrganizationMembers({
 
 
   // =========================================================
+  // INVITATION CREATED
+  // =========================================================
+
+  const handleInvited = () => {
+    /*
+     * Za sada samo zatvaramo modal.
+     *
+     * Kasnije ćemo ovde moći da učitamo
+     * pending invitations.
+     */
+  };
+
+
+  // =========================================================
   // RENDER
   // =========================================================
 
@@ -207,17 +227,42 @@ function OrganizationMembers({
         </div>
 
 
-        <div className="organization-members-count">
+        {/* ===================================================
+            RIGHT SIDE
+        ==================================================== */}
 
-          <strong>
-            {members.length}
-          </strong>
+        <div className="organization-members-header-right">
 
-          <span>
-            {members.length === 1
-              ? 'member'
-              : 'members'}
-          </span>
+          <div className="organization-members-count">
+
+            <strong>
+              {members.length}
+            </strong>
+
+            <span>
+              {members.length === 1
+                ? 'member'
+                : 'members'}
+            </span>
+
+          </div>
+
+
+          {/* INVITE BUTTON */}
+
+          <button
+            type="button"
+            className="organization-members-invite"
+            onClick={() =>
+              setShowInviteModal(true)
+            }
+          >
+            <FaUserPlus />
+
+            <span>
+              Invite member
+            </span>
+          </button>
 
         </div>
 
@@ -339,6 +384,23 @@ function OrganizationMembers({
           })}
 
         </div>
+      )}
+
+
+      {/* =====================================================
+          INVITE MEMBER MODAL
+      ====================================================== */}
+
+      {showInviteModal && (
+        <InviteMemberModal
+          organizationId={
+            organization.organization_id
+          }
+          onClose={() =>
+            setShowInviteModal(false)
+          }
+          onInvited={handleInvited}
+        />
       )}
 
     </div>

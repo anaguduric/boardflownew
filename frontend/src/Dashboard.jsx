@@ -276,7 +276,7 @@ export default function Dashboard() {
             <div className="landing-buttons">
 
               <Link
-                to="/register"
+                to="/register-organization"
                 className="landing-primary-btn"
               >
                 Get Started

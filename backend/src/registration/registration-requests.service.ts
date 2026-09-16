@@ -54,7 +54,7 @@ export class RegistrationRequestsService {
 
     // ----------------------------------------------------------
     // PROVERA DA LI USER VEĆ POSTOJI
-    // ----------------------------------------------------------
+    /* ----------------------------------------------------------
 
     const existingUser =
       await this.userRepository.findOne({
@@ -69,7 +69,7 @@ export class RegistrationRequestsService {
         'Korisnik sa ovim emailom ili korisničkim imenom već postoji.',
       );
     }
-
+*/
     // ----------------------------------------------------------
     // PROVERA POSTOJEĆEG PENDING ZAHTEVA - EMAIL
     // ----------------------------------------------------------

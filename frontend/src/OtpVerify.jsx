@@ -7,8 +7,17 @@ function OtpVerify() {
   const [searchParams] = useSearchParams();
 
   const userId = searchParams.get("userId");
+  const redirect = searchParams.get("redirect");
 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
+
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [canResend, setCanResend] = useState(false);
@@ -16,11 +25,23 @@ function OtpVerify() {
 
   const inputRefs = useRef([]);
 
+  /*
+  ============================================================
+  FOCUS FIRST INPUT
+  ============================================================
+  */
+
   useEffect(() => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
   }, []);
+
+  /*
+  ============================================================
+  OTP INPUT
+  ============================================================
+  */
 
   const handleChange = (e, index) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
@@ -33,7 +54,9 @@ function OtpVerify() {
     }
 
     const newOtp = [...otp];
+
     newOtp[index] = val[0];
+
     setOtp(newOtp);
 
     if (index < 5) {
@@ -41,11 +64,27 @@ function OtpVerify() {
     }
   };
 
+  /*
+  ============================================================
+  BACKSPACE
+  ============================================================
+  */
+
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && otp[index] === "" && index > 0) {
+    if (
+      e.key === "Backspace" &&
+      otp[index] === "" &&
+      index > 0
+    ) {
       inputRefs.current[index - 1]?.focus();
     }
   };
+
+  /*
+  ============================================================
+  PASTE OTP
+  ============================================================
+  */
 
   const handlePaste = (e) => {
     e.preventDefault();
@@ -57,7 +96,14 @@ function OtpVerify() {
 
     if (!pasted) return;
 
-    const newOtp = ["", "", "", "", "", ""];
+    const newOtp = [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ];
 
     pasted.split("").forEach((digit, index) => {
       newOtp[index] = digit;
@@ -66,14 +112,24 @@ function OtpVerify() {
     setOtp(newOtp);
 
     const nextIndex = Math.min(pasted.length, 5);
+
     inputRefs.current[nextIndex]?.focus();
   };
+
+  /*
+  ============================================================
+  VERIFY OTP
+  ============================================================
+  */
 
   const handleVerify = async (e) => {
     e.preventDefault();
 
     if (!userId) {
-      setMessage("❌ Link za aktivaciju naloga nije ispravan.");
+      setMessage(
+        "❌ Link za aktivaciju naloga nije ispravan."
+      );
+
       return;
     }
 
@@ -93,9 +149,11 @@ function OtpVerify() {
         "http://localhost:3000/auth/verify-otp",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             userId: Number(userId),
             otp: otpCode,
@@ -105,35 +163,74 @@ function OtpVerify() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        setSuccess(true);
-        setCanResend(false);
-        setMessage(
-          "Nalog je uspešno aktiviran! Sada možete da se prijavite."
-        );
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 2500);
-      } else {
+      if (!res.ok) {
         setSuccess(false);
         setCanResend(true);
-        setMessage(data.message || "❌ Pogrešan ili istekao OTP kod.");
+
+        setMessage(
+          data.message ||
+            "❌ Pogrešan ili istekao OTP kod."
+        );
+
+        return;
       }
+
+      /*
+      ========================================================
+      OTP SUCCESS
+      ========================================================
+      */
+
+      setSuccess(true);
+      setCanResend(false);
+
+      setMessage(
+        "Nalog je uspešno aktiviran! Sada možete da se prijavite."
+      );
+
+      /*
+      ========================================================
+      REDIRECT
+      ========================================================
+      */
+
+      setTimeout(() => {
+        if (redirect) {
+          navigate(
+            `/login?redirect=${encodeURIComponent(
+              redirect
+            )}`
+          );
+        } else {
+          navigate("/login");
+        }
+      }, 2500);
     } catch (error) {
-      console.error(error);
+      console.error("OTP VERIFY ERROR:", error);
 
       setSuccess(false);
       setCanResend(true);
-      setMessage("❌ Došlo je do greške pri povezivanju sa serverom.");
+
+      setMessage(
+        "❌ Došlo je do greške pri povezivanju sa serverom."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  /*
+  ============================================================
+  RESEND OTP
+  ============================================================
+  */
+
   const handleResend = async () => {
     if (!userId) {
-      setMessage("❌ Link za aktivaciju naloga nije ispravan.");
+      setMessage(
+        "❌ Link za aktivaciju naloga nije ispravan."
+      );
+
       return;
     }
 
@@ -146,9 +243,11 @@ function OtpVerify() {
         "http://localhost:3000/auth/resend-otp",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             userId: Number(userId),
           }),
@@ -158,34 +257,60 @@ function OtpVerify() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Novi OTP kod je poslat na vaš email.");
+        setMessage(
+          "Novi OTP kod je poslat na vaš email."
+        );
+
         setCanResend(false);
-        setOtp(["", "", "", "", "", ""]);
+
+        setOtp([
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+        ]);
 
         setTimeout(() => {
           inputRefs.current[0]?.focus();
         }, 100);
       } else {
-        setMessage(data.message || "❌ Nije moguće poslati novi kod.");
+        setMessage(
+          data.message ||
+            "❌ Nije moguće poslati novi kod."
+        );
       }
     } catch (error) {
-      console.error(error);
-      setMessage("❌ Došlo je do greške pri povezivanju sa serverom.");
+      console.error("RESEND OTP ERROR:", error);
+
+      setMessage(
+        "❌ Došlo je do greške pri povezivanju sa serverom."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  /*
+  ============================================================
+  INVALID LINK
+  ============================================================
+  */
+
   if (!userId) {
     return (
       <div className="otp-modal-overlay">
         <div className="otp-modal">
-          <div className="otp-icon error">!</div>
+          <div className="otp-icon error">
+            !
+          </div>
 
           <h2>Neispravan link</h2>
 
           <p className="otp-description">
-            Link za aktivaciju naloga nije ispravan ili je nepotpun.
+            Link za aktivaciju naloga nije ispravan
+            ili je nepotpun.
           </p>
 
           <button
@@ -199,20 +324,34 @@ function OtpVerify() {
     );
   }
 
+  /*
+  ============================================================
+  MAIN OTP SCREEN
+  ============================================================
+  */
+
   return (
     <div className="otp-modal-overlay">
       <div className="otp-modal">
-        <div className={`otp-icon ${success ? "success" : ""}`}>
+        <div
+          className={`otp-icon ${
+            success ? "success" : ""
+          }`}
+        >
           {success ? "✓" : "✉"}
         </div>
 
         <h2>Aktivacija naloga</h2>
 
         <p className="otp-description">
-          Unesite 6-cifreni kod koji ste dobili na email.
+          Unesite 6-cifreni kod koji ste dobili
+          na email.
         </p>
 
-        <form onSubmit={handleVerify} className="otp-form">
+        <form
+          onSubmit={handleVerify}
+          className="otp-form"
+        >
           <div
             className="otp-inputs"
             onPaste={handlePaste}
@@ -228,8 +367,12 @@ function OtpVerify() {
                 ref={(el) => {
                   inputRefs.current[idx] = el;
                 }}
-                onChange={(e) => handleChange(e, idx)}
-                onKeyDown={(e) => handleKeyDown(e, idx)}
+                onChange={(e) =>
+                  handleChange(e, idx)
+                }
+                onKeyDown={(e) =>
+                  handleKeyDown(e, idx)
+                }
               />
             ))}
           </div>
@@ -238,7 +381,9 @@ function OtpVerify() {
             type="submit"
             disabled={loading || success}
           >
-            {loading ? "Provera..." : "Aktiviraj nalog"}
+            {loading
+              ? "Provera..."
+              : "Aktiviraj nalog"}
           </button>
         </form>
 
@@ -253,14 +398,20 @@ function OtpVerify() {
         )}
 
         {message && (
-          <p className={`message ${success ? "success" : ""}`}>
+          <p
+            className={`message ${
+              success ? "success" : ""
+            }`}
+          >
             {message}
           </p>
         )}
 
         {success && (
           <p className="redirect-message">
-            Preusmeravanje na prijavu...
+            {redirect
+              ? "Nalog je aktiviran. Preusmeravanje na prijavu..."
+              : "Preusmeravanje na prijavu..."}
           </p>
         )}
       </div>
@@ -269,4 +420,3 @@ function OtpVerify() {
 }
 
 export default OtpVerify;
-

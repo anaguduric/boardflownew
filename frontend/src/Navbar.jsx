@@ -232,7 +232,7 @@ export default function Navbar() {
 
 
             <Link
-              to="/register"
+              to="/register-organization"
               className="register-btn"
             >
               Get started

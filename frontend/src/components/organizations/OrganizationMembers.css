@@ -1,8 +1,13 @@
+/* =========================================================
+   ORGANIZATION MEMBERS PAGE
+========================================================= */
+
 .organization-members-page {
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 28px;
+  box-sizing: border-box;
 }
 
 
@@ -14,6 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
 
   margin-bottom: 24px;
 }
@@ -21,23 +27,27 @@
 .organization-members-title {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
+
+  min-width: 0;
 }
 
 .organization-members-title-icon {
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 13px;
+  border-radius: 11px;
 
   background: #eef2ff;
   color: #4f46e5;
 
-  font-size: 19px;
+  font-size: 17px;
 }
 
 .organization-members-title h1 {
@@ -45,8 +55,9 @@
 
   color: #111827;
 
-  font-size: 25px;
-  font-weight: 750;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .organization-members-title p {
@@ -54,7 +65,21 @@
 
   color: #6b7280;
 
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   HEADER RIGHT SIDE
+========================================================= */
+
+.organization-members-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
 }
 
 
@@ -70,21 +95,23 @@
   align-items: center;
   justify-content: center;
 
-  margin-right: 2px;
-
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
 
-  background: white;
+  background: #ffffff;
   color: #6b7280;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .organization-members-back:hover {
   border-color: #c7d2fe;
+  background: #f8faff;
   color: #4f46e5;
 }
 
@@ -98,24 +125,78 @@
   align-items: baseline;
   gap: 5px;
 
-  padding: 9px 13px;
+  height: 38px;
+  padding: 0 12px;
+
+  box-sizing: border-box;
 
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
 
-  background: white;
+  background: #ffffff;
 }
 
 .organization-members-count strong {
   color: #111827;
 
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .organization-members-count span {
   color: #6b7280;
 
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   INVITE MEMBER BUTTON
+========================================================= */
+
+.organization-members-invite {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #635bff;
+  color: #ffffff;
+
   font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.organization-members-invite svg {
+  font-size: 13px;
+}
+
+.organization-members-invite:hover {
+  background: #554ce8;
+
+  box-shadow:
+    0 5px 14px rgba(99, 91, 255, 0.20);
+
+  transform: translateY(-1px);
+}
+
+.organization-members-invite:active {
+  transform: translateY(0);
 }
 
 
@@ -140,12 +221,16 @@
 
   gap: 14px;
 
-  padding: 15px 18px;
+  min-height: 70px;
+
+  padding: 12px 16px;
+
+  box-sizing: border-box;
 
   border: 1px solid #e5e7eb;
-  border-radius: 14px;
+  border-radius: 12px;
 
-  background: white;
+  background: #ffffff;
 
   transition:
     border-color 0.2s ease,
@@ -168,8 +253,8 @@
 ========================================================= */
 
 .organization-member-avatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
 
   flex-shrink: 0;
 
@@ -182,9 +267,16 @@
   background: #eef2ff;
   color: #6366f1;
 
-  font-size: 32px;
+  font-size: 28px;
 
   overflow: hidden;
+}
+
+.organization-member-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
 }
 
 
@@ -201,7 +293,8 @@
 .organization-member-name {
   color: #111827;
 
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.3;
   font-weight: 700;
 }
 
@@ -210,7 +303,8 @@
 
   color: #9ca3af;
 
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.3;
 
   white-space: nowrap;
   overflow: hidden;
@@ -237,6 +331,8 @@
 }
 
 .organization-member-role svg {
+  flex-shrink: 0;
+
   font-size: 13px;
 }
 
@@ -246,7 +342,7 @@
 ========================================================= */
 
 .organization-member-status {
-  min-width: 72px;
+  min-width: 68px;
 
   display: inline-flex;
   align-items: center;
@@ -258,6 +354,8 @@
 
   font-size: 10px;
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
 .organization-member-status-active {
@@ -286,7 +384,7 @@
 ========================================================= */
 
 .organization-members-loading {
-  min-height: 350px;
+  min-height: 300px;
 
   display: flex;
   align-items: center;
@@ -296,7 +394,7 @@
 
   color: #6b7280;
 
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .organization-members-spinner {
@@ -321,17 +419,17 @@
 ========================================================= */
 
 .organization-members-error {
-  padding: 13px 16px;
+  padding: 12px 15px;
 
   margin-bottom: 16px;
 
   border: 1px solid #fecaca;
-  border-radius: 10px;
+  border-radius: 9px;
 
   background: #fef2f2;
   color: #991b1b;
 
-  font-size: 13px;
+  font-size: 12px;
 }
 
 
@@ -340,7 +438,7 @@
 ========================================================= */
 
 .organization-members-empty {
-  min-height: 350px;
+  min-height: 300px;
 
   display: flex;
   flex-direction: column;
@@ -348,39 +446,41 @@
   align-items: center;
   justify-content: center;
 
+  padding: 30px;
+
   text-align: center;
 }
 
 .organization-members-empty-icon {
-  width: 64px;
-  height: 64px;
+  width: 58px;
+  height: 58px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  margin-bottom: 15px;
+  margin-bottom: 14px;
 
-  border-radius: 18px;
+  border-radius: 16px;
 
   background: #eef2ff;
   color: #4f46e5;
 
-  font-size: 28px;
+  font-size: 25px;
 }
 
 .organization-members-empty > svg {
   color: #4f46e5;
-
-  font-size: 40px;
+  font-size: 36px;
 }
 
 .organization-members-empty h2 {
-  margin: 0 0 7px;
+  margin: 0 0 6px;
 
   color: #111827;
 
-  font-size: 19px;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .organization-members-empty p {
@@ -388,22 +488,27 @@
 
   color: #6b7280;
 
-  font-size: 13px;
+  font-size: 12px;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — TABLET
 ========================================================= */
 
 @media (max-width: 700px) {
 
   .organization-members-page {
-    padding: 18px;
+    padding: 20px;
   }
 
   .organization-members-header {
     align-items: flex-start;
+  }
+
+  .organization-members-header-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .organization-member-card {
@@ -415,7 +520,7 @@
   }
 
   .organization-member-role {
-    margin-left: 58px;
+    margin-left: 56px;
   }
 
   .organization-member-status {
@@ -423,24 +528,53 @@
   }
 }
 
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
 @media (max-width: 480px) {
+
+  .organization-members-page {
+    padding: 16px;
+  }
 
   .organization-members-header {
     flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
 
-    gap: 15px;
+  .organization-members-header-right {
+    width: 100%;
+
+    justify-content: flex-start;
+    align-items: center;
   }
 
   .organization-members-count {
-    align-self: flex-start;
+    flex: 1;
+  }
+
+  .organization-members-invite {
+    flex: 1;
+  }
+
+  .organization-member-card {
+    align-items: flex-start;
+  }
+
+  .organization-member-info {
+    width: calc(100% - 58px);
   }
 
   .organization-member-role {
+    width: auto;
+
     margin-left: 0;
   }
 
   .organization-member-status {
     margin-left: 0;
   }
-
 }

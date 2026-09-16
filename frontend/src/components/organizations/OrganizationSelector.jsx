@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import {
   FaBuilding,
-  FaPlus,
   FaCheck,
   FaChevronDown,
 } from 'react-icons/fa';
@@ -10,9 +9,8 @@ import {
 import { useOrganization } from '../../context/OrganizationContext';
 import { useAuth } from '../../context/AuthContext';
 
-import CreateOrganizationModal from './CreateOrganization';
-
 import './OrganizationSelector.css';
+
 
 function OrganizationSelector() {
 
@@ -29,9 +27,6 @@ function OrganizationSelector() {
 
   const [loading, setLoading] = useState(true);
 
-  const [showCreateModal, setShowCreateModal] =
-    useState(false);
-
 
   // =========================================================
   // LOAD ORGANIZATIONS
@@ -40,7 +35,9 @@ function OrganizationSelector() {
   useEffect(() => {
 
     if (!token) {
+
       setLoading(false);
+
       return;
     }
 
@@ -48,6 +45,9 @@ function OrganizationSelector() {
     const loadOrganizations = async () => {
 
       try {
+
+        setLoading(true);
+
 
         const res = await fetch(
           'http://localhost:3000/organizations/my',
@@ -83,19 +83,26 @@ function OrganizationSelector() {
         );
 
 
-        setOrganizations(data);
+        setOrganizations(
+          Array.isArray(data)
+            ? data
+            : []
+        );
 
 
         /*
          * Ako nema trenutno izabrane organizacije,
          * automatski biramo prvu iz baze.
          */
+
         if (
           !currentOrganization &&
           data.length > 0
         ) {
 
-          selectOrganization(data[0]);
+          selectOrganization(
+            data[0]
+          );
 
         }
 
@@ -122,74 +129,6 @@ function OrganizationSelector() {
 
 
   // =========================================================
-  // ORGANIZATION CREATED
-  // =========================================================
-
-  const handleOrganizationCreated = (
-    newOrganization
-  ) => {
-
-    console.log(
-      'NOVA ORGANIZACIJA:',
-      newOrganization
-    );
-
-
-    /*
-     * Dodajemo novu organizaciju
-     * u postojeću listu.
-     */
-    setOrganizations((prev) => {
-
-      /*
-       * Zaštita od dupliranja.
-       */
-      const alreadyExists =
-        prev.some(
-          (organization) =>
-            organization.organization_id ===
-            newOrganization.organization_id
-        );
-
-
-      if (alreadyExists) {
-        return prev;
-      }
-
-
-      return [
-        ...prev,
-        newOrganization,
-      ];
-
-    });
-
-
-    /*
-     * Odmah je postavljamo
-     * kao aktivnu organizaciju.
-     */
-    selectOrganization(
-      newOrganization
-    );
-
-
-    /*
-     * Zatvaramo modal.
-     */
-    setShowCreateModal(false);
-
-
-    /*
-     * Otvaramo selector da korisnik
-     * vidi novu organizaciju.
-     */
-    setOpen(true);
-
-  };
-
-
-  // =========================================================
   // SELECT ORGANIZATION
   // =========================================================
 
@@ -211,199 +150,144 @@ function OrganizationSelector() {
   // =========================================================
 
   return (
-    <>
-      <div className="organization-selector">
 
-        {/* =================================================
-            MAIN BUTTON
-        ================================================== */}
+    <div className="organization-selector">
 
-        <button
-          type="button"
-          className="organization-selector-button"
-          onClick={() =>
-            setOpen((prev) => !prev)
-          }
-        >
+      {/* =================================================
+          MAIN BUTTON
+      ================================================== */}
 
-          <span className="organization-icon">
+      <button
+        type="button"
+        className="organization-selector-button"
+        onClick={() =>
+          setOpen((prev) => !prev)
+        }
+      >
 
-            <FaBuilding />
+        <span className="organization-icon">
 
-          </span>
+          <FaBuilding />
 
-
-          <span className="organization-name">
-
-            {loading
-              ? 'Loading...'
-              : currentOrganization
-                ? currentOrganization.name
-                : 'Select organization'}
-
-          </span>
+        </span>
 
 
-          <span className="organization-arrow">
+        <span className="organization-name">
 
-            <FaChevronDown
-              className={
-                open
-                  ? 'organization-arrow-open'
-                  : ''
+          {loading
+            ? 'Loading...'
+            : currentOrganization
+              ? currentOrganization.name
+              : 'Select organization'}
+
+        </span>
+
+
+        <span className="organization-arrow">
+
+          <FaChevronDown
+            className={
+              open
+                ? 'organization-arrow-open'
+                : ''
+            }
+          />
+
+        </span>
+
+      </button>
+
+
+      {/* =================================================
+          DROPDOWN
+      ================================================== */}
+
+      {open && (
+
+        <div className="organization-dropdown">
+
+          {organizations.length === 0 ? (
+
+            <div className="organization-empty">
+
+              No organizations
+
+            </div>
+
+          ) : (
+
+            organizations.map(
+              (organization) => {
+
+                const isSelected =
+                  currentOrganization
+                    ?.organization_id ===
+                  organization.organization_id;
+
+
+                return (
+
+                  <button
+                    type="button"
+                    key={
+                      organization.organization_id
+                    }
+                    className={
+                      `organization-option ${
+                        isSelected
+                          ? 'selected'
+                          : ''
+                      }`
+                    }
+                    onClick={() =>
+                      handleSelectOrganization(
+                        organization
+                      )
+                    }
+                  >
+
+                    <span className="organization-option-icon">
+
+                      <FaBuilding />
+
+                    </span>
+
+
+                    <span className="organization-option-name">
+
+                      {organization.name}
+
+                    </span>
+
+
+                    {isSelected && (
+
+                      <span className="organization-check">
+
+                        <FaCheck />
+
+                      </span>
+
+                    )}
+
+                  </button>
+
+                );
+
               }
-            />
+            )
 
-          </span>
+          )}
 
-        </button>
-
-
-        {/* =================================================
-            DROPDOWN
-        ================================================== */}
-
-        {open && (
-
-          <div className="organization-dropdown">
-
-            {organizations.length === 0 ? (
-
-              <div className="organization-empty">
-
-                No organizations
-
-              </div>
-
-            ) : (
-
-              organizations.map(
-                (organization) => {
-
-                  const isSelected =
-                    currentOrganization
-                      ?.organization_id ===
-                    organization.organization_id;
-
-
-                  return (
-
-                    <button
-                      type="button"
-                      key={
-                        organization.organization_id
-                      }
-                      className={
-                        `organization-option ${
-                          isSelected
-                            ? 'selected'
-                            : ''
-                        }`
-                      }
-                      onClick={() =>
-                        handleSelectOrganization(
-                          organization
-                        )
-                      }
-                    >
-
-                      <span className="organization-option-icon">
-
-                        <FaBuilding />
-
-                      </span>
-
-
-                      <span className="organization-option-name">
-
-                        {organization.name}
-
-                      </span>
-
-
-                      {isSelected && (
-
-                        <span className="organization-check">
-
-                          <FaCheck />
-
-                        </span>
-
-                      )}
-
-                    </button>
-
-                  );
-
-                }
-              )
-
-            )}
-
-
-            {/* =================================================
-                DIVIDER
-            ================================================== */}
-
-            <div className="organization-dropdown-divider" />
-
-
-            {/* =================================================
-                CREATE
-            ================================================== */}
-
-            <button
-              type="button"
-              className="organization-create"
-              onClick={() => {
-
-                setOpen(false);
-
-                setShowCreateModal(true);
-
-              }}
-            >
-
-              <span>
-
-                <FaPlus />
-
-              </span>
-
-
-              <span>
-                Create organization
-              </span>
-
-            </button>
-
-          </div>
-
-        )}
-
-      </div>
-
-
-      {/* =====================================================
-          CREATE ORGANIZATION MODAL
-      ====================================================== */}
-
-      {showCreateModal && (
-
-        <CreateOrganizationModal
-          onClose={() =>
-            setShowCreateModal(false)
-          }
-
-          onCreated={
-            handleOrganizationCreated
-          }
-        />
+        </div>
 
       )}
 
-    </>
+    </div>
+
   );
+
 }
+
 
 export default OrganizationSelector;
