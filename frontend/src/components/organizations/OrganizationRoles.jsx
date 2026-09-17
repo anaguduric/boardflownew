@@ -237,15 +237,19 @@ function OrganizationRoles() {
 
     return (
 
-      <main className="organization-roles-page">
+      <main className="organization-roles-page-wrapper">
 
-        <div className="organization-roles-loading">
+        <div className="organization-roles-page">
 
-          <FaSpinner className="roles-spinner" />
+          <div className="organization-roles-loading">
 
-          <span>
-            Loading roles...
-          </span>
+            <FaSpinner className="roles-spinner" />
+
+            <span>
+              Loading roles...
+            </span>
+
+          </div>
 
         </div>
 
@@ -264,62 +268,9 @@ function OrganizationRoles() {
 
     return (
 
-      <main className="organization-roles-page">
+      <main className="organization-roles-page-wrapper">
 
-        <button
-          type="button"
-          className="organization-roles-back"
-          onClick={() =>
-            navigate(
-              `/organizations/${id}`
-            )
-          }
-        >
-
-          <FaArrowLeft />
-
-          Back to organization
-
-        </button>
-
-
-        <div className="organization-roles-error">
-
-          <FaUserShield />
-
-          <h2>
-            Unable to load roles
-          </h2>
-
-          <p>
-            {error}
-          </p>
-
-        </div>
-
-      </main>
-
-    );
-
-  }
-
-
-  // =========================================================
-  // RENDER
-  // =========================================================
-
-  return (
-
-    <main className="organization-roles-page">
-
-
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
-
-      <div className="organization-roles-header">
-
-        <div className="organization-roles-header-left">
+        <div className="organization-roles-page">
 
           <button
             type="button"
@@ -340,23 +291,18 @@ function OrganizationRoles() {
           </button>
 
 
-          <div className="organization-roles-title">
+          <div className="organization-roles-error">
 
-            <div className="organization-roles-title-icon">
-
-              <FaUserShield />
-
-            </div>
-
+            <FaUserShield />
 
             <div>
 
-              <h1>
-                Organization Roles
-              </h1>
+              <h2>
+                Unable to load roles
+              </h2>
 
               <p>
-                Manage roles and permissions for this organization.
+                {error}
               </p>
 
             </div>
@@ -365,76 +311,84 @@ function OrganizationRoles() {
 
         </div>
 
+      </main>
 
-        {/* ===================================================
-            CREATE ROLE
-        ==================================================== */}
+    );
 
-        <button
-          type="button"
-          className="organization-role-create-button"
-          onClick={() =>
-            setShowCreateModal(true)
-          }
-        >
-
-          <FaPlus />
-
-          <span>
-            Create role
-          </span>
-
-        </button>
-
-      </div>
+  }
 
 
-      {/* =====================================================
-          COUNT
-      ====================================================== */}
+  // =========================================================
+  // RENDER
+  // =========================================================
 
-      <div className="organization-roles-count">
+  return (
 
-        <strong>
-          {roles.length}
-        </strong>
+    <main className="organization-roles-page-wrapper">
 
-        <span>
-          {roles.length === 1
-            ? 'role'
-            : 'roles'}
-        </span>
-
-      </div>
+      <div className="organization-roles-page">
 
 
-      {/* =====================================================
-          EMPTY
-      ====================================================== */}
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
 
-      {roles.length === 0 ? (
+        <div className="organization-roles-header">
 
-        <div className="organization-roles-empty">
+          <div className="organization-roles-header-left">
 
-          <div className="organization-roles-empty-icon">
+            <button
+              type="button"
+              className="organization-roles-back"
+              onClick={() =>
+                navigate(
+                  `/organizations/${id}`
+                )
+              }
+            >
 
-            <FaUserShield />
+              <FaArrowLeft />
+
+              <span>
+                Back to organization
+              </span>
+
+            </button>
+
+
+            <div className="organization-roles-title">
+
+              <div className="organization-roles-title-icon">
+
+                <FaUserShield />
+
+              </div>
+
+
+              <div>
+
+                <h1>
+                  Organization Roles
+                </h1>
+
+                <p>
+                  Manage roles and permissions for this organization.
+                </p>
+
+              </div>
+
+            </div>
 
           </div>
 
 
-          <h2>
-            No roles yet
-          </h2>
-
-
-          <p>
-            Create your first role for this organization.
-          </p>
-
+          {/* ===================================================
+              CREATE ROLE
+          ==================================================== */}
 
           <button
             type="button"
+            className="organization-role-create-button"
             onClick={() =>
               setShowCreateModal(true)
             }
@@ -442,162 +396,226 @@ function OrganizationRoles() {
 
             <FaPlus />
 
-            Create role
+            <span>
+              Create role
+            </span>
 
           </button>
 
         </div>
 
-      ) : (
+
+        {/* =====================================================
+            COUNT
+        ====================================================== */}
+
+        <div className="organization-roles-count">
+
+          <strong>
+            {roles.length}
+          </strong>
+
+          <span>
+            {roles.length === 1
+              ? 'role'
+              : 'roles'}
+          </span>
+
+        </div>
 
 
-        /* ===================================================
-           ROLE LIST
-        ==================================================== */
+        {/* =====================================================
+            EMPTY
+        ====================================================== */}
 
-        <div className="organization-roles-list">
+        {roles.length === 0 ? (
 
-          {roles.map((role) => (
+          <div className="organization-roles-empty">
 
-            <div
-              key={role.role_id}
-              className="organization-role-card"
+            <div className="organization-roles-empty-icon">
+
+              <FaUserShield />
+
+            </div>
+
+
+            <h2>
+              No roles yet
+            </h2>
+
+
+            <p>
+              Create your first role for this organization.
+            </p>
+
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowCreateModal(true)
+              }
             >
 
+              <FaPlus />
 
-              {/* =================================================
-                  ICON
-              ================================================== */}
+              Create role
 
-              <div className="organization-role-icon">
+            </button>
 
-                <FaUserShield />
+          </div>
 
-              </div>
-
-
-              {/* =================================================
-                  CONTENT
-              ================================================== */}
-
-              <div className="organization-role-content">
-
-                <div className="organization-role-name-row">
-
-                  <h3>
-                    {role.name}
-                  </h3>
+        ) : (
 
 
-                  {role.is_default && (
+          /* ===================================================
+             ROLE LIST
+          ==================================================== */
 
-                    <span className="organization-role-default">
+          <div className="organization-roles-list">
 
-                      Default
+            {roles.map((role) => (
 
-                    </span>
+              <div
+                key={role.role_id}
+                className="organization-role-card"
+              >
 
-                  )}
+
+                {/* =================================================
+                    ICON
+                ================================================== */}
+
+                <div className="organization-role-icon">
+
+                  <FaUserShield />
 
                 </div>
 
 
-                {role.description && (
+                {/* =================================================
+                    CONTENT
+                ================================================== */}
 
-                  <p>
-                    {role.description}
-                  </p>
+                <div className="organization-role-content">
 
-                )}
+                  <div className="organization-role-name-row">
 
-
-                <span className="organization-role-id">
-
-                  Role ID: #{role.role_id}
-
-                </span>
-
-              </div>
+                    <h3>
+                      {role.name}
+                    </h3>
 
 
-              {/* =================================================
-                  ACTIONS
-              ================================================== */}
+                    {role.is_default && (
 
-              <div className="organization-role-actions">
+                      <span className="organization-role-default">
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleEditRole(role)
-                  }
-                >
+                        Default
 
-                  <FaEdit />
+                      </span>
 
-                  <span>
-                    Edit
+                    )}
+
+                  </div>
+
+
+                  {role.description && (
+
+                    <p>
+                      {role.description}
+                    </p>
+
+                  )}
+
+
+                  <span className="organization-role-id">
+
+                    Role ID: #{role.role_id}
+
                   </span>
 
-                </button>
+                </div>
+
+
+                {/* =================================================
+                    ACTIONS
+                ================================================== */}
+
+                <div className="organization-role-actions">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleEditRole(role)
+                    }
+                  >
+
+                    <FaEdit />
+
+                    <span>
+                      Edit
+                    </span>
+
+                  </button>
+
+                </div>
 
               </div>
 
-            </div>
+            ))}
 
-          ))}
+          </div>
 
-        </div>
-
-      )}
+        )}
 
 
-      {/* =====================================================
-          CREATE ROLE MODAL
-      ====================================================== */}
+        {/* =====================================================
+            CREATE ROLE MODAL
+        ====================================================== */}
 
-      {showCreateModal && (
+        {showCreateModal && (
 
-        <CreateOrganizationRole
+          <CreateOrganizationRole
 
-          organizationId={id}
+            organizationId={id}
 
-          onClose={() =>
-            setShowCreateModal(false)
-          }
+            onClose={() =>
+              setShowCreateModal(false)
+            }
 
-          onCreated={
-            handleRoleCreated
-          }
+            onCreated={
+              handleRoleCreated
+            }
 
-        />
+          />
 
-      )}
+        )}
 
 
-      {/* =====================================================
-          EDIT ROLE MODAL
-      ====================================================== */}
+        {/* =====================================================
+            EDIT ROLE MODAL
+        ====================================================== */}
 
-      {editingRole && (
+        {editingRole && (
 
-        <EditOrganizationRole
+          <EditOrganizationRole
 
-          organizationId={id}
+            organizationId={id}
 
-          role={editingRole}
+            role={editingRole}
 
-          onClose={
-            handleCloseEdit
-          }
+            onClose={
+              handleCloseEdit
+            }
 
-          onSaved={
-            handleRoleSaved
-          }
+            onSaved={
+              handleRoleSaved
+            }
 
-        />
+          />
 
-      )}
+        )}
+
+      </div>
 
     </main>
 

@@ -19,6 +19,8 @@ import RegistrationRequest from "./components/registration/RegistrationRequest";
 import Registration from "./components/admin/Registration";
 import OtpVerify from "./OtpVerify";
 import AcceptInvitation from "./components/organizations/AcceptInvitation";
+import TeamList from './components/teams/TeamList';
+import TeamDetails from './components/teams/TeamDetails';
 
 function App() {
   return (
@@ -43,7 +45,8 @@ function App() {
         <Route path="/admin/registration" element={<Registration />}/>
         <Route path="/verify-account" element={<OtpVerify />} />
         <Route path="/accept-invitation" element={<AcceptInvitation />}/>
-        
+        <Route path="/teams" element={<TeamList />} />
+        <Route path="/teams/:id" element={<TeamDetails />}/>
       </Routes>
     </>
   );

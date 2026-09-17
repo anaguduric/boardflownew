@@ -6,17 +6,14 @@ import {
   FaArrowLeft,
 } from 'react-icons/fa';
 
+import { useEffect, useState } from 'react';
 import {
-  useEffect,
-  useState,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 
 import { useOrganization } from '../../context/OrganizationContext';
 import { useAuth } from '../../context/AuthContext';
-
-import OrganizationMembers from './OrganizationMembers';
 
 import './OrganizationDetails.css';
 
@@ -25,270 +22,222 @@ function OrganizationDetails({
   onBack = null,
   onEdit = null,
 }) {
-
   const {
     currentOrganization,
     selectOrganization,
   } = useOrganization();
 
   const { token } = useAuth();
-
   const { id } = useParams();
-
-  const [organization, setOrganization] =
-    useState(
-      organizationProp ||
-      currentOrganization
-    );
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState(null);
-
-  const [activeSection, setActiveSection] =
-    useState('details');
-
   const navigate = useNavigate();
+
+  const [organization, setOrganization] = useState(
+    organizationProp || currentOrganization
+  );
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // =========================================================
   // UČITAVANJE ORGANIZACIJE
   // =========================================================
 
   useEffect(() => {
-
+    // Ako je organizacija prosleđena kroz props
     if (organizationProp) {
-
-      setOrganization(
-        organizationProp
-      );
-
+      setOrganization(organizationProp);
       setLoading(false);
-
       return;
     }
 
-
+    // Ako nema ID-a, koristi trenutno izabranu organizaciju
     if (!id) {
-
-      setOrganization(
-        currentOrganization
-      );
-
+      setOrganization(currentOrganization);
       setLoading(false);
-
       return;
     }
 
-
+    // Ako nema tokena, ne pokušavaj zahtev
     if (!token) {
-
       setLoading(false);
-
       return;
     }
 
+    let cancelled = false;
 
     const loadOrganization = async () => {
-
       try {
-
         setLoading(true);
         setError(null);
-
-
-        console.log(
-          'UČITAVAM ORGANIZACIJU:',
-          id
-        );
-
 
         const res = await fetch(
           `http://localhost:3000/organizations/${id}`,
           {
             method: 'GET',
-
             headers: {
-              Authorization:
-                `Bearer ${token}`,
-
-              'Content-Type':
-                'application/json',
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
             },
           }
         );
 
-
-        console.log(
-          'ORGANIZATION STATUS:',
-          res.status
-        );
-
-
         if (!res.ok) {
-
           if (res.status === 404) {
-
-            throw new Error(
-              'Organization not found'
-            );
+            throw new Error('Organization not found');
           }
 
-          throw new Error(
-            `HTTP error: ${res.status}`
-          );
+          throw new Error(`HTTP error: ${res.status}`);
         }
 
+        const data = await res.json();
 
-        const data =
-          await res.json();
-
-
-        console.log(
-          'ORGANIZACIJA IZ BAZE:',
-          data
-        );
-
+        // Ako je komponenta u međuvremenu unmountovana
+        if (cancelled) {
+          return;
+        }
 
         setOrganization(data);
 
+        // Postavi organizaciju u context
         selectOrganization(data);
-
-
       } catch (err) {
+        if (cancelled) {
+          return;
+        }
 
         console.error(
           'GREŠKA PRI UČITAVANJU ORGANIZACIJE:',
           err
         );
 
-        setError(
-          err.message
-        );
-
+        setError(err.message);
       } finally {
-
-        setLoading(false);
-
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-
     };
-
 
     loadOrganization();
 
+    return () => {
+      cancelled = true;
+    };
+
+    // NAMERNO:
+    // currentOrganization i selectOrganization nisu dependency
+    // jer bi selectOrganization promenio currentOrganization
+    // i napravio beskonačno ponovno učitavanje.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     id,
     token,
     organizationProp,
   ]);
 
-
   // =========================================================
   // LOADING
   // =========================================================
 
   if (loading) {
-
     return (
-      <div className="organization-details-empty">
+      <main className="organization-details-page-wrapper">
+        <div className="organization-details">
+          <div className="organization-details-empty">
 
-        <div className="organization-details-empty-icon">
-          <FaBuilding />
+            <div className="organization-details-empty-icon">
+              <FaBuilding />
+            </div>
+
+            <h2>
+              Loading organization...
+            </h2>
+
+            <p>
+              Please wait while we load the organization details.
+            </p>
+
+          </div>
         </div>
-
-        <h2>
-          Loading organization...
-        </h2>
-
-        <p>
-          Please wait while we load the organization details.
-        </p>
-
-      </div>
+      </main>
     );
-
   }
-
 
   // =========================================================
   // ERROR
   // =========================================================
 
   if (error) {
-
     return (
-      <div className="organization-details-empty">
+      <main className="organization-details-page-wrapper">
+        <div className="organization-details">
+          <div className="organization-details-empty">
 
-        <div className="organization-details-empty-icon">
-          <FaBuilding />
+            <div className="organization-details-empty-icon">
+              <FaBuilding />
+            </div>
+
+            <h2>
+              Organization not found
+            </h2>
+
+            <p>
+              {error}
+            </p>
+
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+              >
+                <FaArrowLeft />
+                <span>Back</span>
+              </button>
+            )}
+
+          </div>
         </div>
-
-        <h2>
-          Organization not found
-        </h2>
-
-        <p>
-          {error}
-        </p>
-
-        {onBack && (
-
-          <button
-            type="button"
-            onClick={onBack}
-          >
-            <FaArrowLeft />
-            Back
-          </button>
-
-        )}
-
-      </div>
+      </main>
     );
-
   }
-
 
   // =========================================================
   // NEMA ORGANIZACIJE
   // =========================================================
 
   if (!organization) {
-
     return (
-      <div className="organization-details-empty">
+      <main className="organization-details-page-wrapper">
+        <div className="organization-details">
+          <div className="organization-details-empty">
 
-        <div className="organization-details-empty-icon">
-          <FaBuilding />
+            <div className="organization-details-empty-icon">
+              <FaBuilding />
+            </div>
+
+            <h2>
+              No organization selected
+            </h2>
+
+            <p>
+              Select an organization to see its details.
+            </p>
+
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+              >
+                <FaArrowLeft />
+                <span>Back</span>
+              </button>
+            )}
+
+          </div>
         </div>
-
-        <h2>
-          No organization selected
-        </h2>
-
-        <p>
-          Select an organization to see its details.
-        </p>
-
-        {onBack && (
-
-          <button
-            type="button"
-            onClick={onBack}
-          >
-            <FaArrowLeft />
-            Back
-          </button>
-
-        )}
-
-      </div>
+      </main>
     );
-
   }
-
 
   // =========================================================
   // PODACI
@@ -303,337 +252,258 @@ function OrganizationDetails({
     organization_id,
   } = organization;
 
-
   // =========================================================
   // LOGO
   // =========================================================
 
   const getLogo = () => {
-
     if (!logo) {
       return null;
     }
 
-
     if (typeof logo === 'string') {
-
-      if (
-        logo.startsWith('data:')
-      ) {
+      if (logo.startsWith('data:')) {
         return logo;
       }
 
       return `data:image/jpeg;base64,${logo}`;
     }
 
-
     return null;
-
   };
 
-
-  const logoSrc =
-    getLogo();
-
+  const logoSrc = getLogo();
 
   // =========================================================
   // STATUS
   // =========================================================
 
   const normalizedStatus =
-    status?.toLowerCase() ||
-    'active';
-
+    status?.toLowerCase() || 'active';
 
   // =========================================================
-  // MEMBERS
-  // =========================================================
-
-  if (activeSection === 'members') {
-
-    return (
-
-      <div className="organization-details">
-
-        <div className="organization-details-top">
-
-          <button
-            type="button"
-            className="organization-back-button"
-            onClick={() =>
-              setActiveSection('details')
-            }
-          >
-
-            <FaArrowLeft />
-
-            <span>
-              Back to organization
-            </span>
-
-          </button>
-
-        </div>
-
-
-        <OrganizationMembers
-          organizationId={
-            organization_id
-          }
-        />
-
-      </div>
-
-    );
-
-  }
-
-
-  // =========================================================
-  // DETAILS
+  // RENDER
   // =========================================================
 
   return (
+    <main className="organization-details-page-wrapper">
+      <div className="organization-details">
 
-    <div className="organization-details">
+        {/* =====================================================
+            TOP BAR
+        ====================================================== */}
 
+        {(onBack || onEdit) && (
+          <div className="organization-details-top">
 
-      {/* =====================================================
-          TOP BAR
-      ====================================================== */}
+            {onBack && (
+              <button
+                type="button"
+                className="organization-back-button"
+                onClick={onBack}
+              >
+                <FaArrowLeft />
+                <span>Back</span>
+              </button>
+            )}
 
-      <div className="organization-details-top">
+            {onEdit && (
+              <button
+                type="button"
+                className="organization-edit-button"
+                onClick={() => onEdit(organization)}
+              >
+                <FaEdit />
+                <span>Edit organization</span>
+              </button>
+            )}
 
-        {onBack && (
-
-          <button
-            type="button"
-            className="organization-back-button"
-            onClick={onBack}
-          >
-
-            <FaArrowLeft />
-
-            <span>
-              Back
-            </span>
-
-          </button>
-
+          </div>
         )}
 
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
 
-        {onEdit && (
+        <section className="organization-details-header">
 
-          <button
-            type="button"
-            className="organization-edit-button"
-            onClick={() =>
-              onEdit(organization)
-            }
-          >
+          <div className="organization-details-logo">
 
-            <FaEdit />
-
-            <span>
-              Edit organization
-            </span>
-
-          </button>
-
-        )}
-
-      </div>
-
-
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
-
-      <section className="organization-details-header">
-
-        <div className="organization-details-logo">
-
-          {logoSrc ? (
-
-            <img
-              src={logoSrc}
-              alt={`${name} logo`}
-            />
-
-          ) : (
-
-            <FaBuilding />
-
-          )}
-
-        </div>
-
-
-        <div className="organization-details-title">
-
-          <div className="organization-details-name-row">
-
-            <h1>
-              {name}
-            </h1>
-
-
-            <span
-              className={`organization-details-status organization-details-status-${normalizedStatus}`}
-            >
-              {status || 'ACTIVE'}
-            </span>
+            {logoSrc ? (
+              <img
+                src={logoSrc}
+                alt={`${name} logo`}
+              />
+            ) : (
+              <FaBuilding />
+            )}
 
           </div>
 
+          <div className="organization-details-title">
 
-          {description && (
+            <div className="organization-details-name-row">
+
+              <h1>
+                {name}
+              </h1>
+
+              <span
+                className={`organization-details-status organization-details-status-${normalizedStatus}`}
+              >
+                {status || 'ACTIVE'}
+              </span>
+
+            </div>
+
+            {description && (
+              <p>
+                {description}
+              </p>
+            )}
+
+          </div>
+
+        </section>
+
+        {/* =====================================================
+            INFO
+        ====================================================== */}
+
+        <section className="organization-details-info">
+
+          <div className="organization-info-item">
+
+            <span className="organization-info-label">
+              Organization ID
+            </span>
+
+            <strong>
+              #{organization_id}
+            </strong>
+
+          </div>
+
+          <div className="organization-info-item">
+
+            <span className="organization-info-label">
+              Your role
+            </span>
+
+            <strong>
+              {role?.name || 'Member'}
+            </strong>
+
+          </div>
+
+          <div className="organization-info-item">
+
+            <span className="organization-info-label">
+              Status
+            </span>
+
+            <strong>
+              {status || 'ACTIVE'}
+            </strong>
+
+          </div>
+
+        </section>
+
+        {/* =====================================================
+            QUICK ACTIONS
+        ====================================================== */}
+
+        <section className="organization-details-section">
+
+          <div className="organization-details-section-heading">
+
+            <h2>
+              Organization
+            </h2>
 
             <p>
-              {description}
+              Manage your organization and its members.
             </p>
 
-          )}
+          </div>
 
-        </div>
+          <div className="organization-details-actions">
 
-      </section>
+            {/* MEMBERS */}
 
+            <button
+              type="button"
+              className="organization-details-action"
+              onClick={() =>
+                navigate(
+                  `/organizations/${organization_id}/members`
+                )
+              }
+            >
 
-      {/* =====================================================
-          INFO
-      ====================================================== */}
+              <div className="organization-action-icon">
+                <FaUsers />
+              </div>
 
-      <section className="organization-details-info">
+              <div className="organization-action-content">
 
-        <div className="organization-info-item">
+                <strong>
+                  Members
+                </strong>
 
-          <span className="organization-info-label">
-            Organization ID
-          </span>
+                <span>
+                  View and manage organization members.
+                </span>
 
-          <strong>
-            #{organization_id}
-          </strong>
+              </div>
 
-        </div>
-
-
-        <div className="organization-info-item">
-
-          <span className="organization-info-label">
-            Your role
-          </span>
-
-          <strong>
-            {role?.name || 'Member'}
-          </strong>
-
-        </div>
-
-
-        <div className="organization-info-item">
-
-          <span className="organization-info-label">
-            Status
-          </span>
-
-          <strong>
-            {status || 'ACTIVE'}
-          </strong>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
-          QUICK ACTIONS
-      ====================================================== */}
-
-      <section className="organization-details-section">
-
-        <h2>
-          Organization
-        </h2>
-
-        <p className="organization-details-section-description">
-          Manage your organization and its members.
-        </p>
-
-
-        <div className="organization-details-actions">
-
-
-          {/* =================================================
-              MEMBERS
-          ================================================= */}
-
-          <button
-            type="button"
-            className="organization-details-action"
-            onClick={() =>
-              navigate( `/organizations/${organization_id}/members`)
-            }
-          >
-
-            <div className="organization-action-icon">
-              <FaUsers />
-            </div>
-
-            <div className="organization-action-content">
-
-              <strong>
-                Members
-              </strong>
-
-              <span>
-                View and manage organization members.
+              <span className="organization-action-arrow">
+                →
               </span>
 
-            </div>
+            </button>
 
-          </button>
+            {/* ROLES */}
 
+            <button
+              type="button"
+              className="organization-details-action"
+              onClick={() =>
+                navigate(
+                  `/organizations/${organization_id}/roles`
+                )
+              }
+            >
 
-          {/* =================================================
-              ROLES
-          ================================================= */}
+              <div className="organization-action-icon">
+                <FaUserShield />
+              </div>
 
-          <button
-            type="button"
-            className="organization-details-action"
-            onClick={() => {
-              navigate(`/organizations/${organization_id}/roles`)
-            }}
-          >
+              <div className="organization-action-content">
 
-            <div className="organization-action-icon">
-              <FaUserShield />
-            </div>
+                <strong>
+                  Roles
+                </strong>
 
-            <div className="organization-action-content">
+                <span>
+                  Manage organization roles and permissions.
+                </span>
 
-              <strong>
-                Roles
-              </strong>
+              </div>
 
-              <span>
-                Manage organization roles and permissions.
+              <span className="organization-action-arrow">
+                →
               </span>
 
-            </div>
+            </button>
 
-          </button>
+          </div>
 
+        </section>
 
-        </div>
-
-      </section>
-
-    </div>
-
+      </div>
+    </main>
   );
 }
 

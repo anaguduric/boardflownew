@@ -1,141 +1,171 @@
-.organization-details {
+/* =========================================================
+   ORGANIZATION DETAILS PAGE WRAPPER
+========================================================= */
+
+.organization-details-page-wrapper {
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 28px;
+  min-height: calc(100vh - 100px);
+  box-sizing: border-box;
 }
 
 
 /* =========================================================
-   TOP
+   ORGANIZATION DETAILS
+========================================================= */
+
+.organization-details {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 40px 50px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TOP BAR
 ========================================================= */
 
 .organization-details-top {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  margin-bottom: 22px;
-}
-
-.organization-back-button,
-.organization-edit-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 9px 13px;
-
-  border-radius: 9px;
-
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-}
-
-.organization-back-button {
-  border: 1px solid #e5e7eb;
-
-  background: white;
-  color: #4b5563;
-}
-
-.organization-back-button:hover {
-  border-color: #c7d2fe;
-  color: #4f46e5;
-}
-
-.organization-edit-button {
-  border: none;
-
-  background: #4f46e5;
-  color: white;
-}
-
-.organization-edit-button:hover {
-  background: #4338ca;
+  margin-bottom: 28px;
 }
 
 
 /* =========================================================
-   HEADER
+   BACK BUTTON
+========================================================= */
+
+.organization-back-button,
+.organization-edit-button {
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.organization-back-button {
+  color: #6b7280;
+  padding: 8px 0;
+}
+
+.organization-back-button:hover {
+  color: #5046d8;
+  transform: translateX(-2px);
+}
+
+.organization-back-button svg {
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.organization-edit-button {
+  padding: 10px 16px;
+  color: #5046d8;
+  background: rgba(80, 70, 216, 0.08);
+  border: 1px solid rgba(80, 70, 216, 0.12);
+  border-radius: 10px;
+}
+
+.organization-edit-button:hover {
+  background: rgba(80, 70, 216, 0.14);
+  border-color: rgba(80, 70, 216, 0.2);
+}
+
+.organization-edit-button svg {
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   ORGANIZATION HEADER
 ========================================================= */
 
 .organization-details-header {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 20px;
-
+  gap: 24px;
   padding: 28px;
-
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-
-  background: white;
-
-  box-shadow:
-    0 5px 20px rgba(15, 23, 42, 0.05);
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(31, 41, 55, 0.05);
+  box-sizing: border-box;
 }
+
+
+/* =========================================================
+   ORGANIZATION LOGO
+========================================================= */
 
 .organization-details-logo {
   width: 82px;
   height: 82px;
-
-  flex-shrink: 0;
-
+  min-width: 82px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border-radius: 20px;
-
-  background: #eef2ff;
-  color: #4f46e5;
-
-  font-size: 32px;
-
+  background: #f4f3ff;
+  border: 1px solid rgba(80, 70, 216, 0.1);
+  border-radius: 18px;
   overflow: hidden;
+  color: #5046d8;
+  font-size: 30px;
 }
 
 .organization-details-logo img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
+  display: block;
 }
+
+
+/* =========================================================
+   TITLE AREA
+========================================================= */
 
 .organization-details-title {
   min-width: 0;
+  flex: 1;
 }
 
 .organization-details-name-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .organization-details-name-row h1 {
   margin: 0;
-
-  color: #111827;
-
-  font-size: 27px;
-  font-weight: 750;
+  color: #1f2937;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 .organization-details-title p {
-  margin: 7px 0 0;
-
+  margin: 9px 0 0;
   color: #6b7280;
-
   font-size: 14px;
   line-height: 1.6;
+  max-width: 700px;
 }
 
 
@@ -146,297 +176,457 @@
 .organization-details-status {
   display: inline-flex;
   align-items: center;
-
+  justify-content: center;
   padding: 5px 10px;
-
   border-radius: 999px;
-
   font-size: 11px;
+  line-height: 1;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .organization-details-status-active {
-  background: #dcfce7;
-  color: #166534;
+  color: #15803d;
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
 }
 
 .organization-details-status-inactive {
-  background: #fef3c7;
-  color: #92400e;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
 }
 
-.organization-details-status-suspended {
-  background: #fee2e2;
-  color: #991b1b;
+.organization-details-status-pending {
+  color: #a16207;
+  background: #fefce8;
+  border: 1px solid #fde68a;
 }
 
 
 /* =========================================================
-   INFO
+   INFORMATION CARDS
 ========================================================= */
 
 .organization-details-info {
+  width: 100%;
   display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 14px;
-
-  margin-top: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
 .organization-info-item {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-
-  padding: 18px;
-
-  border: 1px solid #e5e7eb;
+  gap: 7px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(229, 231, 235, 0.9);
   border-radius: 14px;
-
-  background: white;
+  box-shadow: 0 5px 20px rgba(31, 41, 55, 0.035);
+  box-sizing: border-box;
 }
 
 .organization-info-label {
   color: #9ca3af;
-
   font-size: 11px;
   font-weight: 600;
-
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.5px;
 }
 
 .organization-info-item strong {
-  color: #111827;
-
-  font-size: 15px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 
 /* =========================================================
-   SECTION
+   ORGANIZATION SECTION
 ========================================================= */
 
 .organization-details-section {
-  margin-top: 28px;
+  width: 100%;
 }
 
-.organization-details-section h2 {
+.organization-details-section-heading {
+  margin-bottom: 18px;
+}
+
+.organization-details-section-heading h2 {
   margin: 0;
-
-  color: #111827;
-
+  color: #1f2937;
   font-size: 19px;
+  line-height: 1.3;
+  font-weight: 700;
 }
 
-.organization-details-section-description {
-  margin: 5px 0 16px;
-
-  color: #6b7280;
-
+.organization-details-section-heading p {
+  margin: 5px 0 0;
+  color: #8b93a1;
   font-size: 13px;
+  line-height: 1.5;
 }
 
 
 /* =========================================================
-   ACTIONS
+   ACTION CARDS
 ========================================================= */
 
 .organization-details-actions {
+  width: 100%;
   display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .organization-details-action {
+  width: 100%;
+  min-height: 92px;
   display: flex;
   align-items: center;
-
-  gap: 14px;
-
-  width: 100%;
-
-  padding: 18px;
-
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-
-  background: white;
-
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 6px 24px rgba(31, 41, 55, 0.04);
   text-align: left;
-
   cursor: pointer;
-
-  font-family: inherit;
-
+  box-sizing: border-box;
   transition:
-    border-color 0.2s ease,
+    transform 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.2s ease;
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .organization-details-action:hover {
-  border-color: #c7d2fe;
-
-  box-shadow:
-    0 6px 20px rgba(15, 23, 42, 0.06);
-
-  transform: translateY(-1px);
-}
-
-.organization-action-icon {
-  width: 44px;
-  height: 44px;
-
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 12px;
-
-  background: #eef2ff;
-  color: #4f46e5;
-
-  font-size: 18px;
-}
-
-.organization-action-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.organization-action-content strong {
-  color: #111827;
-
-  font-size: 14px;
-}
-
-.organization-action-content span {
-  color: #6b7280;
-
-  font-size: 12px;
-  line-height: 1.4;
+  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: rgba(80, 70, 216, 0.18);
+  box-shadow: 0 10px 28px rgba(31, 41, 55, 0.08);
 }
 
 
 /* =========================================================
-   EMPTY
+   ACTION ICON
+========================================================= */
+
+.organization-action-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5046d8;
+  background: #f3f2ff;
+  border: 1px solid rgba(80, 70, 216, 0.08);
+  border-radius: 13px;
+  font-size: 18px;
+}
+
+.organization-details-action:hover .organization-action-icon {
+  background: #eeecff;
+}
+
+
+/* =========================================================
+   ACTION CONTENT
+========================================================= */
+
+.organization-action-content {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.organization-action-content strong {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.organization-action-content span {
+  color: #8b93a1;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   ACTION ARROW
+========================================================= */
+
+.organization-action-arrow {
+  color: #a1a1aa;
+  font-size: 20px;
+  font-weight: 400;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.organization-details-action:hover .organization-action-arrow {
+  color: #5046d8;
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   EMPTY / ERROR STATE
 ========================================================= */
 
 .organization-details-empty {
-  min-height: 400px;
-
+  width: 100%;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
-
+  padding: 40px;
+  box-sizing: border-box;
   text-align: center;
 }
 
 .organization-details-empty-icon {
   width: 64px;
   height: 64px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-bottom: 16px;
-
+  margin-bottom: 18px;
+  color: #5046d8;
+  background: #f3f2ff;
+  border: 1px solid rgba(80, 70, 216, 0.1);
   border-radius: 18px;
-
-  background: #eef2ff;
-  color: #4f46e5;
-
-  font-size: 26px;
+  font-size: 24px;
 }
 
 .organization-details-empty h2 {
-  margin: 0 0 7px;
-
-  color: #111827;
-
+  margin: 0 0 8px;
+  color: #374151;
   font-size: 20px;
+  font-weight: 700;
 }
 
 .organization-details-empty p {
-  margin: 0 0 20px;
-
-  color: #6b7280;
-
-  font-size: 14px;
+  max-width: 420px;
+  margin: 0;
+  color: #8b93a1;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .organization-details-empty button {
+  margin-top: 20px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-
-  padding: 10px 15px;
-
+  padding: 10px 16px;
+  color: #ffffff;
+  background: #5046d8;
   border: none;
-  border-radius: 9px;
-
-  background: #4f46e5;
-  color: white;
-
-  font-family: inherit;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
-
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.organization-details-empty button:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — 900px
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
 
   .organization-details {
-    padding: 18px;
+    padding: 28px 25px 45px;
   }
 
   .organization-details-header {
-    flex-direction: column;
-
-    align-items: flex-start;
-  }
-
-  .organization-details-name-row h1 {
-    font-size: 22px;
+    padding: 24px;
   }
 
   .organization-details-info {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .organization-details-actions {
     grid-template-columns: 1fr;
   }
-
 }
+
+
+/* =========================================================
+   RESPONSIVE — 700px
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .organization-details {
+    padding: 24px 18px 40px;
+  }
+
+  .organization-details-top {
+    margin-bottom: 22px;
+  }
+
+  .organization-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 22px;
+  }
+
+  .organization-details-logo {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    border-radius: 16px;
+    font-size: 25px;
+  }
+
+  .organization-details-name-row h1 {
+    font-size: 24px;
+  }
+
+  .organization-details-info {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+
+  .organization-info-item {
+    padding: 16px 18px;
+  }
+
+  .organization-details-section-heading h2 {
+    font-size: 18px;
+  }
+
+  .organization-details-action {
+    min-height: 86px;
+    padding: 16px 18px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 450px
+========================================================= */
 
 @media (max-width: 450px) {
 
+  .organization-details {
+    padding: 20px 14px 35px;
+  }
+
   .organization-details-top {
-    align-items: flex-start;
+    margin-bottom: 18px;
   }
 
-  .organization-edit-button span,
-  .organization-back-button span {
-    display: none;
+  .organization-back-button,
+  .organization-edit-button {
+    font-size: 12px;
   }
 
+  .organization-edit-button {
+    padding: 8px 11px;
+  }
+
+  .organization-details-header {
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .organization-details-logo {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .organization-details-name-row {
+    gap: 9px;
+  }
+
+  .organization-details-name-row h1 {
+    font-size: 21px;
+  }
+
+  .organization-details-title p {
+    font-size: 12px;
+  }
+
+  .organization-details-status {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  .organization-info-item {
+    padding: 14px 16px;
+  }
+
+  .organization-info-label {
+    font-size: 10px;
+  }
+
+  .organization-info-item strong {
+    font-size: 13px;
+  }
+
+  .organization-details-section-heading {
+    margin-bottom: 14px;
+  }
+
+  .organization-details-section-heading h2 {
+    font-size: 17px;
+  }
+
+  .organization-details-section-heading p {
+    font-size: 12px;
+  }
+
+  .organization-details-action {
+    gap: 12px;
+    padding: 14px;
+    min-height: 78px;
+  }
+
+  .organization-action-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 11px;
+    font-size: 16px;
+  }
+
+  .organization-action-content strong {
+    font-size: 13px;
+  }
+
+  .organization-action-content span {
+    font-size: 11px;
+  }
+
+  .organization-action-arrow {
+    font-size: 17px;
+  }
 }

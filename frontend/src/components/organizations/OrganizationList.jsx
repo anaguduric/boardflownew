@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import {
   FaBuilding,
   FaPlus,
@@ -75,23 +76,17 @@ function OrganizationList() {
         }
       );
 
-
       if (!res.ok) {
-        throw new Error(
-          `HTTP error: ${res.status}`
-        );
+        throw new Error(`HTTP error: ${res.status}`);
       }
-
 
       const data = await res.json();
 
-      console.log(
-        'ORGANIZACIJE:',
-        data
+      console.log('ORGANIZACIJE:', data);
+
+      setOrganizations(
+        Array.isArray(data) ? data : []
       );
-
-
-      setOrganizations(data);
 
 
       // =====================================================
@@ -100,13 +95,11 @@ function OrganizationList() {
 
       if (
         !currentOrganization &&
+        Array.isArray(data) &&
         data.length > 0
       ) {
-
         selectOrganization(data[0]);
-
       }
-
 
     } catch (err) {
 
@@ -124,7 +117,6 @@ function OrganizationList() {
       setLoading(false);
 
     }
-
   };
 
 
@@ -133,9 +125,7 @@ function OrganizationList() {
   // =========================================================
 
   useEffect(() => {
-
     loadOrganizations();
-
   }, [token]);
 
 
@@ -144,13 +134,10 @@ function OrganizationList() {
   // =========================================================
 
   const filteredOrganizations =
-    organizations.filter(
-      (organization) =>
-        organization.name
-          ?.toLowerCase()
-          .includes(
-            search.toLowerCase()
-          )
+    organizations.filter((organization) =>
+      organization.name
+        ?.toLowerCase()
+        .includes(search.toLowerCase())
     );
 
 
@@ -158,21 +145,13 @@ function OrganizationList() {
   // SELECT ORGANIZATION
   // =========================================================
 
-  const handleSelectOrganization = (
-    organization
-  ) => {
+  const handleSelectOrganization = (organization) => {
 
-    // Postavljamo aktivnu organizaciju
-    selectOrganization(
-      organization
-    );
+    selectOrganization(organization);
 
-
-    // Otvaramo detalje
     navigate(
       `/organizations/${organization.organization_id}`
     );
-
   };
 
 
@@ -180,40 +159,25 @@ function OrganizationList() {
   // CREATE SUCCESS
   // =========================================================
 
-  const handleOrganizationCreated = (
-    organization
-  ) => {
+  const handleOrganizationCreated = (organization) => {
 
     console.log(
       'Kreirana organizacija:',
       organization
     );
 
+    setOrganizations((prev) => [
+      ...prev,
+      organization,
+    ]);
 
-    // Dodaj novu organizaciju u listu
-    setOrganizations(
-      (prev) => [
-        ...prev,
-        organization,
-      ]
-    );
+    selectOrganization(organization);
 
-
-    // Automatski je postavi kao aktivnu
-    selectOrganization(
-      organization
-    );
-
-
-    // Zatvori modal
     setShowCreateModal(false);
 
-
-    // Otvori detalje nove organizacije
     navigate(
       `/organizations/${organization.organization_id}`
     );
-
   };
 
 
@@ -224,7 +188,6 @@ function OrganizationList() {
   if (loading) {
 
     return (
-
       <main className="organizations-page">
 
         <div className="organizations-loading">
@@ -238,9 +201,7 @@ function OrganizationList() {
         </div>
 
       </main>
-
     );
-
   }
 
 
@@ -249,34 +210,32 @@ function OrganizationList() {
   // =========================================================
 
   return (
-
     <main className="organizations-page">
 
-
       {/* =====================================================
-          HEADER
+          PAGE HEADER
       ====================================================== */}
 
-      <div className="organizations-header">
+      <section className="organizations-header">
 
         <div className="organizations-title">
 
           <div className="organizations-title-icon">
-
             <FaBuilding />
-
           </div>
 
+          <div className="organizations-title-content">
 
-          <div>
+            <span className="organizations-eyebrow">
+              WORKSPACE
+            </span>
 
             <h1>
               Organizations
             </h1>
 
             <p>
-              Manage your organizations and
-              workspaces.
+              Manage your organizations and workspaces.
             </p>
 
           </div>
@@ -287,9 +246,7 @@ function OrganizationList() {
         <button
           type="button"
           className="organizations-create-button"
-          onClick={() =>
-            setShowCreateModal(true)
-          }
+          onClick={() => setShowCreateModal(true)}
         >
 
           <FaPlus />
@@ -300,14 +257,14 @@ function OrganizationList() {
 
         </button>
 
-      </div>
+      </section>
 
 
       {/* =====================================================
-          SEARCH
+          TOOLBAR
       ====================================================== */}
 
-      <div className="organizations-toolbar">
+      <section className="organizations-toolbar">
 
         <div className="organizations-search">
 
@@ -318,9 +275,7 @@ function OrganizationList() {
             placeholder="Search organizations..."
             value={search}
             onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
+              setSearch(e.target.value)
             }
           />
 
@@ -329,15 +284,19 @@ function OrganizationList() {
 
         <div className="organizations-count">
 
-          {organizations.length}{' '}
+          <strong>
+            {filteredOrganizations.length}
+          </strong>
 
-          {organizations.length === 1
-            ? 'organization'
-            : 'organizations'}
+          <span>
+            {filteredOrganizations.length === 1
+              ? 'organization'
+              : 'organizations'}
+          </span>
 
         </div>
 
-      </div>
+      </section>
 
 
       {/* =====================================================
@@ -345,13 +304,9 @@ function OrganizationList() {
       ====================================================== */}
 
       {error && (
-
         <div className="organizations-error">
-
           {error}
-
         </div>
-
       )}
 
 
@@ -365,49 +320,34 @@ function OrganizationList() {
           <div className="organizations-empty">
 
             <div className="organizations-empty-icon">
-
               <FaBuilding />
-
             </div>
 
-
             <h2>
-
               {search
                 ? 'No organizations found'
                 : 'No organizations yet'}
-
             </h2>
 
-
             <p>
-
               {search
                 ? 'Try a different search.'
                 : 'Create your first organization to get started.'}
-
             </p>
 
-
             {!search && (
-
               <button
                 type="button"
                 onClick={() =>
                   setShowCreateModal(true)
                 }
               >
-
                 <FaPlus />
-
                 Create organization
-
               </button>
-
             )}
 
           </div>
-
         )}
 
 
@@ -417,37 +357,50 @@ function OrganizationList() {
 
       {filteredOrganizations.length > 0 && (
 
-        <div className="organizations-grid">
+        <section className="organizations-section">
 
-          {filteredOrganizations.map(
-            (organization) => (
+          <div className="organizations-section-header">
 
-              <OrganizationCard
-                key={
-                  organization.organization_id
-                }
+            <div>
+              <h2>
+                Your organizations
+              </h2>
 
-                organization={
-                  organization
-                }
+              <p>
+                Select an organization to manage its workspace.
+              </p>
+            </div>
 
-                isSelected={
-                  currentOrganization
-                    ?.organization_id ===
-                  organization.organization_id
-                }
+          </div>
 
-                onSelect={
-                  handleSelectOrganization
-                }
 
-              />
+          <div className="organizations-grid">
 
-            )
-          )}
+            {filteredOrganizations.map(
+              (organization) => (
 
-        </div>
+                <OrganizationCard
+                  key={organization.organization_id}
 
+                  organization={organization}
+
+                  isSelected={
+                    currentOrganization
+                      ?.organization_id ===
+                    organization.organization_id
+                  }
+
+                  onSelect={
+                    handleSelectOrganization
+                  }
+                />
+
+              )
+            )}
+
+          </div>
+
+        </section>
       )}
 
 
@@ -458,7 +411,6 @@ function OrganizationList() {
       {showCreateModal && (
 
         <CreateOrganizationModal
-
           onClose={() =>
             setShowCreateModal(false)
           }
@@ -466,15 +418,12 @@ function OrganizationList() {
           onCreated={
             handleOrganizationCreated
           }
-
         />
 
       )}
 
     </main>
-
   );
-
 }
 
 export default OrganizationList;

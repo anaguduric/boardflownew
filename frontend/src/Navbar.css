@@ -3,8 +3,7 @@
    ========================================================= */
 
 .navbar {
-  position: fixed;
-  top: 0;
+  position: relative;
   z-index: 1000;
 
   width: calc(100% - 32px);

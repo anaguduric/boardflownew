@@ -2,7 +2,7 @@ import OrganizationList from './OrganizationList';
 
 function Organizations() {
   return (
-    <main>
+    <main className="organizations-page-wrapper">
       <OrganizationList />
     </main>
   );

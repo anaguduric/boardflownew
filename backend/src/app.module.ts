@@ -16,6 +16,9 @@ import { RegistrationRequestsModule } from './registration/registration-requests
 import { AuthModule } from './auth/auth.module';
 import { OrganizationInvitationsModule } from './organization-invitations/organization-invitations.module';
 import { TaskCommentsModule } from './task-comments/task-comments.module';
+import { TeamsModule } from './teams/teams.module';
+import { TeamMembersModule } from './team-members/team-members.module';
+import { RoleMembersModule } from './role-members/role-members.module';
 
 @Module({
   imports: [
@@ -45,6 +48,9 @@ import { TaskCommentsModule } from './task-comments/task-comments.module';
     RegistrationRequestsModule,
     OrganizationInvitationsModule,
     TaskCommentsModule,
+    TeamsModule,
+    TeamMembersModule,
+    RoleMembersModule,
     AuthModule,
   ],
 })

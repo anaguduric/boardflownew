@@ -14,6 +14,7 @@ import InviteMemberModal from '../../components/organizations/InviteMemberModal'
 
 import './OrganizationMembers.css';
 
+
 function OrganizationMembers({
   organization: organizationProp = null,
   onBack = null,
@@ -121,29 +122,37 @@ function OrganizationMembers({
 
   if (!organization) {
     return (
-      <div className="organization-members-empty">
+      <main className="organization-members-page-wrapper">
 
-        <FaUserCircle />
+        <div className="organization-members-page">
 
-        <h2>
-          No organization selected
-        </h2>
+          <div className="organization-members-empty">
 
-        <p>
-          Select an organization first.
-        </p>
+            <FaUserCircle />
 
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-          >
-            <FaArrowLeft />
-            Back
-          </button>
-        )}
+            <h2>
+              No organization selected
+            </h2>
 
-      </div>
+            <p>
+              Select an organization first.
+            </p>
+
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+              >
+                <FaArrowLeft />
+                Back
+              </button>
+            )}
+
+          </div>
+
+        </div>
+
+      </main>
     );
   }
 
@@ -154,19 +163,23 @@ function OrganizationMembers({
 
   if (loading) {
     return (
-      <div className="organization-members-page">
+      <main className="organization-members-page-wrapper">
 
-        <div className="organization-members-loading">
+        <div className="organization-members-page">
 
-          <FaSpinner className="organization-members-spinner" />
+          <div className="organization-members-loading">
 
-          <span>
-            Loading members...
-          </span>
+            <FaSpinner className="organization-members-spinner" />
+
+            <span>
+              Loading members...
+            </span>
+
+          </div>
 
         </div>
 
-      </div>
+      </main>
     );
   }
 
@@ -179,8 +192,8 @@ function OrganizationMembers({
     /*
      * Za sada samo zatvaramo modal.
      *
-     * Kasnije ćemo ovde moći da učitamo
-     * pending invitations.
+     * Kasnije ovde možemo dodati
+     * učitavanje pending invitations.
      */
   };
 
@@ -190,221 +203,241 @@ function OrganizationMembers({
   // =========================================================
 
   return (
-    <div className="organization-members-page">
+    <main className="organization-members-page-wrapper">
 
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
+      <div className="organization-members-page">
 
-      <div className="organization-members-header">
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
 
-        <div className="organization-members-title">
+        <div className="organization-members-header">
 
-          {onBack && (
+          <div className="organization-members-title">
+
+            {onBack && (
+              <button
+                type="button"
+                className="organization-members-back"
+                onClick={onBack}
+              >
+                <FaArrowLeft />
+              </button>
+            )}
+
+            <div className="organization-members-title-icon">
+              <FaUserShield />
+            </div>
+
+            <div>
+              <h1>
+                Members
+              </h1>
+
+              <p>
+                {organization.name}
+              </p>
+            </div>
+
+          </div>
+
+
+          {/* ===================================================
+              RIGHT SIDE
+          ==================================================== */}
+
+          <div className="organization-members-header-right">
+
+            <div className="organization-members-count">
+
+              <strong>
+                {members.length}
+              </strong>
+
+              <span>
+                {members.length === 1
+                  ? 'member'
+                  : 'members'}
+              </span>
+
+            </div>
+
+
+            {/* INVITE BUTTON */}
+
             <button
               type="button"
-              className="organization-members-back"
-              onClick={onBack}
+              className="organization-members-invite"
+              onClick={() =>
+                setShowInviteModal(true)
+              }
             >
-              <FaArrowLeft />
-            </button>
-          )}
+              <FaUserPlus />
 
-          <div className="organization-members-title-icon">
-            <FaUserShield />
+              <span>
+                Invite member
+              </span>
+            </button>
+
           </div>
 
-          <div>
-            <h1>
-              Members
-            </h1>
+        </div>
+
+
+        {/* =====================================================
+            ERROR
+        ====================================================== */}
+
+        {error && (
+          <div className="organization-members-error">
+            {error}
+          </div>
+        )}
+
+
+        {/* =====================================================
+            EMPTY
+        ====================================================== */}
+
+        {!error && members.length === 0 && (
+          <div className="organization-members-empty">
+
+            <div className="organization-members-empty-icon">
+              <FaUserCircle />
+            </div>
+
+            <h2>
+              No members
+            </h2>
 
             <p>
-              {organization.name}
+              This organization doesn't have any members yet.
             </p>
-          </div>
-
-        </div>
-
-
-        {/* ===================================================
-            RIGHT SIDE
-        ==================================================== */}
-
-        <div className="organization-members-header-right">
-
-          <div className="organization-members-count">
-
-            <strong>
-              {members.length}
-            </strong>
-
-            <span>
-              {members.length === 1
-                ? 'member'
-                : 'members'}
-            </span>
 
           </div>
+        )}
 
 
-          {/* INVITE BUTTON */}
+        {/* =====================================================
+            MEMBERS LIST
+        ====================================================== */}
 
-          <button
-            type="button"
-            className="organization-members-invite"
-            onClick={() =>
-              setShowInviteModal(true)
+        {!error && members.length > 0 && (
+          <div className="organization-members-list">
+
+            {members.map((member) => {
+
+              const username =
+                member.username ||
+                'Unknown user';
+
+              const email =
+                member.email ||
+                '';
+
+              const role =
+                member.role?.name ||
+                'Member';
+
+              const status =
+                member.status ||
+                'ACTIVE';
+
+              return (
+                <div
+                  key={member.membership_id}
+                  className="organization-member-card"
+                >
+
+                  {/* AVATAR + USER */}
+
+                  <div className="organization-member-info">
+
+                    <div className="organization-member-avatar">
+                      <img
+                        src={`http://localhost:3000/user-profiles/${member.user_id}/profile-picture`}
+                        alt={username}
+                        className="organization-member-avatar-image"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling.style.display = 'block';
+                        }}
+                      />
+
+                      <FaUserCircle className="organization-member-avatar-fallback" />
+                    </div>
+
+                    <div className="organization-member-text">
+
+                      <div className="organization-member-name">
+                        {username}
+                      </div>
+
+                      {email && (
+                        <div className="organization-member-email">
+                          {email}
+                        </div>
+                      )}
+
+                    </div>
+
+                  </div>
+
+
+                  {/* ROLE */}
+
+                  <div className="organization-member-right">
+
+                    <div className="organization-member-role">
+
+                      <FaUserShield />
+
+                      <span>
+                        {role}
+                      </span>
+
+                    </div>
+
+
+                    {/* STATUS */}
+
+                    <div
+                      className={`organization-member-status organization-member-status-${status.toLowerCase()}`}
+                    >
+                      {status}
+                    </div>
+
+                  </div>
+
+                </div>
+              );
+            })}
+
+          </div>
+        )}
+
+
+        {/* =====================================================
+            INVITE MEMBER MODAL
+        ====================================================== */}
+
+        {showInviteModal && (
+          <InviteMemberModal
+            organizationId={
+              organization.organization_id
             }
-          >
-            <FaUserPlus />
-
-            <span>
-              Invite member
-            </span>
-          </button>
-
-        </div>
+            onClose={() =>
+              setShowInviteModal(false)
+            }
+            onInvited={handleInvited}
+          />
+        )}
 
       </div>
 
-
-      {/* =====================================================
-          ERROR
-      ====================================================== */}
-
-      {error && (
-        <div className="organization-members-error">
-          {error}
-        </div>
-      )}
-
-
-      {/* =====================================================
-          EMPTY
-      ====================================================== */}
-
-      {!error && members.length === 0 && (
-        <div className="organization-members-empty">
-
-          <div className="organization-members-empty-icon">
-            <FaUserCircle />
-          </div>
-
-          <h2>
-            No members
-          </h2>
-
-          <p>
-            This organization doesn't have any members yet.
-          </p>
-
-        </div>
-      )}
-
-
-      {/* =====================================================
-          MEMBERS LIST
-      ====================================================== */}
-
-      {!error && members.length > 0 && (
-        <div className="organization-members-list">
-
-          {members.map((member) => {
-
-            const username =
-              member.username ||
-              'Unknown user';
-
-            const email =
-              member.email ||
-              '';
-
-            const role =
-              member.role?.name ||
-              'Member';
-
-            const status =
-              member.status ||
-              'ACTIVE';
-
-            return (
-              <div
-                key={member.membership_id}
-                className="organization-member-card"
-              >
-
-                {/* AVATAR */}
-
-                <div className="organization-member-avatar">
-                  <FaUserCircle />
-                </div>
-
-
-                {/* USER */}
-
-                <div className="organization-member-info">
-
-                  <div className="organization-member-name">
-                    {username}
-                  </div>
-
-                  {email && (
-                    <div className="organization-member-email">
-                      {email}
-                    </div>
-                  )}
-
-                </div>
-
-
-                {/* ROLE */}
-
-                <div className="organization-member-role">
-
-                  <FaUserShield />
-
-                  <span>
-                    {role}
-                  </span>
-
-                </div>
-
-
-                {/* STATUS */}
-
-                <div
-                  className={`organization-member-status organization-member-status-${status.toLowerCase()}`}
-                >
-                  {status}
-                </div>
-
-              </div>
-            );
-          })}
-
-        </div>
-      )}
-
-
-      {/* =====================================================
-          INVITE MEMBER MODAL
-      ====================================================== */}
-
-      {showInviteModal && (
-        <InviteMemberModal
-          organizationId={
-            organization.organization_id
-          }
-          onClose={() =>
-            setShowInviteModal(false)
-          }
-          onInvited={handleInvited}
-        />
-      )}
-
-    </div>
+    </main>
   );
 }
+
 
 export default OrganizationMembers;

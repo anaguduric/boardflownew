@@ -1,4 +1,17 @@
-import { Controller, Get, Patch, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+  Param,
+  ParseIntPipe,
+  Res,
+} from '@nestjs/common';
+
+import { Response } from 'express';
+
 import { UserProfilesService } from './userprofiles.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -6,7 +19,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class UserProfilesController {
   constructor(private service: UserProfilesService) {}
 
-  // ✅ Uzima trenutno ulogovanog korisnika iz tokena
+  // =========================================================
+  // GET MY PROFILE
+  // =========================================================
+
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMyProfile(@Req() req) {
@@ -15,7 +31,8 @@ export class UserProfilesController {
     const profile = await this.service.findByUserId(userId);
 
     return {
-      bio: profile?.bio || "",
+      bio: profile?.bio || '',
+
       profilePic: profile?.profilePic
         ? `data:image/jpeg;base64,${profile.profilePic.toString('base64')}`
         : null,
@@ -42,39 +59,87 @@ export class UserProfilesController {
         x: profile?.offsetX ?? 0,
         y: profile?.offsetY ?? 0,
       },
+
       scale: profile?.scale ?? 1,
     };
   }
 
-  // ✅ Update samo za ulogovanog usera
+  // =========================================================
+  // GET USER PROFILE PICTURE
+  // =========================================================
+
+  @Get(':userId/profile-picture')
+  async getProfilePicture(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Res() res: Response,
+  ) {
+    const profile =
+      await this.service.findByUserId(userId);
+
+    if (!profile?.profilePic) {
+      return res.status(404).send();
+    }
+
+    res.set({
+      'Content-Type': 'image/jpeg',
+      'Content-Length': profile.profilePic.length.toString(),
+      'Cache-Control': 'public, max-age=3600',
+    });
+
+    return res.send(profile.profilePic);
+  }
+
+  // =========================================================
+  // UPDATE MY PROFILE
+  // =========================================================
+
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  async updateMyProfile(@Req() req, @Body() body: any) {
+  async updateMyProfile(
+    @Req() req,
+    @Body() body: any,
+  ) {
     const userId = req.user.userId;
 
-    const { offset, scale, profilePic, ...rest } = body;
+    const {
+      offset,
+      scale,
+      profilePic,
+      ...rest
+    } = body;
 
-    const dto: any = { ...rest };
+    const dto: any = {
+      ...rest,
+    };
 
     if (offset) {
       dto.offsetX = offset.x;
       dto.offsetY = offset.y;
     }
+
     if (scale !== undefined) {
       dto.scale = scale;
     }
 
-    // profilePic dolazi sa frontenda kao base64 data-URL string
-    // (npr. "data:image/png;base64,iVBORw0KG..."), a kolona u bazi
-    // je 'longblob' — mora se konvertovati u pravi Buffer pre upisa,
-    // inače se u bazu upiše nevalidan sadržaj i slika je "razbijena".
     if (profilePic) {
-      const base64Data = profilePic.replace(/^data:image\/\w+;base64,/, '');
-      dto.profilePic = Buffer.from(base64Data, 'base64');
+      const base64Data = profilePic.replace(
+        /^data:image\/\w+;base64,/,
+        '',
+      );
+
+      dto.profilePic = Buffer.from(
+        base64Data,
+        'base64',
+      );
     }
 
-    await this.service.updateProfile(userId, dto);
+    await this.service.updateProfile(
+      userId,
+      dto,
+    );
 
-    return { message: 'Profil uspešno ažuriran ✅' };
+    return {
+      message: 'Profil uspešno ažuriran ✅',
+    };
   }
 }
