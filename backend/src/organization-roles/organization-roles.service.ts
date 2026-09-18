@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +14,8 @@ import { CreateOrganizationRoleDto } from './dto/create-organization-role.dto';
 
 import { Permission } from '../permissions/permission.entity';
 import { RolePermission } from '../role-permissions/role-permissions.entity';
+import { OrganizationMember } from '../organization-members/organization-member.entity';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class OrganizationRolesService {
@@ -29,6 +32,14 @@ export class OrganizationRolesService {
     @InjectRepository(RolePermission)
     private readonly rolePermissionRepository:
       Repository<RolePermission>,
+
+    @InjectRepository(OrganizationMember)
+    private readonly organizationMemberRepository:
+      Repository<OrganizationMember>,
+
+    @InjectRepository(User)
+    private readonly userRepository:
+      Repository<User>,
   ) {}
 
 
@@ -610,6 +621,175 @@ export class OrganizationRolesService {
       organizationId,
       roleId,
     );
+
+  }
+
+
+  // =========================================================
+  // ADMIN - ALL ORGANIZATION ROLES
+  // =========================================================
+
+  async getAdminRoles(
+    adminUserId: number,
+  ) {
+
+    // -------------------------------------------------------
+    // CHECK SUPER ADMIN
+    // -------------------------------------------------------
+
+    const admin =
+      await this.userRepository.findOne({
+        where: {
+          user_id:
+            adminUserId,
+        },
+
+        relations: [
+          'role',
+        ],
+      });
+
+
+    console.log(
+      'ADMIN USER ID:',
+      adminUserId,
+    );
+
+    console.log(
+      'ADMIN ROLE:',
+      admin?.role?.role_name,
+    );
+
+
+    if (!admin) {
+
+      throw new NotFoundException(
+        'Admin user not found',
+      );
+
+    }
+
+
+    const roleName =
+      admin.role?.role_name
+        ?.trim()
+        .toUpperCase()
+        .replace(/\s+/g, '_');
+
+
+    console.log(
+      'NORMALIZED ROLE:',
+      roleName,
+    );
+
+
+    if (
+      roleName !==
+      'SUPER_ADMIN'
+    ) {
+
+      throw new ForbiddenException(
+        'Only Super Admin can access this resource',
+      );
+
+    }
+
+
+    // -------------------------------------------------------
+    // GET ALL ORGANIZATION ROLES
+    // -------------------------------------------------------
+
+    const roles =
+      await this.roleRepository.find({
+
+        relations: [
+          'organization',
+        ],
+
+        order: {
+          role_id: 'DESC',
+        },
+
+      });
+
+
+    // -------------------------------------------------------
+    // GET MEMBER COUNTS + ORGANIZATION
+    // -------------------------------------------------------
+
+    const result =
+      await Promise.all(
+
+        roles.map(
+          async (role) => {
+
+            const memberCount =
+              await this.organizationMemberRepository.count({
+                where: {
+                  role_id:
+                    role.role_id,
+
+                  status:
+                    'ACTIVE',
+                },
+              });
+
+
+            return {
+
+              role_id:
+                role.role_id,
+
+              name:
+                role.name,
+
+              description:
+                role.description,
+
+              is_default:
+                role.is_default,
+
+              organization_id:
+                role.organization_id,
+
+              organization:
+                role.organization
+                  ? {
+
+                      organization_id:
+                        role.organization
+                          .organization_id,
+
+                      name:
+                        role.organization
+                          .name,
+
+                      status:
+                        role.organization
+                          .status,
+
+                    }
+
+                  : null,
+
+              member_count:
+                memberCount,
+
+              created_at:
+                role.created_at,
+
+              updated_at:
+                role.updated_at,
+
+            };
+
+          },
+        ),
+
+      );
+
+
+    return result;
 
   }
 

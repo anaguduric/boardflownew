@@ -205,6 +205,13 @@ export class AuthService {
         id: user.user_id,
         username: user.username,
         email: user.email,
+
+         role: user.role
+        ? {
+        role_id: user.role.role_id,
+        name: user.role.role_name,
+      }
+    : null,
       },
     };
   }
@@ -267,6 +274,13 @@ export class AuthService {
         id: user.user_id,
         username: user.username,
         email: user.email,
+
+        role: user.role
+      ? {
+          role_id: user.role.role_id,
+          name: user.role.role_name,
+        }
+      : null,
       },
     };
   }

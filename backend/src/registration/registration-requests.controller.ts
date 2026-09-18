@@ -32,6 +32,18 @@ export class RegistrationRequestsController {
   }
 
   // --------------------------------------------------
+  // ADMIN - STATISTIKA
+  // --------------------------------------------------
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stats')
+  async getStats(@Req() req: any) {
+    return this.registrationRequestsService.getAdminStats(
+      req.user.userId,
+    );
+  }
+
+  // --------------------------------------------------
   // ADMIN - SVI ZAHTEVI
   // --------------------------------------------------
 

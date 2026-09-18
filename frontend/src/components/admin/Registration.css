@@ -135,7 +135,7 @@
 }
 
 .requests-table tbody tr {
-  transition: background 0.15s;
+  transition: background 0.15s ease;
 }
 
 .requests-table tbody tr:hover {
@@ -242,51 +242,99 @@
 .request-actions {
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
 .request-actions button {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
-  transition: 0.18s;
+
+  font-size: 14px;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.request-actions button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.request-actions button:not(:disabled):active {
+  transform: translateY(0);
 }
 
 .request-actions button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
+
+/* =========================================================
+   VIEW REQUEST
+========================================================= */
+
 .view-request-button {
-  background: #f0f2f6;
+  background: #f5f6f9;
+  border-color: #e7e9ef !important;
   color: #667085;
 }
 
 .view-request-button:hover {
-  background: #e5e8ee;
+  background: #eceef3;
+  border-color: #dfe2e9 !important;
+  color: #4f596b;
+  box-shadow: 0 4px 10px rgba(31, 41, 55, 0.08);
 }
 
+
+/* =========================================================
+   APPROVE REQUEST
+========================================================= */
+
 .approve-button {
-  background: #eaf8ef;
+  background: #edf9f1;
+  border-color: #d8f0df !important;
   color: #27824a;
 }
 
 .approve-button:hover {
-  background: #d8f1df;
+  background: #def4e5;
+  border-color: #c8e9d2 !important;
+  color: #216f3e;
+  box-shadow: 0 4px 10px rgba(39, 130, 74, 0.12);
 }
 
+
+/* =========================================================
+   REJECT REQUEST
+========================================================= */
+
 .reject-button {
-  background: #fff0f0;
+  background: #fff1f1;
+  border-color: #f3dada !important;
   color: #c03939;
 }
 
 .reject-button:hover {
-  background: #fbe0e0;
+  background: #fde4e4;
+  border-color: #efcccc !important;
+  color: #a83232;
+  box-shadow: 0 4px 10px rgba(192, 57, 57, 0.11);
 }
 
 
@@ -333,11 +381,15 @@
   position: fixed;
   inset: 0;
   z-index: 2000;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
+
   background: rgba(24, 31, 45, 0.52);
+
   backdrop-filter: blur(3px);
 }
 
@@ -350,9 +402,12 @@
   width: 100%;
   max-width: 650px;
   max-height: calc(100vh - 40px);
+
   overflow-y: auto;
+
   background: #ffffff;
   border-radius: 16px;
+
   box-shadow: 0 20px 55px rgba(0, 0, 0, 0.2);
 }
 
@@ -360,8 +415,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   gap: 20px;
+
   padding: 24px 26px;
+
   border-bottom: 1px solid #edf0f4;
 }
 
@@ -382,14 +440,20 @@
   width: 34px;
   height: 34px;
   flex-shrink: 0;
+
   border: none;
   border-radius: 8px;
+
   background: #f1f3f6;
   color: #697386;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
+
+  transition: 0.18s ease;
 }
 
 .modal-close:hover {
@@ -417,7 +481,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
   margin: 0 0 15px;
+
   color: #343c4b;
   font-size: 14px;
 }
@@ -434,21 +500,26 @@
 
 .details-grid > div {
   padding: 13px 14px;
+
   background: #f8f9fb;
   border-radius: 9px;
 }
 
 .details-grid label {
   display: block;
+
   margin-bottom: 5px;
+
   color: #8a92a0;
   font-size: 11px;
+
   text-transform: uppercase;
   font-weight: 700;
 }
 
 .details-grid span {
   display: block;
+
   color: #303846;
   font-size: 14px;
   line-height: 1.5;
@@ -467,23 +538,30 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+
   padding: 18px 26px 24px;
+
   border-top: 1px solid #edf0f4;
 }
 
 .modal-actions button {
   height: 42px;
   padding: 0 17px;
+
   border: none;
   border-radius: 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   font-size: 13px;
   font-weight: 600;
+
   cursor: pointer;
-  transition: 0.18s;
+
+  transition: 0.18s ease;
 }
 
 .modal-actions button:disabled {
@@ -531,26 +609,35 @@
 .approval-icon {
   width: 58px;
   height: 58px;
+
   margin: 0 auto 16px;
+
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: #eaf8ef;
   color: #2f9b57;
+
   font-size: 24px;
 }
 
 .approval-content h3 {
   margin: 0 0 8px;
+
   color: #252d3a;
   font-size: 20px;
 }
 
 .approval-content > p {
   max-width: 480px;
+
   margin: 0 auto 22px;
+
   color: #737c8c;
+
   font-size: 14px;
   line-height: 1.6;
 }
@@ -558,29 +645,40 @@
 .approval-summary {
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   gap: 10px;
+
   text-align: left;
 }
 
 .approval-summary > div {
   padding: 13px 14px;
+
   border-radius: 9px;
+
   background: #f7f8fa;
 }
 
 .approval-summary span {
   display: block;
+
   margin-bottom: 5px;
+
   color: #89919f;
+
   font-size: 11px;
   font-weight: 700;
+
   text-transform: uppercase;
 }
 
 .approval-summary strong {
   display: block;
+
   color: #343c4b;
+
   font-size: 13px;
+
   word-break: break-word;
 }
 
@@ -595,8 +693,11 @@
 
 .reject-content label {
   display: block;
+
   margin-bottom: 8px;
+
   color: #343c4b;
+
   font-size: 14px;
   font-weight: 600;
 }
@@ -604,15 +705,24 @@
 .reject-content textarea {
   width: 100%;
   box-sizing: border-box;
+
   padding: 12px 13px;
+
   border: 1px solid #dce1e9;
   border-radius: 9px;
+
   resize: vertical;
+
   min-height: 120px;
+
   font-family: inherit;
   font-size: 14px;
+
   color: #303846;
+
   outline: none;
+
+  transition: 0.18s ease;
 }
 
 .reject-content textarea:focus {
@@ -626,7 +736,6 @@
 ========================================================= */
 
 @media (max-width: 700px) {
-
   .registration-requests-page {
     padding: 25px 18px;
   }
@@ -654,14 +763,11 @@
   .modal-actions button {
     width: 100%;
   }
-
 }
 
 
 @media (max-width: 600px) {
-
   .approval-summary {
     grid-template-columns: 1fr;
   }
-
 }

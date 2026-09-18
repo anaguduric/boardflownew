@@ -28,7 +28,7 @@ export default function RegistrationRequests() {
   const [error, setError] = useState("");
 
   /* =========================================================
-     UČITAVANJE ZAHTEVA
+     FETCH REQUESTS
   ========================================================= */
 
   const fetchRequests = async () => {
@@ -51,7 +51,7 @@ export default function RegistrationRequests() {
         throw new Error(
           Array.isArray(data.message)
             ? data.message.join(", ")
-            : data.message || "Greška pri učitavanju zahteva."
+            : data.message || "Failed to load registration requests."
         );
       }
 
@@ -70,7 +70,7 @@ export default function RegistrationRequests() {
   }, [token]);
 
   /* =========================================================
-     ODOBRAVANJE ZAHTEVA
+     APPROVE REQUEST
   ========================================================= */
 
   const approveRequest = async (request) => {
@@ -96,7 +96,7 @@ export default function RegistrationRequests() {
         throw new Error(
           Array.isArray(data.message)
             ? data.message.join(", ")
-            : data.message || "Greška pri odobravanju zahteva."
+            : data.message || "Failed to approve the request."
         );
       }
 
@@ -112,7 +112,7 @@ export default function RegistrationRequests() {
   };
 
   /* =========================================================
-     ODBIJANJE ZAHTEVA
+     REJECT REQUEST
   ========================================================= */
 
   const openRejectModal = (request) => {
@@ -148,7 +148,7 @@ export default function RegistrationRequests() {
         throw new Error(
           Array.isArray(data.message)
             ? data.message.join(", ")
-            : data.message || "Greška pri odbijanju zahteva."
+            : data.message || "Failed to reject the request."
         );
       }
 
@@ -187,13 +187,13 @@ export default function RegistrationRequests() {
   const getStatusText = (status) => {
     switch (status) {
       case "PENDING":
-        return "Na čekanju";
+        return "Pending";
 
       case "APPROVED":
-        return "Odobreno";
+        return "Approved";
 
       case "REJECTED":
-        return "Odbijeno";
+        return "Rejected";
 
       default:
         return status;
@@ -201,13 +201,13 @@ export default function RegistrationRequests() {
   };
 
   /* =========================================================
-     DATUM
+     DATE
   ========================================================= */
 
   const formatDate = (date) => {
     if (!date) return "-";
 
-    return new Date(date).toLocaleString("sr-RS", {
+    return new Date(date).toLocaleString("en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -224,7 +224,7 @@ export default function RegistrationRequests() {
     return (
       <div className="registration-requests-page">
         <div className="requests-loading">
-          Učitavanje zahteva...
+          Loading registration requests...
         </div>
       </div>
     );
@@ -244,14 +244,15 @@ export default function RegistrationRequests() {
       <div className="requests-header">
 
         <div>
-          <h1>Zahtevi za registraciju</h1>
+          <h1>Registration Requests</h1>
 
           <p>
-            Pregled i upravljanje zahtevima za kreiranje organizacija.
+            Review and manage requests to create new organizations.
           </p>
         </div>
 
         <div className="requests-counter">
+
           <span>
             {
               requests.filter(
@@ -260,7 +261,8 @@ export default function RegistrationRequests() {
             }
           </span>
 
-          <small>Na čekanju</small>
+          <small>Pending</small>
+
         </div>
 
       </div>
@@ -280,17 +282,19 @@ export default function RegistrationRequests() {
       ===================================================== */}
 
       {requests.length === 0 ? (
+
         <div className="empty-requests">
 
           <FaBuilding />
 
-          <h2>Nema zahteva</h2>
+          <h2>No Registration Requests</h2>
 
           <p>
-            Trenutno nema podnetih zahteva za registraciju.
+            There are currently no registration requests.
           </p>
 
         </div>
+
       ) : (
 
         /* ===================================================
@@ -302,14 +306,16 @@ export default function RegistrationRequests() {
           <table className="requests-table">
 
             <thead>
+
               <tr>
-                <th>Korisnik</th>
-                <th>Organizacija</th>
+                <th>User</th>
+                <th>Organization</th>
                 <th>Email</th>
                 <th>Status</th>
-                <th>Datum</th>
-                <th>Akcije</th>
+                <th>Date</th>
+                <th>Actions</th>
               </tr>
+
             </thead>
 
             <tbody>
@@ -321,6 +327,7 @@ export default function RegistrationRequests() {
                   {/* USER */}
 
                   <td>
+
                     <div className="request-user">
 
                       <div className="request-avatar">
@@ -328,6 +335,7 @@ export default function RegistrationRequests() {
                       </div>
 
                       <div>
+
                         <strong>
                           {request.first_name}{" "}
                           {request.last_name}
@@ -336,14 +344,17 @@ export default function RegistrationRequests() {
                         <span>
                           @{request.username}
                         </span>
+
                       </div>
 
                     </div>
+
                   </td>
 
                   {/* ORGANIZATION */}
 
                   <td>
+
                     <div className="organization-info">
 
                       <FaBuilding />
@@ -353,11 +364,13 @@ export default function RegistrationRequests() {
                       </span>
 
                     </div>
+
                   </td>
 
                   {/* EMAIL */}
 
                   <td>
+
                     <div className="email-info">
 
                       <FaEnvelope />
@@ -365,6 +378,7 @@ export default function RegistrationRequests() {
                       {request.email}
 
                     </div>
+
                   </td>
 
                   {/* STATUS */}
@@ -398,9 +412,11 @@ export default function RegistrationRequests() {
                   {/* DATE */}
 
                   <td>
+
                     <span className="request-date">
                       {formatDate(request.created_at)}
                     </span>
+
                   </td>
 
                   {/* ACTIONS */}
@@ -416,15 +432,17 @@ export default function RegistrationRequests() {
                         onClick={() =>
                           setSelectedRequest(request)
                         }
-                        title="Pregledaj zahtev"
+                        title="View request"
+                        aria-label="View request"
                       >
                         <FaEye />
                       </button>
 
-                      {/* APPROVE */}
+                      {/* APPROVE / REJECT */}
 
                       {request.status === "PENDING" && (
                         <>
+
                           <button
                             className="approve-button"
                             onClick={() => {
@@ -432,12 +450,11 @@ export default function RegistrationRequests() {
                               setShowApproveModal(true);
                             }}
                             disabled={actionLoading}
-                            title="Odobri zahtev"
+                            title="Approve request"
+                            aria-label="Approve request"
                           >
                             <FaCheck />
                           </button>
-
-                          {/* REJECT */}
 
                           <button
                             className="reject-button"
@@ -445,10 +462,12 @@ export default function RegistrationRequests() {
                               openRejectModal(request)
                             }
                             disabled={actionLoading}
-                            title="Odbij zahtev"
+                            title="Reject request"
+                            aria-label="Reject request"
                           >
                             <FaTimes />
                           </button>
+
                         </>
                       )}
 
@@ -489,11 +508,13 @@ export default function RegistrationRequests() {
               <div className="admin-modal-header">
 
                 <div>
-                  <h2>Detalji zahteva</h2>
+
+                  <h2>Request Details</h2>
 
                   <p>
-                    Pregled podataka koje je korisnik uneo.
+                    Review the information submitted by the user.
                   </p>
+
                 </div>
 
                 <button
@@ -501,6 +522,8 @@ export default function RegistrationRequests() {
                   onClick={() =>
                     setSelectedRequest(null)
                   }
+                  title="Close"
+                  aria-label="Close"
                 >
                   <FaTimes />
                 </button>
@@ -515,13 +538,13 @@ export default function RegistrationRequests() {
 
                   <h3>
                     <FaUser />
-                    Podaci korisnika
+                    User Information
                   </h3>
 
                   <div className="details-grid">
 
                     <div>
-                      <label>Ime</label>
+                      <label>First Name</label>
 
                       <span>
                         {selectedRequest.first_name}
@@ -529,7 +552,7 @@ export default function RegistrationRequests() {
                     </div>
 
                     <div>
-                      <label>Prezime</label>
+                      <label>Last Name</label>
 
                       <span>
                         {selectedRequest.last_name}
@@ -537,7 +560,7 @@ export default function RegistrationRequests() {
                     </div>
 
                     <div>
-                      <label>Korisničko ime</label>
+                      <label>Username</label>
 
                       <span>
                         {selectedRequest.username}
@@ -562,26 +585,28 @@ export default function RegistrationRequests() {
 
                   <h3>
                     <FaBuilding />
-                    Organizacija
+                    Organization
                   </h3>
 
                   <div className="details-grid">
 
                     <div>
-                      <label>Naziv</label>
+
+                      <label>Name</label>
 
                       <span>
                         {selectedRequest.organization_name}
                       </span>
+
                     </div>
 
                     <div className="full-detail">
 
-                      <label>Opis</label>
+                      <label>Description</label>
 
                       <span>
                         {selectedRequest.organization_description ||
-                          "Nije unet opis."}
+                          "No description provided."}
                       </span>
 
                     </div>
@@ -594,7 +619,7 @@ export default function RegistrationRequests() {
 
                 <div className="detail-section">
 
-                  <h3>Status zahteva</h3>
+                  <h3>Request Status</h3>
 
                   <span
                     className={`request-status ${getStatusClass(
@@ -617,25 +642,27 @@ export default function RegistrationRequests() {
                 <div className="modal-actions">
 
                   <button
-                    className="modal-approve"
+                    className="modal-icon-button modal-approve"
                     onClick={() =>
                       setShowApproveModal(true)
                     }
                     disabled={actionLoading}
+                    title="Approve request"
+                    aria-label="Approve request"
                   >
                     <FaCheck />
-                    Odobri zahtev
                   </button>
 
                   <button
-                    className="modal-reject"
+                    className="modal-icon-button modal-reject"
                     onClick={() =>
                       openRejectModal(selectedRequest)
                     }
                     disabled={actionLoading}
+                    title="Reject request"
+                    aria-label="Reject request"
                   >
                     <FaTimes />
-                    Odbij zahtev
                   </button>
 
                 </div>
@@ -668,12 +695,13 @@ export default function RegistrationRequests() {
             <div className="admin-modal-header">
 
               <div>
-                <h2>Odobri zahtev</h2>
+
+                <h2>Approve Request</h2>
 
                 <p>
-                  Da li ste sigurni da želite da odobrite
-                  ovaj zahtev?
+                  Are you sure you want to approve this request?
                 </p>
+
               </div>
 
               <button
@@ -682,6 +710,8 @@ export default function RegistrationRequests() {
                   setShowApproveModal(false)
                 }
                 disabled={actionLoading}
+                title="Close"
+                aria-label="Close"
               >
                 <FaTimes />
               </button>
@@ -699,46 +729,54 @@ export default function RegistrationRequests() {
               </h3>
 
               <p>
-                Korisnik{" "}
+                User{" "}
                 <strong>
                   {selectedRequest.first_name}{" "}
                   {selectedRequest.last_name}
                 </strong>{" "}
-                biće kreiran kao vlasnik ove organizacije.
+                will be created as the owner of this organization.
               </p>
 
               <div className="approval-summary">
 
                 <div>
-                  <span>Korisnik</span>
+
+                  <span>User</span>
 
                   <strong>
                     @{selectedRequest.username}
                   </strong>
+
                 </div>
 
                 <div>
+
                   <span>Email</span>
 
                   <strong>
                     {selectedRequest.email}
                   </strong>
+
                 </div>
 
                 <div>
-                  <span>Organizacija</span>
+
+                  <span>Organization</span>
 
                   <strong>
                     {selectedRequest.organization_name}
                   </strong>
+
                 </div>
 
                 <div>
-                  <span>Uloga</span>
+
+                  <span>Role</span>
 
                   <strong>
                     Organization Owner
                   </strong>
+
                 </div>
 
               </div>
@@ -748,27 +786,35 @@ export default function RegistrationRequests() {
             <div className="modal-actions">
 
               <button
-                className="modal-cancel"
+                className="modal-icon-button modal-cancel"
                 onClick={() =>
                   setShowApproveModal(false)
                 }
                 disabled={actionLoading}
+                title="Cancel"
+                aria-label="Cancel"
               >
-                Otkaži
+                <FaTimes />
               </button>
 
               <button
-                className="modal-approve"
+                className="modal-icon-button modal-approve"
                 onClick={() =>
                   approveRequest(selectedRequest)
                 }
                 disabled={actionLoading}
+                title={
+                  actionLoading
+                    ? "Approving..."
+                    : "Approve request"
+                }
+                aria-label={
+                  actionLoading
+                    ? "Approving..."
+                    : "Approve request"
+                }
               >
                 <FaCheck />
-
-                {actionLoading
-                  ? "Odobravanje..."
-                  : "Da, odobri zahtev"}
               </button>
 
             </div>
@@ -799,15 +845,17 @@ export default function RegistrationRequests() {
             <div className="admin-modal-header">
 
               <div>
-                <h2>Odbij zahtev</h2>
+
+                <h2>Reject Request</h2>
 
                 <p>
-                  Zahtev korisnika{" "}
+                  The request from{" "}
                   <strong>
                     {selectedRequest.username}
                   </strong>{" "}
-                  biće označen kao odbijen.
+                  will be marked as rejected.
                 </p>
+
               </div>
 
               <button
@@ -816,6 +864,8 @@ export default function RegistrationRequests() {
                   setShowRejectModal(false)
                 }
                 disabled={actionLoading}
+                title="Close"
+                aria-label="Close"
               >
                 <FaTimes />
               </button>
@@ -825,7 +875,7 @@ export default function RegistrationRequests() {
             <div className="reject-content">
 
               <label>
-                Razlog odbijanja
+                Rejection Reason
               </label>
 
               <textarea
@@ -833,7 +883,7 @@ export default function RegistrationRequests() {
                 onChange={(e) =>
                   setRejectionReason(e.target.value)
                 }
-                placeholder="Unesite razlog odbijanja..."
+                placeholder="Enter the reason for rejection..."
                 rows="5"
               />
 
@@ -842,25 +892,33 @@ export default function RegistrationRequests() {
             <div className="modal-actions">
 
               <button
-                className="modal-cancel"
+                className="modal-icon-button modal-cancel"
                 onClick={() =>
                   setShowRejectModal(false)
                 }
                 disabled={actionLoading}
+                title="Cancel"
+                aria-label="Cancel"
               >
-                Otkaži
+                <FaTimes />
               </button>
 
               <button
-                className="modal-reject"
+                className="modal-icon-button modal-reject"
                 onClick={rejectRequest}
                 disabled={actionLoading}
+                title={
+                  actionLoading
+                    ? "Processing..."
+                    : "Reject request"
+                }
+                aria-label={
+                  actionLoading
+                    ? "Processing..."
+                    : "Reject request"
+                }
               >
                 <FaTimes />
-
-                {actionLoading
-                  ? "Obrada..."
-                  : "Odbij zahtev"}
               </button>
 
             </div>

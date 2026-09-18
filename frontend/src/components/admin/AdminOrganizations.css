@@ -1,0 +1,1103 @@
+/* =========================================================
+   ADMIN ORGANIZATIONS PAGE
+========================================================= */
+
+.admin-organizations-page {
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  padding: 32px 38px 50px;
+  background: #f7f8fc;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.admin-organizations-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.admin-organizations-label {
+  display: inline-block;
+  margin-bottom: 8px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #7c3aed;
+}
+
+.admin-organizations-header h1 {
+  margin: 0;
+
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.admin-organizations-header p {
+  margin: 8px 0 0;
+
+  font-size: 14px;
+  color: #7b8494;
+}
+
+/* =========================================================
+   COUNTER
+========================================================= */
+
+.admin-organizations-counter {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-width: 190px;
+  padding: 14px 18px;
+
+  border: 1px solid #e7e9f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.05);
+}
+
+.admin-organizations-counter > svg {
+  width: 19px;
+  height: 19px;
+
+  color: #7c3aed;
+}
+
+.admin-organizations-counter div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-organizations-counter strong {
+  font-size: 20px;
+  line-height: 1;
+  color: #1f2937;
+}
+
+.admin-organizations-counter span {
+  font-size: 11px;
+  color: #8a93a3;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.admin-organizations-error {
+  margin-bottom: 22px;
+  padding: 13px 16px;
+
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+
+  background: #fff5f5;
+  color: #b91c1c;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.admin-organizations-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+.admin-organization-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 88px;
+  padding: 16px 18px;
+
+  border: 1px solid #e7e9f0;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.04);
+}
+
+.admin-organization-stat-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+}
+
+.admin-organization-stat-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-organization-stat-icon.total {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.admin-organization-stat-icon.active {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+.admin-organization-stat-icon.inactive {
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+.admin-organization-stat-icon.suspended {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.admin-organization-stat-card div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-organization-stat-card span {
+  font-size: 12px;
+  color: #8a93a3;
+}
+
+.admin-organization-stat-card strong {
+  font-size: 22px;
+  line-height: 1;
+  color: #1f2937;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.admin-organizations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 16px;
+  padding: 14px;
+
+  border: 1px solid #e7e9f0;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.04);
+}
+
+.admin-organizations-search {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: min(440px, 100%);
+}
+
+.admin-organizations-search > svg {
+  position: absolute;
+  left: 14px;
+
+  width: 14px;
+  height: 14px;
+
+  color: #9aa2b1;
+}
+
+.admin-organizations-search input {
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  padding: 0 14px 0 38px;
+
+  border: 1px solid #e2e5ec;
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #f9fafc;
+  color: #1f2937;
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.admin-organizations-search input:focus {
+  border-color: #8b5cf6;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+
+.admin-organizations-search input::placeholder {
+  color: #a1a8b5;
+}
+
+.admin-organizations-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-organizations-filters select {
+  height: 42px;
+
+  min-width: 145px;
+
+  padding: 0 32px 0 12px;
+
+  border: 1px solid #e2e5ec;
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #f9fafc;
+  color: #4b5563;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.admin-organizations-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+
+  border: 1px solid #e7e9f0;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.04);
+}
+
+.admin-organizations-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 950px;
+}
+
+.admin-organizations-table thead {
+  background: #fafbfc;
+}
+
+.admin-organizations-table th {
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e7e9f0;
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+
+  color: #8a93a3;
+}
+
+.admin-organizations-table td {
+  padding: 15px 18px;
+
+  border-bottom: 1px solid #eef0f4;
+
+  font-size: 13px;
+  color: #4b5563;
+
+  vertical-align: middle;
+}
+
+.admin-organizations-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-organizations-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.admin-organizations-table tbody tr:hover {
+  background: #fafaff;
+}
+
+/* =========================================================
+   ORGANIZATION CELL
+========================================================= */
+
+.admin-organization-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-organization-avatar {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.admin-organization-avatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-organization-cell div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-organization-cell strong {
+  color: #273142;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-organization-cell span {
+  color: #9aa2b1;
+  font-size: 11px;
+}
+
+/* =========================================================
+   OWNER
+========================================================= */
+
+.admin-organization-owner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-owner-avatar {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.admin-owner-avatar svg {
+  width: 13px;
+  height: 13px;
+}
+
+.admin-organization-owner div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.admin-organization-owner strong {
+  max-width: 180px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 12px;
+  color: #374151;
+}
+
+.admin-organization-owner span {
+  max-width: 180px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 11px;
+  color: #9aa2b1;
+}
+
+.admin-no-owner {
+  color: #a1a8b5;
+  font-size: 12px;
+}
+
+/* =========================================================
+   MEMBERS
+========================================================= */
+
+.admin-organization-members {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #4b5563;
+}
+
+.admin-organization-members svg {
+  width: 13px;
+  height: 13px;
+  color: #8b5cf6;
+}
+
+.admin-organization-members strong {
+  font-size: 13px;
+  color: #374151;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.admin-organization-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-organization-status svg {
+  width: 11px;
+  height: 11px;
+}
+
+.admin-organization-status.active {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.admin-organization-status.inactive {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.admin-organization-status.suspended {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.admin-organization-status.unknown {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.admin-organization-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  white-space: nowrap;
+}
+
+.admin-organization-date svg {
+  width: 12px;
+  height: 12px;
+  color: #9aa2b1;
+}
+
+.admin-organization-date span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.admin-organization-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.admin-organization-view-button {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e2e5ec;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-organization-view-button:hover {
+  border-color: #c4b5fd;
+  background: #f5f3ff;
+  color: #7c3aed;
+  transform: translateY(-1px);
+}
+
+.admin-organization-view-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* =========================================================
+   LOADING / EMPTY
+========================================================= */
+
+.admin-organizations-loading,
+.admin-organizations-empty {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e7e9f0;
+  border-radius: 16px;
+
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.04);
+
+  text-align: center;
+}
+
+.admin-organizations-loading {
+  gap: 10px;
+  color: #7c3aed;
+}
+
+.admin-organizations-loading svg {
+  width: 25px;
+  height: 25px;
+}
+
+.admin-organizations-loading span {
+  font-size: 13px;
+  color: #7b8494;
+}
+
+.admin-organizations-empty {
+  padding: 30px;
+}
+
+.admin-organizations-empty > svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 14px;
+
+  color: #c4b5fd;
+}
+
+.admin-organizations-empty h2 {
+  margin: 0 0 7px;
+
+  font-size: 18px;
+  color: #374151;
+}
+
+.admin-organizations-empty p {
+  margin: 0;
+
+  font-size: 13px;
+  color: #8a93a3;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.admin-organization-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.admin-organization-modal {
+  width: min(680px, 100%);
+  max-height: calc(100vh - 50px);
+
+  overflow-y: auto;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.2);
+
+  animation: adminOrganizationModalIn 0.2s ease;
+}
+
+@keyframes adminOrganizationModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.admin-organization-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 24px 25px 20px;
+
+  border-bottom: 1px solid #eef0f4;
+}
+
+.admin-organization-modal-header > div {
+  min-width: 0;
+}
+
+.admin-organization-modal-header span {
+  display: block;
+  margin-bottom: 5px;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+
+  color: #7c3aed;
+}
+
+.admin-organization-modal-header h2 {
+  margin: 0;
+
+  font-size: 22px;
+  color: #273142;
+}
+
+.admin-organization-modal-header p {
+  margin: 6px 0 0;
+
+  font-size: 12px;
+  color: #8a93a3;
+}
+
+.admin-organization-modal-close {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-organization-modal-close:hover {
+  border-color: #fecaca;
+  background: #fff5f5;
+  color: #dc2626;
+}
+
+.admin-organization-modal-close svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* =========================================================
+   ORGANIZATION PREVIEW
+========================================================= */
+
+.admin-organization-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin: 20px 25px;
+
+  padding: 16px;
+
+  border: 1px solid #eceef3;
+  border-radius: 14px;
+
+  background: #fafbff;
+}
+
+.admin-organization-large-avatar {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.admin-organization-large-avatar svg {
+  width: 21px;
+  height: 21px;
+}
+
+.admin-organization-preview h3 {
+  margin: 0 0 5px;
+
+  font-size: 17px;
+  color: #273142;
+}
+
+.admin-organization-preview span {
+  font-size: 11px;
+  color: #929aaa;
+}
+
+/* =========================================================
+   DETAIL GRID
+========================================================= */
+
+.admin-organization-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  padding: 0 25px;
+}
+
+.admin-organization-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding: 14px;
+
+  border: 1px solid #eceef3;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.admin-organization-detail-card > span {
+  font-size: 11px;
+  color: #929aaa;
+}
+
+.admin-organization-detail-card > strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  color: #374151;
+}
+
+.admin-organization-detail-card > strong > svg {
+  color: #7c3aed;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.admin-organization-description {
+  margin: 18px 25px 0;
+  padding: 15px;
+
+  border: 1px solid #eceef3;
+  border-radius: 12px;
+
+  background: #fafbfc;
+}
+
+.admin-organization-description > span {
+  display: block;
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a93a3;
+}
+
+.admin-organization-description p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* =========================================================
+   OWNER SECTION
+========================================================= */
+
+.admin-organization-owner-section {
+  margin: 18px 25px 25px;
+}
+
+.admin-organization-section-heading {
+  margin-bottom: 10px;
+}
+
+.admin-organization-section-heading h3 {
+  margin: 0;
+
+  font-size: 14px;
+  color: #374151;
+}
+
+.admin-organization-modal-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+
+  border: 1px solid #eceef3;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.admin-owner-large-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.admin-owner-large-avatar svg {
+  width: 15px;
+  height: 15px;
+}
+
+.admin-organization-modal-owner > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-organization-modal-owner strong {
+  font-size: 13px;
+  color: #374151;
+}
+
+.admin-organization-modal-owner span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11px;
+  color: #8a93a3;
+}
+
+.admin-organization-modal-owner span svg {
+  width: 11px;
+  height: 11px;
+}
+
+.admin-organization-no-owner {
+  padding: 14px;
+
+  border: 1px dashed #d9dde5;
+  border-radius: 12px;
+
+  color: #929aaa;
+
+  font-size: 12px;
+  text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .admin-organizations-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .admin-organizations-page {
+    padding: 28px 22px 40px;
+  }
+
+  .admin-organizations-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-organizations-counter {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-organizations-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-organizations-search {
+    width: 100%;
+  }
+
+  .admin-organizations-filters {
+    width: 100%;
+  }
+
+  .admin-organizations-filters select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-organizations-page {
+    padding: 22px 14px 35px;
+  }
+
+  .admin-organizations-header h1 {
+    font-size: 27px;
+  }
+
+  .admin-organizations-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-organization-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-organization-modal-overlay {
+    padding: 12px;
+  }
+
+  .admin-organization-modal {
+    max-height: calc(100vh - 24px);
+    border-radius: 16px;
+  }
+
+  .admin-organization-modal-header {
+    padding: 20px 18px 17px;
+  }
+
+  .admin-organization-preview {
+    margin: 16px 18px;
+  }
+
+  .admin-organization-detail-grid {
+    padding: 0 18px;
+  }
+
+  .admin-organization-description {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .admin-organization-owner-section {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+}

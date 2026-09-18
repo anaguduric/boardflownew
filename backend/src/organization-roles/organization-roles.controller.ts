@@ -15,7 +15,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { CreateOrganizationRoleDto } from './dto/create-organization-role.dto';
 
-@Controller('organizations/:organizationId/roles')
+@Controller('organizations')
 export class OrganizationRolesController {
 
   constructor(
@@ -25,11 +25,39 @@ export class OrganizationRolesController {
 
 
   // =========================================================
-  // GET ORGANIZATION ROLES
+  // ADMIN - ALL ROLES
+  // GET /organizations/admin/roles
   // =========================================================
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('admin/roles')
+  async getAdminRoles(
+    @Req() req: any,
+  ) {
+
+    console.log(
+      'GET ADMIN ORGANIZATION ROLES',
+    );
+
+    console.log(
+      'ADMIN USER ID:',
+      req.user?.userId,
+    );
+
+    return this.organizationRolesService
+      .getAdminRoles(
+        req.user.userId,
+      );
+  }
+
+
+  // =========================================================
+  // GET ORGANIZATION ROLES
+  // GET /organizations/:organizationId/roles
+  // =========================================================
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':organizationId/roles')
   async getOrganizationRoles(
     @Param(
       'organizationId',
@@ -54,21 +82,20 @@ export class OrganizationRolesController {
       req.user?.userId,
     );
 
-
     return this.organizationRolesService
       .getOrganizationRoles(
         organizationId,
       );
-
   }
 
 
   // =========================================================
   // CREATE ORGANIZATION ROLE
+  // POST /organizations/:organizationId/roles
   // =========================================================
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post(':organizationId/roles')
   async createOrganizationRole(
     @Param(
       'organizationId',
@@ -102,13 +129,10 @@ export class OrganizationRolesController {
       createOrganizationRoleDto,
     );
 
-
     return this.organizationRolesService
       .createOrganizationRole(
         organizationId,
         createOrganizationRoleDto,
       );
-
   }
-
 }

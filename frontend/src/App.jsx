@@ -21,6 +21,10 @@ import OtpVerify from "./OtpVerify";
 import AcceptInvitation from "./components/organizations/AcceptInvitation";
 import TeamList from './components/teams/TeamList';
 import TeamDetails from './components/teams/TeamDetails';
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminUsers from "./components/admin/AdminUsers";
+import AdminOrganizations from "./components/admin/AdminOrganizations";
+import AdminRoles from "./components/admin/AdminRoles";
 
 function App() {
   return (
@@ -47,6 +51,10 @@ function App() {
         <Route path="/accept-invitation" element={<AcceptInvitation />}/>
         <Route path="/teams" element={<TeamList />} />
         <Route path="/teams/:id" element={<TeamDetails />}/>
+        <Route path="/admin" element={<AdminDashboard />}/>
+        <Route path="/admin/users" element={<AdminUsers />}/>
+        <Route path="/admin/organizations" element={<AdminOrganizations />}/>
+        <Route path="/admin/roles" element={<AdminRoles />}/>
       </Routes>
     </>
   );

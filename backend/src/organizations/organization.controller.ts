@@ -44,7 +44,21 @@ export class OrganizationController {
     return this.organizationService
       .getMyOrganizations(userId);
   }
+  // =====================================================
+  // ADMIN - ALL ORGANIZATIONS
+  // GET /organizations/admin/all
+  // =====================================================
 
+  @UseGuards(JwtAuthGuard)
+  @Get('admin/all')
+  async getAdminOrganizations(
+    @Req() req: any,
+  ) {
+    return this.organizationService
+    .getAdminOrganizations(
+      req.user.userId,
+    );
+  }
 
   // =====================================================
   // GET ONE ORGANIZATION

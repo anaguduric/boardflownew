@@ -224,6 +224,40 @@ export class RegistrationRequestsService {
     return admin;
   }
 
+  async getAdminStats(adminUserId: number) {
+  await this.checkSuperAdmin(adminUserId);
+
+  const [
+    totalUsers,
+    totalOrganizations,
+    pendingRequests,
+    verifiedUsers,
+  ] = await Promise.all([
+    this.userRepository.count(),
+
+    this.organizationRepository.count(),
+
+    this.requestRepository.count({
+      where: {
+        status: 'PENDING',
+      },
+    }),
+
+    this.userRepository.count({
+      where: {
+        status: 'verified',
+      },
+    }),
+  ]);
+
+  return {
+    totalUsers,
+    totalOrganizations,
+    pendingRequests,
+    verifiedUsers,
+  };
+}
+
   // ============================================================
   // ADMIN - ODOBRAVANJE ZAHTEVA
   // ============================================================

@@ -8,6 +8,7 @@ import {
   FaChevronDown,
   FaUser,
   FaSignOutAlt,
+  FaUserShield,
 } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
@@ -23,6 +24,14 @@ export default function Navbar() {
   const ref = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("NAVBAR USER:", user);
+
+  // =========================================================
+  // PROVERA DA LI JE KORISNIK ADMIN
+  // =========================================================
+
+  const isAdmin =
+    user?.role?.name?.toLowerCase() === "super_admin";
 
   // =========================================================
   // UČITAVANJE PROFILNE SLIKE
@@ -169,6 +178,7 @@ export default function Navbar() {
             <span>Projects</span>
           </Link>
 
+
           <Link
             to="/organizations"
             className={
@@ -180,6 +190,7 @@ export default function Navbar() {
             <FaBuilding />
             <span>Organizations</span>
           </Link>
+
 
           <Link
             to="/teams"
@@ -281,7 +292,7 @@ export default function Navbar() {
                 </span>
 
                 <span className="user-role">
-                  Account
+                  {isAdmin ? "Administrator" : "Account"}
                 </span>
 
               </div>
@@ -362,6 +373,26 @@ export default function Navbar() {
                   </span>
 
                 </Link>
+
+
+                {/* ADMIN */}
+
+                {isAdmin && (
+
+                  <Link
+                    to="/admin"
+                    onClick={() => setOpen(false)}
+                  >
+
+                    <FaUserShield />
+
+                    <span>
+                      Admin
+                    </span>
+
+                  </Link>
+
+                )}
 
 
                 {/* LOGOUT */}
