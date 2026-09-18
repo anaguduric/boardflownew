@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
+import {
+  FaCalendarAlt,
+  FaChevronLeft,
+  FaChevronRight,
+  FaExternalLinkAlt,
+  FaMapMarkerAlt,
+  FaSyncAlt,
+  FaTimes,
+} from "react-icons/fa";
 import "./GoogleCalendar.css";
 
 const API_URL = "http://localhost:3000";
 
-const WEEK_DAYS = [
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thu",
-  "Fri",
-  "Sat",
-  "Sun",
-];
+const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 function getMonthDays(date) {
   const year = date.getFullYear();
@@ -19,25 +20,35 @@ function getMonthDays(date) {
 
   const firstDay = new Date(year, month, 1);
 
-  // JS: Sunday = 0, Monday = 1...
-  // Pretvaramo da je Monday = 0
   const firstDayIndex = (firstDay.getDay() + 6) % 7;
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInMonth = new Date(
+    year,
+    month + 1,
+    0
+  ).getDate();
 
-  const previousMonthDays = new Date(year, month, 0).getDate();
+  const previousMonthDays = new Date(
+    year,
+    month,
+    0
+  ).getDate();
 
   const days = [];
 
-  // Dani prethodnog meseca
+  // Previous month
   for (let i = firstDayIndex - 1; i >= 0; i--) {
     days.push({
-      date: new Date(year, month - 1, previousMonthDays - i),
+      date: new Date(
+        year,
+        month - 1,
+        previousMonthDays - i
+      ),
       currentMonth: false,
     });
   }
 
-  // Dani trenutnog meseca
+  // Current month
   for (let i = 1; i <= daysInMonth; i++) {
     days.push({
       date: new Date(year, month, i),
@@ -45,7 +56,7 @@ function getMonthDays(date) {
     });
   }
 
-  // Dani sledećeg meseca
+  // Next month
   let nextDay = 1;
 
   while (days.length < 42) {
@@ -67,6 +78,14 @@ function formatMonth(date) {
   });
 }
 
+function formatSelectedDate(date) {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function isSameDay(date1, date2) {
   return (
     date1.getFullYear() === date2.getFullYear() &&
@@ -76,7 +95,9 @@ function isSameDay(date1, date2) {
 }
 
 function getEventDate(event) {
-  const value = event?.start?.dateTime || event?.start?.date;
+  const value =
+    event?.start?.dateTime ||
+    event?.start?.date;
 
   if (!value) {
     return null;
@@ -94,23 +115,36 @@ function formatEventTime(event) {
     return "";
   }
 
-  return new Date(event.start.dateTime).toLocaleTimeString("en-US", {
+  return new Date(
+    event.start.dateTime
+  ).toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
   });
 }
 
 export default function GoogleCalendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] =
+    useState(new Date());
+
   const [today] = useState(new Date());
 
+  const [selectedDate, setSelectedDate] =
+    useState(new Date());
+
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [loading, setLoading] =
+    useState(true);
 
-  const token = localStorage.getItem("token");
+  const [error, setError] =
+    useState("");
+
+  const [selectedEvent, setSelectedEvent] =
+    useState(null);
+
+  const token =
+    localStorage.getItem("token");
 
   const days = useMemo(() => {
     return getMonthDays(currentDate);
@@ -130,121 +164,193 @@ export default function GoogleCalendar() {
         return;
       }
 
-      const response = await fetch(`${API_URL}/google-calendar/events`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/google-calendar/events`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to load Google Calendar events.");
+        throw new Error(
+          "Failed to load Google Calendar events."
+        );
       }
 
       const data = await response.json();
 
       setEvents(data.events || []);
     } catch (err) {
-      console.error("Google Calendar error:", err);
-      setError("Could not load calendar events.");
+      console.error(
+        "Google Calendar error:",
+        err
+      );
+
+      setError(
+        "Could not load calendar events."
+      );
     } finally {
       setLoading(false);
     }
   }
 
   function goToPreviousMonth() {
-    setCurrentDate(
-      new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() - 1,
-        1
-      )
+    const previousMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
     );
+
+    setCurrentDate(previousMonth);
+    setSelectedDate(previousMonth);
   }
 
   function goToNextMonth() {
-    setCurrentDate(
-      new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
-        1
-      )
+    const nextMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      1
     );
+
+    setCurrentDate(nextMonth);
+    setSelectedDate(nextMonth);
   }
 
   function goToToday() {
-    setCurrentDate(new Date());
+    const todayDate = new Date();
+
+    setCurrentDate(todayDate);
+    setSelectedDate(todayDate);
   }
 
   function getEventsForDay(day) {
     return events.filter((event) => {
-      const eventDate = getEventDate(event);
+      const eventDate =
+        getEventDate(event);
 
       if (!eventDate) {
         return false;
       }
 
-      return isSameDay(eventDate, day);
+      return isSameDay(
+        eventDate,
+        day
+      );
     });
   }
 
+  const selectedDayEvents = useMemo(() => {
+    return events
+      .filter((event) => {
+        const eventDate =
+          getEventDate(event);
+
+        if (!eventDate) {
+          return false;
+        }
+
+        return isSameDay(
+          eventDate,
+          selectedDate
+        );
+      })
+      .sort((a, b) => {
+        const dateA =
+          getEventDate(a);
+
+        const dateB =
+          getEventDate(b);
+
+        return dateA - dateB;
+      });
+  }, [events, selectedDate]);
+
   return (
     <div className="google-calendar">
-      {/* HEADER */}
 
-      <div className="google-calendar-header">
-        <div className="google-calendar-left">
-          <button
-            className="calendar-today-btn"
-            onClick={goToToday}
-          >
-            Today
-          </button>
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-          <div className="calendar-navigation">
-            <button
-              className="calendar-nav-btn"
-              onClick={goToPreviousMonth}
-              aria-label="Previous month"
-            >
-              ‹
-            </button>
+      <div className="calendar-header">
 
-            <button
-              className="calendar-nav-btn"
-              onClick={goToNextMonth}
-              aria-label="Next month"
-            >
-              ›
-            </button>
+        <div className="calendar-header-title">
+
+          <div className="calendar-icon">
+            <FaCalendarAlt />
           </div>
 
-          <h2>{formatMonth(currentDate)}</h2>
+          <div>
+            <h2>Calendar</h2>
+
+            <span>
+              {formatMonth(currentDate)}
+            </span>
+          </div>
+
         </div>
 
-        <div className="google-calendar-right">
-          <span className="calendar-view-label">
-            Month
-          </span>
+        <button
+          className="calendar-refresh-btn"
+          onClick={loadEvents}
+          title="Refresh calendar"
+          aria-label="Refresh calendar"
+        >
+          <FaSyncAlt />
+        </button>
 
-          <button
-            className="calendar-refresh-btn"
-            onClick={loadEvents}
-            title="Refresh calendar"
-          >
-            ↻
-          </button>
-        </div>
       </div>
 
-      {/* LOADING */}
+      {/* =====================================================
+          CONTROLS
+      ===================================================== */}
+
+      <div className="calendar-controls">
+
+        <button
+          className="calendar-today-btn"
+          onClick={goToToday}
+        >
+          Today
+        </button>
+
+        <div className="calendar-month-navigation">
+
+          <button
+            className="calendar-nav-btn"
+            onClick={goToPreviousMonth}
+            aria-label="Previous month"
+          >
+            <FaChevronLeft />
+          </button>
+
+          <button
+            className="calendar-nav-btn"
+            onClick={goToNextMonth}
+            aria-label="Next month"
+          >
+            <FaChevronRight />
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* =====================================================
+          LOADING
+      ===================================================== */}
 
       {loading && (
         <div className="calendar-loading">
-          Loading your Google Calendar...
+          Loading calendar...
         </div>
       )}
 
-      {/* ERROR */}
+      {/* =====================================================
+          ERROR
+      ===================================================== */}
 
       {error && (
         <div className="calendar-error">
@@ -252,105 +358,238 @@ export default function GoogleCalendar() {
         </div>
       )}
 
-      {/* WEEK DAYS */}
+      {/* =====================================================
+          WEEK DAYS
+      ===================================================== */}
 
       <div className="calendar-weekdays">
-        {WEEK_DAYS.map((day) => (
-          <div
-            key={day}
-            className="calendar-weekday"
-          >
-            {day}
-          </div>
-        ))}
-      </div>
 
-      {/* CALENDAR GRID */}
-
-      <div className="calendar-grid">
-        {days.map((dayInfo, index) => {
-          const dayEvents = getEventsForDay(dayInfo.date);
-
-          const isToday = isSameDay(
-            dayInfo.date,
-            today
-          );
-
-          return (
+        {WEEK_DAYS.map(
+          (day, index) => (
             <div
-              key={index}
-              className={`calendar-day ${
-                !dayInfo.currentMonth
-                  ? "calendar-day-other-month"
+              key={`${day}-${index}`}
+              className={`calendar-weekday ${
+                index >= 5
+                  ? "calendar-weekend"
                   : ""
               }`}
             >
-              <div
-                className={`calendar-day-number ${
-                  isToday
-                    ? "calendar-day-today"
-                    : ""
-                }`}
-              >
-                {dayInfo.date.getDate()}
-              </div>
-
-              <div className="calendar-day-events">
-                {dayEvents.slice(0, 3).map((event) => (
-                  <button
-                    key={event.id}
-                    className="calendar-event"
-                    onClick={() =>
-                      setSelectedEvent(event)
-                    }
-                  >
-                    <span className="calendar-event-title">
-                      {event.summary || "Untitled event"}
-                    </span>
-
-                    <span className="calendar-event-time">
-                      {formatEventTime(event)}
-                    </span>
-                  </button>
-                ))}
-
-                {dayEvents.length > 3 && (
-                  <button
-                    className="calendar-more-events"
-                    onClick={() =>
-                      setSelectedEvent(dayEvents[3])
-                    }
-                  >
-                    +{dayEvents.length - 3} more
-                  </button>
-                )}
-              </div>
+              {day}
             </div>
-          );
-        })}
+          )
+        )}
+
       </div>
 
-      {/* EVENT MODAL */}
+      {/* =====================================================
+          CALENDAR GRID
+      ===================================================== */}
+
+      <div className="calendar-grid">
+
+        {days.map(
+          (dayInfo, index) => {
+
+            const dayEvents =
+              getEventsForDay(
+                dayInfo.date
+              );
+
+            const isToday =
+              isSameDay(
+                dayInfo.date,
+                today
+              );
+
+            const isSelected =
+              isSameDay(
+                dayInfo.date,
+                selectedDate
+              );
+
+            return (
+              <button
+                key={index}
+                type="button"
+                className={`
+                  calendar-day
+
+                  ${
+                    !dayInfo.currentMonth
+                      ? "calendar-day-other-month"
+                      : ""
+                  }
+
+                  ${
+                    isSelected
+                      ? "calendar-day-selected"
+                      : ""
+                  }
+                `}
+                onClick={() =>
+                  setSelectedDate(
+                    dayInfo.date
+                  )
+                }
+              >
+
+                <span
+                  className={`
+                    calendar-day-number
+
+                    ${
+                      isToday
+                        ? "calendar-day-today"
+                        : ""
+                    }
+                  `}
+                >
+                  {dayInfo.date.getDate()}
+                </span>
+
+                {/* SAMO MALA TAČKICA AKO POSTOJI EVENT */}
+
+                {dayEvents.length > 0 && (
+                  <span className="calendar-event-dot" />
+                )}
+
+              </button>
+            );
+          }
+        )}
+
+      </div>
+
+      {/* =====================================================
+          SELECTED DAY EVENTS
+      ===================================================== */}
+
+      <div className="calendar-upcoming">
+
+        <div className="calendar-section-header">
+
+          <div>
+            <h3>Events</h3>
+
+            <span className="selected-date-label">
+              {formatSelectedDate(
+                selectedDate
+              )}
+            </span>
+          </div>
+
+          {selectedDayEvents.length >
+            0 && (
+            <span className="calendar-event-count">
+              {selectedDayEvents.length}
+            </span>
+          )}
+
+        </div>
+
+        {/* EMPTY */}
+
+        {selectedDayEvents.length ===
+          0 &&
+          !loading && (
+            <div className="calendar-empty">
+
+              <FaCalendarAlt />
+
+              <p>
+                No events for this day
+              </p>
+
+            </div>
+          )}
+
+        {/* EVENTS */}
+
+        {selectedDayEvents.length >
+          0 && (
+          <div className="calendar-event-list">
+
+            {selectedDayEvents.map(
+              (event) => (
+                <button
+                  key={event.id}
+                  className="calendar-upcoming-event"
+                  onClick={() =>
+                    setSelectedEvent(
+                      event
+                    )
+                  }
+                  type="button"
+                >
+
+                  <div className="calendar-event-date">
+                    <strong>
+                      {formatEventTime(
+                        event
+                      )}
+                    </strong>
+                  </div>
+
+                  <div className="calendar-event-info">
+
+                    <strong>
+                      {event.summary ||
+                        "Untitled event"}
+                    </strong>
+
+                    {event.location && (
+                      <span className="calendar-event-location">
+
+                        <FaMapMarkerAlt />
+
+                        {event.location}
+
+                      </span>
+                    )}
+
+                  </div>
+
+                </button>
+              )
+            )}
+
+          </div>
+        )}
+
+      </div>
+
+      {/* =====================================================
+          EVENT MODAL
+      ===================================================== */}
 
       {selectedEvent && (
         <div
           className="calendar-event-overlay"
-          onClick={() => setSelectedEvent(null)}
+          onClick={() =>
+            setSelectedEvent(null)
+          }
         >
+
           <div
             className="calendar-event-modal"
             onClick={(event) =>
               event.stopPropagation()
             }
           >
+
             <button
               className="calendar-modal-close"
               onClick={() =>
                 setSelectedEvent(null)
               }
+              aria-label="Close"
             >
-              ×
+              <FaTimes />
             </button>
+
+            <div className="calendar-modal-icon">
+              <FaCalendarAlt />
+            </div>
 
             <h3>
               {selectedEvent.summary ||
@@ -359,7 +598,8 @@ export default function GoogleCalendar() {
 
             {selectedEvent.start?.dateTime && (
               <p>
-                <strong>Start:</strong>{" "}
+                <strong>Start</strong>
+
                 {new Date(
                   selectedEvent.start.dateTime
                 ).toLocaleString()}
@@ -368,7 +608,8 @@ export default function GoogleCalendar() {
 
             {selectedEvent.start?.date && (
               <p>
-                <strong>Date:</strong>{" "}
+                <strong>Date</strong>
+
                 {new Date(
                   selectedEvent.start.date
                 ).toLocaleDateString()}
@@ -377,7 +618,8 @@ export default function GoogleCalendar() {
 
             {selectedEvent.end?.dateTime && (
               <p>
-                <strong>End:</strong>{" "}
+                <strong>End</strong>
+
                 {new Date(
                   selectedEvent.end.dateTime
                 ).toLocaleString()}
@@ -386,7 +628,8 @@ export default function GoogleCalendar() {
 
             {selectedEvent.location && (
               <p>
-                <strong>Location:</strong>{" "}
+                <strong>Location</strong>
+
                 {selectedEvent.location}
               </p>
             )}
@@ -399,17 +642,24 @@ export default function GoogleCalendar() {
 
             {selectedEvent.htmlLink && (
               <a
-                href={selectedEvent.htmlLink}
+                href={
+                  selectedEvent.htmlLink
+                }
                 target="_blank"
                 rel="noreferrer"
                 className="open-google-event"
               >
                 Open in Google Calendar
+
+                <FaExternalLinkAlt />
               </a>
             )}
+
           </div>
+
         </div>
       )}
+
     </div>
   );
 }
