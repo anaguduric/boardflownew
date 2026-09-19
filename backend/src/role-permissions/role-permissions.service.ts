@@ -26,9 +26,7 @@ import {
 
 @Injectable()
 export class RolePermissionsService {
-
   constructor(
-
     @InjectRepository(RolePermission)
     private readonly rolePermissionRepository:
       Repository<RolePermission>,
@@ -40,9 +38,7 @@ export class RolePermissionsService {
     @InjectRepository(OrganizationRole)
     private readonly roleRepository:
       Repository<OrganizationRole>,
-
   ) {}
-
 
   // =========================================================
   // GET ROLE PERMISSIONS
@@ -52,30 +48,22 @@ export class RolePermissionsService {
     organizationId: number,
     roleId: number,
   ) {
-
     // -------------------------------------------------------
-    // PROVERA ROLE
+    // PROVERA GLOBALNE ROLE
     // -------------------------------------------------------
 
     const role =
       await this.roleRepository.findOne({
         where: {
           role_id: roleId,
-
-          organization_id:
-            organizationId,
         },
       });
 
-
     if (!role) {
-
       throw new BadRequestException(
-        'Role does not belong to this organization.',
+        'Role does not exist.',
       );
-
     }
-
 
     // -------------------------------------------------------
     // GET PERMISSIONS
@@ -86,16 +74,13 @@ export class RolePermissionsService {
         where: {
           role_id: roleId,
         },
-
         relations: [
           'permission',
         ],
       });
 
-
     return rolePermissions.map(
       (rolePermission) => ({
-
         permission_id:
           rolePermission.permission_id,
 
@@ -110,12 +95,9 @@ export class RolePermissionsService {
 
         action:
           rolePermission.permission.action,
-
       }),
     );
-
   }
-
 
   // =========================================================
   // SET ROLE PERMISSIONS
@@ -126,30 +108,22 @@ export class RolePermissionsService {
     roleId: number,
     permissionIds: number[],
   ) {
-
     // -------------------------------------------------------
-    // PROVERA ROLE
+    // PROVERA GLOBALNE ROLE
     // -------------------------------------------------------
 
     const role =
       await this.roleRepository.findOne({
         where: {
           role_id: roleId,
-
-          organization_id:
-            organizationId,
         },
       });
 
-
     if (!role) {
-
       throw new BadRequestException(
-        'Role does not belong to this organization.',
+        'Role does not exist.',
       );
-
     }
-
 
     // -------------------------------------------------------
     // VALIDACIJA PERMISSIONS
@@ -165,18 +139,14 @@ export class RolePermissionsService {
           })
         : [];
 
-
     if (
       permissions.length !==
       permissionIds.length
     ) {
-
       throw new BadRequestException(
         'One or more permissions do not exist.',
       );
-
     }
-
 
     // -------------------------------------------------------
     // TRANSACTION
@@ -185,9 +155,8 @@ export class RolePermissionsService {
     return this.rolePermissionRepository.manager
       .transaction(
         async (manager) => {
-
           // -----------------------------------------------
-          // OBRIŠI STARE
+          // OBRIŠI STARE PERMISSIONS
           // -----------------------------------------------
 
           await manager.delete(
@@ -197,13 +166,13 @@ export class RolePermissionsService {
             },
           );
 
-
           // -----------------------------------------------
-          // DODAJ NOVE
+          // DODAJ NOVE PERMISSIONS
           // -----------------------------------------------
 
-          if (permissionIds.length > 0) {
-
+          if (
+            permissionIds.length > 0
+          ) {
             const newRolePermissions =
               permissionIds.map(
                 (permissionId) =>
@@ -219,14 +188,11 @@ export class RolePermissionsService {
                   ),
               );
 
-
             await manager.save(
               RolePermission,
               newRolePermissions,
             );
-
           }
-
 
           // -----------------------------------------------
           // RETURN
@@ -241,10 +207,7 @@ export class RolePermissionsService {
             permission_ids:
               permissionIds,
           };
-
         },
       );
-
   }
-
 }

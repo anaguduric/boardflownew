@@ -61,38 +61,69 @@ export class TasksService {
   // GET ALL TASKS
   // =============================
 
-  async findAll(): Promise<Task[]> {
+  async findAll(
+    organizationId: number,
+  ): Promise<Task[]> {
 
-    return this.taskRepository.find({
-      relations: [
+    return this.taskRepository
+      .createQueryBuilder('task')
+
+      .leftJoinAndSelect(
+        'task.project',
         'project',
-        'creator',
-        'assignee',
-      ],
+      )
 
-      order: {
-        created_at: 'DESC',
-      },
-    });
+      .leftJoinAndSelect(
+        'task.creator',
+        'creator',
+      )
+
+      .leftJoinAndSelect(
+        'task.assignee',
+        'assignee',
+      )
+
+      .leftJoinAndSelect(
+        'task.status',
+        'status',
+      )
+
+      .where(
+        'project.organization_id = :organizationId',
+        {
+          organizationId,
+        },
+      )
+
+      .orderBy(
+        'task.created_at',
+        'DESC',
+      )
+
+      .getMany();
   }
 
   // =============================
   // GET ONE TASK
   // =============================
 
-  async findOne(taskId: number): Promise<Task> {
+  async findOne(
+    taskId: number,
+  ): Promise<Task> {
 
-    const task = await this.taskRepository.findOne({
-      where: {
-        task_id: taskId,
-      },
+    const task =
+      await this.taskRepository.findOne({
+        where: {
+          task_id: taskId,
+        },
 
-      relations: [
-        'project',
-        'creator',
-        'assignee',
-      ],
-    });
+        relations: [
+          'project',
+          'creator',
+          'assignee',
+          'status',
+        ],
+      });
 
     if (!task) {
       throw new NotFoundException(
@@ -112,11 +143,12 @@ export class TasksService {
     statusId: number,
   ): Promise<Task> {
 
-    const task = await this.taskRepository.findOne({
-      where: {
-        task_id: taskId,
-      },
-    });
+    const task =
+      await this.taskRepository.findOne({
+        where: {
+          task_id: taskId,
+        },
+      });
 
     if (!task) {
       throw new NotFoundException(
@@ -124,11 +156,12 @@ export class TasksService {
       );
     }
 
-    const status = await this.statusRepository.findOne({
-      where: {
-        status_id: statusId,
-      },
-    });
+    const status =
+      await this.statusRepository.findOne({
+        where: {
+          status_id: statusId,
+        },
+      });
 
     if (!status) {
       throw new NotFoundException(
@@ -141,55 +174,84 @@ export class TasksService {
 
     return this.taskRepository.save(task);
   }
- // =============================
+
+  // =============================
   // UPDATE TASK
   // =============================
 
   async update(
-  taskId: number,
-  updateTaskDto: UpdateTaskDto,
-): Promise<Task> {
-  const task = await this.taskRepository.findOne({
-    where: { task_id: taskId },
-  });
+    taskId: number,
+    updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
 
-  if (!task) {
-    throw new NotFoundException('Task not found');
+    const task =
+      await this.taskRepository.findOne({
+        where: {
+          task_id: taskId,
+        },
+      });
+
+    if (!task) {
+      throw new NotFoundException(
+        'Task not found',
+      );
+    }
+
+    const status =
+      await this.statusRepository.findOne({
+        where: {
+          status_id: updateTaskDto.status_id,
+        },
+      });
+
+    if (!status) {
+      throw new NotFoundException(
+        'Status not found',
+      );
+    }
+
+    task.title =
+      updateTaskDto.title;
+
+    task.description =
+      updateTaskDto.description;
+
+    task.status_id =
+      updateTaskDto.status_id;
+
+    task.due_date =
+      new Date(updateTaskDto.due_date);
+
+    task.assigned_to =
+      updateTaskDto.assigned_to;
+
+    task.updated_at =
+      new Date();
+
+    return this.taskRepository.save(task);
   }
 
-  const status = await this.statusRepository.findOne({
-    where: {
-      status_id: updateTaskDto.status_id,
-    },
-  });
+  // =============================
+  // REMOVE TASK
+  // =============================
 
-  if (!status) {
-    throw new NotFoundException('Status not found');
+  async remove(
+    taskId: number,
+  ): Promise<void> {
+
+    const task =
+      await this.taskRepository.findOne({
+        where: {
+          task_id: taskId,
+        },
+      });
+
+    if (!task) {
+      throw new NotFoundException(
+        'Task not found',
+      );
+    }
+
+    await this.taskRepository.remove(task);
   }
-
-  task.title = updateTaskDto.title;
-  task.description = updateTaskDto.description;
-  task.status_id = updateTaskDto.status_id;
-  task.due_date = new Date(updateTaskDto.due_date);
-  task.assigned_to = updateTaskDto.assigned_to;
-  task.updated_at = new Date();
-
-  return this.taskRepository.save(task);
-}
-
-// =============================
-// REMOVE TASK
-// =============================
-async remove(taskId: number): Promise<void> {
-  const task = await this.taskRepository.findOne({
-    where: { task_id: taskId },
-  });
-
-  if (!task) {
-    throw new NotFoundException('Task not found');
-  }
-
-  await this.taskRepository.remove(task);
-}
-
 }

@@ -4,28 +4,23 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Post,
+  Patch,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { OrganizationRolesService } from './organization-roles.service';
-
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-
-import { CreateOrganizationRoleDto } from './dto/create-organization-role.dto';
 
 @Controller('organizations')
 export class OrganizationRolesController {
-
   constructor(
-    private readonly organizationRolesService:
-      OrganizationRolesService,
+    private readonly organizationRolesService: OrganizationRolesService,
   ) {}
 
-
   // =========================================================
-  // ADMIN - ALL ROLES
+  // ADMIN - ALL GLOBAL ROLES
   // GET /organizations/admin/roles
   // =========================================================
 
@@ -34,105 +29,116 @@ export class OrganizationRolesController {
   async getAdminRoles(
     @Req() req: any,
   ) {
-
-    console.log(
-      'GET ADMIN ORGANIZATION ROLES',
+    return this.organizationRolesService.getAdminRoles(
+      req.user.userId,
     );
-
-    console.log(
-      'ADMIN USER ID:',
-      req.user?.userId,
-    );
-
-    return this.organizationRolesService
-      .getAdminRoles(
-        req.user.userId,
-      );
   }
 
-
   // =========================================================
-  // GET ORGANIZATION ROLES
+  // GET GLOBAL ORGANIZATION ROLES
   // GET /organizations/:organizationId/roles
   // =========================================================
 
   @UseGuards(JwtAuthGuard)
   @Get(':organizationId/roles')
   async getOrganizationRoles(
-    @Param(
-      'organizationId',
-      ParseIntPipe,
-    )
+    @Param('organizationId', ParseIntPipe)
     organizationId: number,
-
-    @Req() req: any,
   ) {
-
-    console.log(
-      'GET ORGANIZATION ROLES',
-    );
-
-    console.log(
-      'ORGANIZATION ID:',
+    return this.organizationRolesService.getOrganizationRoles(
       organizationId,
     );
-
-    console.log(
-      'USER ID:',
-      req.user?.userId,
-    );
-
-    return this.organizationRolesService
-      .getOrganizationRoles(
-        organizationId,
-      );
   }
 
-
   // =========================================================
-  // CREATE ORGANIZATION ROLE
-  // POST /organizations/:organizationId/roles
+  // GET SINGLE GLOBAL ROLE
+  // GET /organizations/:organizationId/roles/:roleId
   // =========================================================
 
   @UseGuards(JwtAuthGuard)
-  @Post(':organizationId/roles')
-  async createOrganizationRole(
-    @Param(
-      'organizationId',
-      ParseIntPipe,
-    )
+  @Get(':organizationId/roles/:roleId')
+  async getOrganizationRole(
+    @Param('organizationId', ParseIntPipe)
     organizationId: number,
 
-    @Body()
-    createOrganizationRoleDto:
-      CreateOrganizationRoleDto,
-
-    @Req() req: any,
+    @Param('roleId', ParseIntPipe)
+    roleId: number,
   ) {
-
-    console.log(
-      'CREATE ORGANIZATION ROLE',
-    );
-
-    console.log(
-      'ORGANIZATION ID:',
+    return this.organizationRolesService.getOrganizationRole(
       organizationId,
+      roleId,
     );
+  }
 
-    console.log(
-      'USER ID:',
-      req.user?.userId,
+  // =========================================================
+  // UPDATE GLOBAL ROLE
+  // PATCH /organizations/:organizationId/roles/:roleId
+  // =========================================================
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':organizationId/roles/:roleId')
+  async updateOrganizationRole(
+    @Param('organizationId', ParseIntPipe)
+    organizationId: number,
+
+    @Param('roleId', ParseIntPipe)
+    roleId: number,
+
+    @Body()
+    body: {
+      description?: string | null;
+    },
+  ) {
+    return this.organizationRolesService.updateOrganizationRole(
+      organizationId,
+      roleId,
+      body.description,
     );
+  }
 
-    console.log(
-      'ROLE DATA:',
-      createOrganizationRoleDto,
+  // =========================================================
+  // GET ROLE PERMISSIONS
+  // GET /organizations/:organizationId/roles/:roleId/permissions
+  // =========================================================
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':organizationId/roles/:roleId/permissions')
+  async getRolePermissions(
+    @Param('organizationId', ParseIntPipe)
+    organizationId: number,
+
+    @Param('roleId', ParseIntPipe)
+    roleId: number,
+  ) {
+    return this.organizationRolesService.getRolePermissions(
+      organizationId,
+      roleId,
     );
+  }
 
-    return this.organizationRolesService
-      .createOrganizationRole(
-        organizationId,
-        createOrganizationRoleDto,
-      );
+  // =========================================================
+  // UPDATE ROLE PERMISSIONS
+  // PUT /organizations/:organizationId/roles/:roleId/permissions
+  // =========================================================
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':organizationId/roles/:roleId/permissions')
+  async updateRolePermissions(
+    @Param('organizationId', ParseIntPipe)
+    organizationId: number,
+
+    @Param('roleId', ParseIntPipe)
+    roleId: number,
+
+    @Body()
+    body: {
+      permission_ids: number[];
+    },
+  ) {
+    return this.organizationRolesService.updateRolePermissions(
+      organizationId,
+      roleId,
+      body.permission_ids,
+    );
   }
 }

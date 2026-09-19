@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
-  ForbiddenException,
   Injectable,
+  ConflictException,
+  ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
 
@@ -12,11 +12,11 @@ import { Organization } from './organization.entity';
 import { OrganizationRole } from '../organization-roles/organization-role.entity';
 import { OrganizationMember } from '../organization-members/organization-member.entity';
 import { User } from '../users/user.entity';
+
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 
 @Injectable()
 export class OrganizationService {
-
   constructor(
     @InjectRepository(Organization)
     private readonly organizationRepository: Repository<Organization>,
@@ -29,128 +29,101 @@ export class OrganizationService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
- 
   ) {}
 
-
-  // =====================================================
+  // =========================================================
   // GET MY ORGANIZATIONS
-  // =====================================================
+  // =========================================================
 
   async getMyOrganizations(userId: number) {
-
     const memberships =
       await this.organizationMemberRepository.find({
         where: {
           user_id: userId,
           status: 'ACTIVE',
         },
-        relations: [
-          'organization',
-          'role',
-        ],
+        relations: ['organization', 'role'],
+        order: {
+          organization_id: 'ASC',
+        },
       });
 
-
-    return memberships.map((membership) => ({
+    return memberships.map(member => ({
       organization_id:
-        membership.organization.organization_id,
+        member.organization.organization_id,
 
       name:
-        membership.organization.name,
-
-      description:
-        membership.organization.description,
+        member.organization.name,
 
       logo:
-        membership.organization.logo,
+        member.organization.logo,
 
-      status:
-        membership.organization.status,
+      description:
+        member.organization.description,
 
-      role: membership.role
+      role: member.role
         ? {
-            role_id: membership.role.role_id,
-            name: membership.role.name,
+            role_id: member.role.role_id,
+            name: member.role.name,
+            description: member.role.description,
           }
         : null,
     }));
   }
 
-  // =====================================================
-// GET ONE ORGANIZATION
-// =====================================================
+  // =========================================================
+  // GET ORGANIZATION BY ID
+  // =========================================================
 
-async getOrganizationById(
-  organizationId: number,
-  userId: number,
-) {
-  const membership =
-    await this.organizationMemberRepository.findOne({
-      where: {
-        organization_id: organizationId,
-        user_id: userId,
-        status: 'ACTIVE',
-      },
-      relations: [
-        'organization',
-        'role',
-      ],
-    });
+  async getOrganizationById(
+    organizationId: number,
+    userId: number,
+  ) {
+    const membership =
+      await this.organizationMemberRepository.findOne({
+        where: {
+          organization_id: organizationId,
+          user_id: userId,
+          status: 'ACTIVE',
+        },
+        relations: ['organization', 'role'],
+      });
 
-  if (!membership) {
-    throw new NotFoundException(
-      'Organization not found',
-    );
+    if (!membership) {
+      throw new ForbiddenException(
+        'You are not a member of this organization.',
+      );
+    }
+
+    return {
+      ...membership.organization,
+
+      role: membership.role
+        ? {
+            role_id: membership.role.role_id,
+            name: membership.role.name,
+            description: membership.role.description,
+          }
+        : null,
+    };
   }
 
-  return {
-    organization_id:
-      membership.organization.organization_id,
-
-    name:
-      membership.organization.name,
-
-    description:
-      membership.organization.description,
-
-    logo:
-      membership.organization.logo,
-
-    status:
-      membership.organization.status,
-
-    role: membership.role
-      ? {
-          role_id:
-            membership.role.role_id,
-
-          name:
-            membership.role.name,
-        }
-      : null,
-  };
-}
-
-
-  // =====================================================
+  // =========================================================
   // CREATE ORGANIZATION
-  // =====================================================
+  // =========================================================
 
   async createOrganization(
     userId: number,
-    createOrganizationDto: CreateOrganizationDto,
+    dto: CreateOrganizationDto,
   ) {
-
     const {
       name,
       description,
-    } = createOrganizationDto;
+    } = dto;
 
-
-    // -----------------------------------------------------
-    // PROVERA IMENA
-    // -----------------------------------------------------
+    // ---------------------------------------------------------
+    // Check organization name
+    // ---------------------------------------------------------
 
     const existingOrganization =
       await this.organizationRepository.findOne({
@@ -159,253 +132,206 @@ async getOrganizationById(
         },
       });
 
-
     if (existingOrganization) {
-      throw new BadRequestException(
-        'Organization with this name already exists',
+      throw new ConflictException(
+        'An organization with this name already exists.',
       );
     }
 
+    // ---------------------------------------------------------
+    // Find GLOBAL Organization Owner role
+    // ---------------------------------------------------------
 
-    // -----------------------------------------------------
-    // TRANSAKCIJA
-    // -----------------------------------------------------
+    const ownerRole =
+      await this.organizationRoleRepository.findOne({
+        where: {
+          name: 'Organization Owner',
+        },
+      });
 
-    return this.organizationRepository.manager.transaction(
-      async (manager) => {
+    if (!ownerRole) {
+      throw new NotFoundException(
+        'Organization Owner role does not exist.',
+      );
+    }
 
-        // ================================================
-        // 1. CREATE ORGANIZATION
-        // ================================================
+    // ---------------------------------------------------------
+    // Verify user exists
+    // ---------------------------------------------------------
 
-        const organization =
-          manager.create(
-            Organization,
-            {
-              name,
-              description:
-                description || null,
-              status: 'ACTIVE',
-            },
-          );
+    const user =
+      await this.userRepository.findOne({
+        where: {
+          user_id: userId,
+        },
+      });
 
+    if (!user) {
+      throw new NotFoundException(
+        'User does not exist.',
+      );
+    }
 
-        const savedOrganization =
-          await manager.save(
-            Organization,
-            organization,
-          );
+    // ---------------------------------------------------------
+    // Create organization
+    // ---------------------------------------------------------
 
+    const organization =
+      this.organizationRepository.create({
+        name,
+        description: description ?? null,
+        logo: null,
+      });
 
-        // ================================================
-        // 2. CREATE OWNER ROLE
-        // ================================================
-
-        const ownerRole =
-          manager.create(
-            OrganizationRole,
-            {
-              organization_id:
-                savedOrganization.organization_id,
-
-              name: 'Owner',
-
-              description:
-                'Organization owner',
-
-              is_default: false,
-            },
-          );
-
-
-        const savedRole =
-          await manager.save(
-            OrganizationRole,
-            ownerRole,
-          );
-
-
-        // ================================================
-        // 3. ADD CREATOR AS MEMBER
-        // ================================================
-
-        const membership =
-          manager.create(
-            OrganizationMember,
-            {
-              user_id: userId,
-
-              organization_id:
-                savedOrganization.organization_id,
-
-              role_id:
-                savedRole.role_id,
-
-              status: 'ACTIVE',
-
-              joined_at: new Date(),
-
-              left_at: null,
-            },
-          );
-
-
-        await manager.save(
-          OrganizationMember,
-          membership,
-        );
-
-
-        // ================================================
-        // 4. RETURN ORGANIZATION
-        // ================================================
-
-        return {
-          organization_id:
-            savedOrganization.organization_id,
-
-          name:
-            savedOrganization.name,
-
-          description:
-            savedOrganization.description,
-
-          status:
-            savedOrganization.status,
-
-          role: {
-            role_id:
-              savedRole.role_id,
-
-            name:
-              savedRole.name,
-          },
-        };
-
-      },
-    );
-  }
-
-  // =====================================================
-// ADMIN - ALL ORGANIZATIONS
-// =====================================================
-
-async getAdminOrganizations(adminUserId: number) {
-
-  // ---------------------------------------------------
-  // CHECK SUPER ADMIN
-  // ---------------------------------------------------
-
-  const admin = await this.userRepository.findOne({
-    where: {
-      user_id: adminUserId,
-    },
-    relations: ['role'],
-  });
-
-  console.log('ADMIN USER ID:', adminUserId);
-  console.log('ADMIN USER:', admin);
-  console.log('ADMIN ROLE:', admin?.role);
-  console.log('ADMIN ROLE NAME:', admin?.role?.role_name);
-
-  if (!admin) {
-    throw new NotFoundException(
-      'Admin user not found',
-    );
-  }
-
-  const roleName = admin.role?.role_name
-    ?.trim()
-    .toUpperCase()
-    .replace(/\s+/g, '_');
-
-  console.log('NORMALIZED ROLE:', roleName);
-
-  if (roleName !== 'SUPER_ADMIN') {
-    throw new ForbiddenException(
-      'Only Super Admin can access this resource',
-    );
-  }
-
-  // ---------------------------------------------------
-  // GET ALL ORGANIZATIONS
-  // ---------------------------------------------------
-
-  const organizations =
-    await this.organizationRepository.find({
-      order: {
-        organization_id: 'DESC',
-      },
-    });
-
-  // ---------------------------------------------------
-  // GET MEMBER COUNTS + OWNERS
-  // ---------------------------------------------------
-
-  const result = await Promise.all(
-    organizations.map(async (organization) => {
-
-      const members =
-        await this.organizationMemberRepository.find({
-          where: {
-            organization_id:
-              organization.organization_id,
-
-            status: 'ACTIVE',
-          },
-
-          relations: [
-            'user',
-            'role',
-          ],
-        });
-
-      const owner = members.find(
-        (member) =>
-          member.role?.name
-            ?.trim()
-            .toLowerCase() === 'owner',
+    const savedOrganization =
+      await this.organizationRepository.save(
+        organization,
       );
 
-      return {
+    // ---------------------------------------------------------
+    // Creator automatically becomes Organization Owner
+    // ---------------------------------------------------------
+
+    const ownerMembership =
+      this.organizationMemberRepository.create({
+        user_id: userId,
+
         organization_id:
-          organization.organization_id,
+          savedOrganization.organization_id,
 
-        name:
-          organization.name,
+        role_id:
+          ownerRole.role_id,
 
-        description:
-          organization.description,
+        status: 'ACTIVE',
 
-        status:
-          organization.status,
+        joined_at: new Date(),
 
-        created_at:
-          organization.created_at,
+        left_at: null,
+      });
 
-        updated_at:
-          organization.updated_at,
+    await this.organizationMemberRepository.save(
+      ownerMembership,
+    );
 
-        member_count:
-          members.length,
+    // ---------------------------------------------------------
+    // Return created organization
+    // ---------------------------------------------------------
 
-        owner: owner?.user
-          ? {
-              user_id:
-                owner.user.user_id,
+    return {
+      ...savedOrganization,
 
-              username:
-                owner.user.username,
+      role: {
+        role_id: ownerRole.role_id,
+        name: ownerRole.name,
+        description: ownerRole.description,
+      },
+    };
+  }
 
-              email:
-                owner.user.email,
-            }
-          : null,
-      };
-    }),
-  );
+  // =========================================================
+  // ADMIN ORGANIZATIONS
+  // =========================================================
 
-  return result;
-}
+  async getAdminOrganizations(userId: number) {
+    // ---------------------------------------------------------
+    // Verify system user
+    // ---------------------------------------------------------
 
+    const user =
+      await this.userRepository.findOne({
+        where: {
+          user_id: userId,
+        },
+        relations: ['role'],
+      });
+
+    if (!user) {
+      throw new NotFoundException(
+        'User does not exist.',
+      );
+    }
+
+    // ---------------------------------------------------------
+    // Only SUPER_ADMIN can access this endpoint
+    // ---------------------------------------------------------
+
+    if (
+      !user.role ||
+      user.role.role_name !== 'SUPER_ADMIN'
+    ) {
+      throw new ForbiddenException(
+        'Only super admins can access this endpoint.',
+      );
+    }
+
+    // ---------------------------------------------------------
+    // Get all organizations
+    // ---------------------------------------------------------
+
+    const organizations =
+      await this.organizationRepository.find({
+        relations: ['members'],
+        order: {
+          organization_id: 'ASC',
+        },
+      });
+
+    // ---------------------------------------------------------
+    // Find GLOBAL Organization Owner role
+    // ---------------------------------------------------------
+
+    const ownerRole =
+      await this.organizationRoleRepository.findOne({
+        where: {
+          name: 'Organization Owner',
+        },
+      });
+
+    // ---------------------------------------------------------
+    // Get owner of every organization
+    // ---------------------------------------------------------
+
+    return Promise.all(
+      organizations.map(
+        async organization => {
+          const ownerMembership =
+            ownerRole
+              ? await this.organizationMemberRepository.findOne({
+                  where: {
+                    organization_id:
+                      organization.organization_id,
+
+                    role_id:
+                      ownerRole.role_id,
+
+                    status: 'ACTIVE',
+                  },
+
+                  relations: [
+                    'user',
+                    'role',
+                  ],
+                })
+              : null;
+
+          return {
+            ...organization,
+
+            owner: ownerMembership
+              ? {
+                  user_id:
+                    ownerMembership.user.user_id,
+
+                  username:
+                    ownerMembership.user.username,
+
+                  email:
+                    ownerMembership.user.email,
+                }
+              : null,
+          };
+        },
+      ),
+    );
+  }
 }

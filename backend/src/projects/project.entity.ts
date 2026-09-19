@@ -4,11 +4,12 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
-import { OneToMany } from 'typeorm';
 import { Task } from '../tasks/task.entity';
+import { Organization } from '../organizations/organization.entity';
 
 @Entity('projects')
 export class Project {
@@ -16,6 +17,24 @@ export class Project {
     name: 'project_id',
   })
   project_id!: number;
+
+  @Column({
+    name: 'organization_id',
+    type: 'int',
+  })
+  organization_id!: number;
+
+  @ManyToOne(
+    () => Organization,
+    {
+      nullable: false,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({
+    name: 'organization_id',
+  })
+  organization!: Organization;
 
   @Column({
     name: 'project_name',
@@ -50,8 +69,8 @@ export class Project {
   creator!: User;
 
   @OneToMany(
-  () => Task,
-  task => task.project,
-)
-tasks!: Task[];
+    () => Task,
+    task => task.project,
+  )
+  tasks!: Task[];
 }

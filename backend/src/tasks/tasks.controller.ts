@@ -7,28 +7,34 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateTaskDto } from './dto/update-task.dto';
+
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../permissions/permission.guard';
+import { RequirePermission } from '../permissions/permission.decorator';
 
 @Controller('tasks')
 export class TasksController {
-
   constructor(
     private readonly tasksService: TasksService,
   ) {}
 
-  // =============================
-  // CREATE TASK
-  // =============================
-
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'create',
+  )
   async create(
     @Body() createTaskDto: CreateTaskDto,
     @Req() req: any,
@@ -41,50 +47,81 @@ export class TasksController {
     );
   }
 
-  // =============================
-  // GET ALL TASKS
-  // =============================
-
   @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAll() {
-    return this.tasksService.findAll();
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'view',
+  )
+  async findAll(
+    @Req() req: any,
+    @Query('organizationId') organizationId?: string,
+  ) {
+    const resolvedOrganizationId =
+      req.permissionOrganizationId ||
+      Number(organizationId);
+
+    return this.tasksService.findAll(
+      resolvedOrganizationId,
+    );
   }
 
-  // =============================
-  // GET ONE TASK
-  // =============================
-
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'view',
+  )
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.tasksService.findOne(id);
   }
 
-  // =============================
-  // UPDATE TASK STATUS
-  // =============================
-
   @Patch(':id/status')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'update',
+  )
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body('status_id', ParseIntPipe) statusId: number,
+
+    @Body(
+      'status_id',
+      ParseIntPipe,
+    )
+    statusId: number,
   ) {
-    return this.tasksService.updateStatus(id, statusId);
+    return this.tasksService.updateStatus(
+      id,
+      statusId,
+    );
   }
 
-    // =============================
-  // UPDATE TASK
-  // =============================
-
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'update',
+  )
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTaskDto: UpdateTaskDto,
+
+    @Body()
+    updateTaskDto: UpdateTaskDto,
   ) {
     return this.tasksService.update(
       id,
@@ -92,19 +129,22 @@ export class TasksController {
     );
   }
 
-  // =============================
-// DELETE TASK
-// =============================
+  @Delete(':id')
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'task',
+    'delete',
+  )
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.tasksService.remove(id);
 
-@Delete(':id')
-@UseGuards(JwtAuthGuard)
-async remove(
-  @Param('id', ParseIntPipe) id: number,
-) {
-  await this.tasksService.remove(id);
-
-  return {
-    message: 'Task deleted successfully',
-  };
-}
+    return {
+      message: 'Task deleted successfully',
+    };
+  }
 }

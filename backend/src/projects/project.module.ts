@@ -6,6 +6,7 @@ import { ProjectsService } from './project.service';
 import { ProjectsController } from './project.controller';
 
 import { Task } from '../tasks/task.entity';
+import { PermissionsModule } from '../permissions/permissions.module';
 
 @Module({
   imports: [
@@ -13,6 +14,8 @@ import { Task } from '../tasks/task.entity';
       Project,
       Task,
     ]),
+
+    PermissionsModule,
   ],
 
   controllers: [

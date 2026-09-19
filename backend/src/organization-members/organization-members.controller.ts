@@ -10,6 +10,8 @@ import {
 import { OrganizationMemberService } from './organization-members.service';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../permissions/permission.guard';
+import { RequirePermission } from '../permissions/permission.decorator';
 
 @Controller('organizations')
 export class OrganizationMemberController {
@@ -19,23 +21,27 @@ export class OrganizationMemberController {
 
   // =========================================================
   // GET ORGANIZATION MEMBERS
+  // GET /organizations/:organizationId/members
   // =========================================================
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'member',
+    'view',
+  )
   @Get(':organizationId/members')
   async getOrganizationMembers(
-    @Param('organizationId', ParseIntPipe)
+    @Param(
+      'organizationId',
+      ParseIntPipe,
+    )
     organizationId: number,
 
     @Req() req: any,
   ) {
-    console.log(
-      'GET ORGANIZATION MEMBERS:',
-      organizationId,
-      'USER:',
-      req.user.userId,
-    );
-
     return this.organizationMemberService.getOrganizationMembers(
       organizationId,
       req.user.userId,
@@ -44,15 +50,29 @@ export class OrganizationMemberController {
 
   // =========================================================
   // GET ONE MEMBER
+  // GET /organizations/:organizationId/members/:membershipId
   // =========================================================
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'member',
+    'view',
+  )
   @Get(':organizationId/members/:membershipId')
   async getMember(
-    @Param('organizationId', ParseIntPipe)
+    @Param(
+      'organizationId',
+      ParseIntPipe,
+    )
     organizationId: number,
 
-    @Param('membershipId', ParseIntPipe)
+    @Param(
+      'membershipId',
+      ParseIntPipe,
+    )
     membershipId: number,
 
     @Req() req: any,

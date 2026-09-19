@@ -4,9 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
-import { OneToMany } from 'typeorm';
-import { OrganizationRole } from '../organization-roles/organization-role.entity';
+
 import { OrganizationMember } from '../organization-members/organization-member.entity';
 
 @Entity('organizations')
@@ -53,19 +53,9 @@ export class Organization {
   })
   updated_at!: Date;
 
- 
   @OneToMany(
-  () => OrganizationRole,
-  role => role.organization,
-)
-organizationRoles!: OrganizationRole[];
-
-@OneToMany(
-  () => OrganizationMember,
-  member => member.organization,
-)
-members!: OrganizationMember[];
-
-
-
+    () => OrganizationMember,
+    member => member.organization,
+  )
+  members!: OrganizationMember[];
 }

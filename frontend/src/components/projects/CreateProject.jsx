@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaPlus } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { useOrganization } from "../../context/OrganizationContext";
 import "./Projects.css";
 
 export default function CreateProject() {
   const { token } = useAuth();
+  const { currentOrganization } = useOrganization();
+
   const navigate = useNavigate();
 
   const [projectName, setProjectName] = useState("");
@@ -18,6 +21,11 @@ export default function CreateProject() {
     e.preventDefault();
 
     setError("");
+
+    if (!currentOrganization?.organization_id) {
+      setError("Please select an organization first.");
+      return;
+    }
 
     if (!projectName.trim()) {
       setError("Project name is required.");
@@ -40,6 +48,9 @@ export default function CreateProject() {
           body: JSON.stringify({
             project_name: projectName.trim(),
             description: description.trim() || null,
+            organization_id: Number(
+              currentOrganization.organization_id
+            ),
           }),
         }
       );
@@ -52,11 +63,9 @@ export default function CreateProject() {
         );
       }
 
-      // Nakon uspešnog kreiranja
       navigate("/projects");
-
     } catch (err) {
-      console.error(err);
+      console.error("Create project error:", err);
 
       setError(
         err.message || "Something went wrong."
@@ -68,7 +77,6 @@ export default function CreateProject() {
 
   return (
     <div className="projects-page">
-
       <div className="create-project-page">
 
         <button
@@ -83,6 +91,7 @@ export default function CreateProject() {
         <div className="create-project-card">
 
           <div className="create-project-heading">
+
             <div className="create-project-icon">
               <FaPlus />
             </div>
@@ -95,6 +104,7 @@ export default function CreateProject() {
                 organizing your work.
               </p>
             </div>
+
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -149,9 +159,7 @@ export default function CreateProject() {
               <button
                 type="button"
                 className="cancel-project-btn"
-                onClick={() =>
-                  navigate("/projects")
-                }
+                onClick={() => navigate("/projects")}
                 disabled={loading}
               >
                 Cancel
@@ -176,7 +184,6 @@ export default function CreateProject() {
         </div>
 
       </div>
-
     </div>
   );
 }

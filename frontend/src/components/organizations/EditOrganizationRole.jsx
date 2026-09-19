@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import {
   FaTimes,
   FaSave,
@@ -10,20 +11,25 @@ import { useAuth } from '../../context/AuthContext';
 
 import './EditOrganizationRole.css';
 
+
 function EditOrganizationRole({
   organizationId,
   role,
   onClose,
   onSaved,
 }) {
+
   const { token } = useAuth();
 
-  const [name, setName] = useState(
-    role?.name || ''
-  );
+
+  // =========================================================
+  // STATE
+  // =========================================================
 
   const [description, setDescription] =
-    useState(role?.description || '');
+    useState(
+      role?.description || ''
+    );
 
   const [permissions, setPermissions] =
     useState([]);
@@ -40,27 +46,37 @@ function EditOrganizationRole({
   const [error, setError] =
     useState('');
 
+
   // =========================================================
   // LOAD PERMISSIONS
   // =========================================================
 
   useEffect(() => {
 
-    if (!token || !organizationId || !role?.role_id) {
+    if (
+      !token ||
+      !organizationId ||
+      !role?.role_id
+    ) {
+
       setLoading(false);
+
       return;
     }
+
 
     const loadData = async () => {
 
       try {
 
         setLoading(true);
+
         setError('');
 
-        // ---------------------------------------------------
-        // SVE PERMISSIONS
-        // ---------------------------------------------------
+
+        // =====================================================
+        // LOAD ALL PERMISSIONS
+        // =====================================================
 
         const permissionsResponse =
           await fetch(
@@ -78,18 +94,29 @@ function EditOrganizationRole({
             }
           );
 
+
         if (!permissionsResponse.ok) {
+
+          const data =
+            await permissionsResponse
+              .json()
+              .catch(() => null);
+
           throw new Error(
+            data?.message ||
             `Permissions HTTP error: ${permissionsResponse.status}`
           );
+
         }
+
 
         const allPermissions =
           await permissionsResponse.json();
 
-        // ---------------------------------------------------
-        // PERMISSIONS OVE ROLE
-        // ---------------------------------------------------
+
+        // =====================================================
+        // LOAD PERMISSIONS FOR THIS ROLE
+        // =====================================================
 
         const rolePermissionsResponse =
           await fetch(
@@ -107,20 +134,36 @@ function EditOrganizationRole({
             }
           );
 
+
         if (!rolePermissionsResponse.ok) {
+
+          const data =
+            await rolePermissionsResponse
+              .json()
+              .catch(() => null);
+
           throw new Error(
+            data?.message ||
             `Role permissions HTTP error: ${rolePermissionsResponse.status}`
           );
+
         }
+
 
         const rolePermissions =
           await rolePermissionsResponse.json();
+
+
+        // =====================================================
+        // SET PERMISSIONS
+        // =====================================================
 
         setPermissions(
           Array.isArray(allPermissions)
             ? allPermissions
             : []
         );
+
 
         setSelectedPermissions(
           Array.isArray(rolePermissions)
@@ -131,6 +174,7 @@ function EditOrganizationRole({
             : []
         );
 
+
       } catch (err) {
 
         console.error(
@@ -138,9 +182,12 @@ function EditOrganizationRole({
           err
         );
 
+
         setError(
+          err.message ||
           'Permissions could not be loaded.'
         );
+
 
       } finally {
 
@@ -149,6 +196,7 @@ function EditOrganizationRole({
       }
 
     };
+
 
     loadData();
 
@@ -170,11 +218,14 @@ function EditOrganizationRole({
         const module =
           permission.module || 'Other';
 
+
         if (!groups[module]) {
           groups[module] = [];
         }
 
+
         groups[module].push(permission);
+
 
         return groups;
 
@@ -184,7 +235,7 @@ function EditOrganizationRole({
 
 
   // =========================================================
-  // TOGGLE PERMISSION
+  // TOGGLE SINGLE PERMISSION
   // =========================================================
 
   const togglePermission = (
@@ -205,6 +256,7 @@ function EditOrganizationRole({
 
         }
 
+
         return [
           ...current,
           permissionId,
@@ -217,7 +269,7 @@ function EditOrganizationRole({
 
 
   // =========================================================
-  // TOGGLE MODULE
+  // TOGGLE WHOLE MODULE
   // =========================================================
 
   const toggleModule = (
@@ -230,11 +282,14 @@ function EditOrganizationRole({
           permission.permission_id
       );
 
+
     const allSelected =
+      moduleIds.length > 0 &&
       moduleIds.every(
         (id) =>
           selectedPermissions.includes(id)
       );
+
 
     if (allSelected) {
 
@@ -270,23 +325,22 @@ function EditOrganizationRole({
 
     e.preventDefault();
 
-    if (!name.trim()) {
 
-      setError(
-        'Role name is required.'
-      );
-
+    if (!role?.role_id) {
       return;
     }
+
 
     try {
 
       setSaving(true);
+
       setError('');
 
-      // ---------------------------------------------------
-      // UPDATE ROLE
-      // ---------------------------------------------------
+
+      // =====================================================
+      // UPDATE ROLE DESCRIPTION
+      // =====================================================
 
       const roleResponse =
         await fetch(
@@ -303,8 +357,6 @@ function EditOrganizationRole({
             },
 
             body: JSON.stringify({
-              name: name.trim(),
-
               description:
                 description.trim() ||
                 null,
@@ -312,29 +364,29 @@ function EditOrganizationRole({
           }
         );
 
-      /*
-       * Ako još nemaš PATCH endpoint za role,
-       * permissions će se i dalje moći sačuvati.
-       *
-       * 404 / 405 ne prekida save.
-       */
 
-      if (
-        !roleResponse.ok &&
-        roleResponse.status !== 404 &&
-        roleResponse.status !== 405
-      ) {
+      if (!roleResponse.ok) {
+
+        const data =
+          await roleResponse
+            .json()
+            .catch(() => null);
 
         throw new Error(
+          data?.message ||
           `Role update failed: ${roleResponse.status}`
         );
 
       }
 
 
-      // ---------------------------------------------------
+      const updatedRole =
+        await roleResponse.json();
+
+
+      // =====================================================
       // UPDATE PERMISSIONS
-      // ---------------------------------------------------
+      // =====================================================
 
       const permissionsResponse =
         await fetch(
@@ -357,36 +409,50 @@ function EditOrganizationRole({
           }
         );
 
+
       if (!permissionsResponse.ok) {
 
+        const data =
+          await permissionsResponse
+            .json()
+            .catch(() => null);
+
         throw new Error(
+          data?.message ||
           `Permissions update failed: ${permissionsResponse.status}`
         );
 
       }
 
 
-      // ---------------------------------------------------
-      // UPDATED ROLE
-      // ---------------------------------------------------
+      // =====================================================
+      // UPDATED ROLE FOR PARENT
+      // =====================================================
 
-      const updatedRole = {
+      const finalRole = {
         ...role,
 
-        name:
-          name.trim(),
+        ...updatedRole,
+
+        // Naziv ostaje originalni jer je role fixed.
+        name: role.name,
 
         description:
           description.trim() ||
           null,
+
+        is_default:
+          role.is_default,
       };
 
 
       if (onSaved) {
-        onSaved(updatedRole);
+        onSaved(finalRole);
       }
 
+
       onClose();
+
 
     } catch (err) {
 
@@ -395,9 +461,12 @@ function EditOrganizationRole({
         err
       );
 
+
       setError(
+        err.message ||
         'Changes could not be saved.'
       );
+
 
     } finally {
 
@@ -428,9 +497,12 @@ function EditOrganizationRole({
       onMouseDown={(e) => {
 
         if (
-          e.target === e.currentTarget
+          e.target === e.currentTarget &&
+          !saving
         ) {
+
           onClose();
+
         }
 
       }}
@@ -443,6 +515,7 @@ function EditOrganizationRole({
         }
       >
 
+
         {/* =================================================
             HEADER
         ================================================== */}
@@ -452,8 +525,11 @@ function EditOrganizationRole({
           <div className="edit-role-header-left">
 
             <div className="edit-role-header-icon">
+
               <FaUserShield />
+
             </div>
+
 
             <div>
 
@@ -462,7 +538,7 @@ function EditOrganizationRole({
               </h2>
 
               <p>
-                Update role details and permissions
+                Update role description and permissions.
               </p>
 
             </div>
@@ -476,20 +552,23 @@ function EditOrganizationRole({
             onClick={onClose}
             disabled={saving}
           >
+
             <FaTimes />
+
           </button>
 
         </div>
 
 
         {/* =================================================
-            BODY
+            FORM
         ================================================== */}
 
         <form
           className="edit-role-form"
           onSubmit={handleSave}
         >
+
 
           {/* =================================================
               ROLE DETAILS
@@ -512,6 +591,11 @@ function EditOrganizationRole({
 
             <div className="edit-role-fields">
 
+
+              {/* =================================================
+                  ROLE NAME
+              ================================================== */}
+
               <div className="edit-role-field">
 
                 <label htmlFor="edit-role-name">
@@ -521,16 +605,21 @@ function EditOrganizationRole({
                 <input
                   id="edit-role-name"
                   type="text"
-                  value={name}
-                  onChange={(e) =>
-                    setName(e.target.value)
-                  }
-                  placeholder="e.g. Project Manager"
-                  disabled={saving}
+                  value={role.name}
+                  disabled
+                  readOnly
                 />
+
+                <small>
+                  Role names are fixed and cannot be changed.
+                </small>
 
               </div>
 
+
+              {/* =================================================
+                  DESCRIPTION
+              ================================================== */}
 
               <div className="edit-role-field">
 
@@ -581,18 +670,20 @@ function EditOrganizationRole({
 
               <div className="edit-role-selected-count">
 
-                {selectedPermissions.length}
+                {selectedPermissions.length}{' '}
 
-                {' '}
-
-                selected
+                {selectedPermissions.length === 1
+                  ? 'permission'
+                  : 'permissions'}
 
               </div>
 
             </div>
 
 
-            {/* LOADING */}
+            {/* =================================================
+                LOADING
+            ================================================== */}
 
             {loading && (
 
@@ -609,7 +700,9 @@ function EditOrganizationRole({
             )}
 
 
-            {/* ERROR */}
+            {/* =================================================
+                ERROR
+            ================================================== */}
 
             {!loading && error && (
 
@@ -622,7 +715,9 @@ function EditOrganizationRole({
             )}
 
 
-            {/* PERMISSIONS */}
+            {/* =================================================
+                EMPTY
+            ================================================== */}
 
             {!loading &&
               !error &&
@@ -643,6 +738,10 @@ function EditOrganizationRole({
               )}
 
 
+            {/* =================================================
+                PERMISSION GROUPS
+            ================================================== */}
+
             {!loading &&
               !error &&
               Object.entries(
@@ -661,14 +760,16 @@ function EditOrganizationRole({
                         permission.permission_id
                     );
 
+
                   const allSelected =
                     moduleIds.length > 0 &&
                     moduleIds.every(
-                      (id) =>
+                      (permissionId) =>
                         selectedPermissions.includes(
-                          id
+                          permissionId
                         )
                     );
+
 
                   return (
 
@@ -677,7 +778,10 @@ function EditOrganizationRole({
                       className="edit-role-permission-group"
                     >
 
-                      {/* MODULE HEADER */}
+
+                      {/* =================================================
+                          MODULE HEADER
+                      ================================================== */}
 
                       <div className="edit-role-module-header">
 
@@ -689,7 +793,9 @@ function EditOrganizationRole({
 
                           <span>
                             {modulePermissions.length}{' '}
-                            permissions
+                            {modulePermissions.length === 1
+                              ? 'permission'
+                              : 'permissions'}
                           </span>
 
                         </div>
@@ -715,7 +821,9 @@ function EditOrganizationRole({
                       </div>
 
 
-                      {/* PERMISSION LIST */}
+                      {/* =================================================
+                          PERMISSION LIST
+                      ================================================== */}
 
                       <div className="edit-role-permission-list">
 
@@ -727,17 +835,20 @@ function EditOrganizationRole({
                                 permission.permission_id
                               );
 
+
                             return (
 
                               <label
                                 key={
                                   permission.permission_id
                                 }
-                                className={`edit-role-permission ${
-                                  checked
-                                    ? 'selected'
-                                    : ''
-                                }`}
+                                className={
+                                  `edit-role-permission ${
+                                    checked
+                                      ? 'selected'
+                                      : ''
+                                  }`
+                                }
                               >
 
                                 <input
@@ -753,7 +864,9 @@ function EditOrganizationRole({
 
 
                                 <span className="edit-role-checkbox">
+
                                   {checked && '✓'}
+
                                 </span>
 
 
@@ -762,6 +875,7 @@ function EditOrganizationRole({
                                   <strong>
                                     {permission.name}
                                   </strong>
+
 
                                   {permission.description && (
 
@@ -799,9 +913,13 @@ function EditOrganizationRole({
           ================================================== */}
 
           {error && (
+
             <div className="edit-role-footer-error">
+
               {error}
+
             </div>
+
           )}
 
 
@@ -817,7 +935,9 @@ function EditOrganizationRole({
               onClick={onClose}
               disabled={saving}
             >
+
               Cancel
+
             </button>
 
 
@@ -833,17 +953,21 @@ function EditOrganizationRole({
               {saving ? (
 
                 <>
+
                   <FaSpinner className="edit-role-spinner" />
 
                   Saving...
+
                 </>
 
               ) : (
 
                 <>
+
                   <FaSave />
 
                   Save changes
+
                 </>
 
               )}
@@ -852,6 +976,7 @@ function EditOrganizationRole({
 
           </div>
 
+
         </form>
 
       </div>
@@ -859,6 +984,8 @@ function EditOrganizationRole({
     </div>
 
   );
+
 }
+
 
 export default EditOrganizationRole;

@@ -11,16 +11,16 @@ import {
 import { OrganizationService } from './organization.service';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../permissions/permission.guard';
+import { RequirePermission } from '../permissions/permission.decorator';
 
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 
 @Controller('organizations')
 export class OrganizationController {
-
   constructor(
     private readonly organizationService: OrganizationService,
   ) {}
-
 
   // =====================================================
   // MY ORGANIZATIONS
@@ -32,18 +32,14 @@ export class OrganizationController {
   async getMyOrganizations(
     @Req() req: any,
   ) {
-
     const userId =
       req.user.userId;
 
-    console.log(
-      'GET MY ORGANIZATIONS:',
+    return this.organizationService.getMyOrganizations(
       userId,
     );
-
-    return this.organizationService
-      .getMyOrganizations(userId);
   }
+
   // =====================================================
   // ADMIN - ALL ORGANIZATIONS
   // GET /organizations/admin/all
@@ -54,8 +50,7 @@ export class OrganizationController {
   async getAdminOrganizations(
     @Req() req: any,
   ) {
-    return this.organizationService
-    .getAdminOrganizations(
+    return this.organizationService.getAdminOrganizations(
       req.user.userId,
     );
   }
@@ -65,61 +60,52 @@ export class OrganizationController {
   // GET /organizations/:id
   // =====================================================
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'organization',
+    'view',
+  )
   @Get(':id')
   async getOrganizationById(
     @Param('id') id: string,
     @Req() req: any,
   ) {
-
     const userId =
       req.user.userId;
 
     const organizationId =
       Number(id);
 
-    console.log(
-      'GET ORGANIZATION:',
+    return this.organizationService.getOrganizationById(
       organizationId,
-      'USER:',
       userId,
     );
-
-    return this.organizationService
-      .getOrganizationById(
-        organizationId,
-        userId,
-      );
   }
-
 
   // =====================================================
   // CREATE ORGANIZATION
   // POST /organizations
+  //
+  // PermissionGuard se NE koristi ovde.
+  // Korisnik još nema membership u novoj organizaciji.
   // =====================================================
 
   @UseGuards(JwtAuthGuard)
   @Post()
   async createOrganization(
     @Req() req: any,
-
     @Body()
-    createOrganizationDto:
-      CreateOrganizationDto,
+    createOrganizationDto: CreateOrganizationDto,
   ) {
-
     const userId =
       req.user.userId;
 
-    console.log(
-      'CREATE ORGANIZATION USER:',
+    return this.organizationService.createOrganization(
       userId,
+      createOrganizationDto,
     );
-
-    return this.organizationService
-      .createOrganization(
-        userId,
-        createOrganizationDto,
-      );
   }
 }

@@ -5,13 +5,17 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { ProjectsService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
+
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../permissions/permission.guard';
+import { RequirePermission } from '../permissions/permission.decorator';
 
 @Controller('projects')
 export class ProjectsController {
@@ -20,30 +24,59 @@ export class ProjectsController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'project',
+    'create',
+  )
   async create(
-    @Body() createProjectDto: CreateProjectDto,
+    @Body()
+    createProjectDto: CreateProjectDto,
     @Req() req: any,
   ) {
-    console.log('REQ.USER:', req.user);
-    console.log('USER ID:', req.user?.userId);
-
     const userId = req.user.userId;
 
     return this.projectsService.create(
       createProjectDto,
       userId,
+      createProjectDto.organization_id,
     );
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAll() {
-    return this.projectsService.findAll();
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'project',
+    'view',
+  )
+  async findAll(
+    @Req() req: any,
+    @Query('organizationId') organizationId?: string,
+  ) {
+    const resolvedOrganizationId =
+      req.permissionOrganizationId ||
+      Number(organizationId);
+
+    return this.projectsService.findAll(
+      resolvedOrganizationId,
+    );
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'project',
+    'view',
+  )
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ) {
@@ -51,7 +84,14 @@ export class ProjectsController {
   }
 
   @Get(':id/tasks')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'project',
+    'view',
+  )
   async findTasks(
     @Param('id', ParseIntPipe) id: number,
   ) {

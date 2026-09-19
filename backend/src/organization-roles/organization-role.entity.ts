@@ -2,45 +2,23 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Organization } from '../organizations/organization.entity';
 import { OrganizationMember } from '../organization-members/organization-member.entity';
 import { RolePermission } from '../role-permissions/role-permissions.entity';
 
 @Entity('organizationroles')
 export class OrganizationRole {
-  @PrimaryGeneratedColumn({
-    name: 'role_id',
-  })
+  @PrimaryGeneratedColumn({ name: 'role_id' })
   role_id!: number;
-
-  @Column({
-    name: 'organization_id',
-    type: 'int',
-  })
-  organization_id!: number;
-
-  @ManyToOne(
-    () => Organization,
-    organization => organization.organizationRoles,
-    {
-      nullable: false,
-    },
-  )
-  @JoinColumn({
-    name: 'organization_id',
-  })
-  organization!: Organization;
 
   @Column({
     type: 'varchar',
     length: 50,
+    unique: true,
   })
   name!: string;
 
@@ -54,7 +32,7 @@ export class OrganizationRole {
   @Column({
     name: 'is_default',
     type: 'boolean',
-    default: false,
+    default: true,
   })
   is_default!: boolean;
 
@@ -77,8 +55,8 @@ export class OrganizationRole {
   members!: OrganizationMember[];
 
   @OneToMany(
-  () => RolePermission,
-  rolePermission => rolePermission.role,
-)
-rolePermissions!: RolePermission[];
+    () => RolePermission,
+    rolePermission => rolePermission.role,
+  )
+  rolePermissions!: RolePermission[];
 }

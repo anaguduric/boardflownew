@@ -4,64 +4,152 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../permissions/permission.guard';
+import { RequirePermission } from '../permissions/permission.decorator';
+
 import { TeamsService } from './teams.service';
 
 @Controller('teams')
-@UseGuards(JwtAuthGuard)
 export class TeamsController {
   constructor(
     private readonly teamsService: TeamsService,
   ) {}
 
+  // =========================================================
   // GET /teams
+  // =========================================================
+
   @Get()
-  async findAll() {
-    return this.teamsService.findAll();
-  }
-
-  // GET /teams/:id
-  @Get(':id')
-  async findOne(
-    @Param('id') id: string,
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'team',
+    'view',
+  )
+  async findAll(
+    @Req() req: any,
+    @Query('organizationId') organizationId?: string,
   ) {
-    return this.teamsService.findOne(Number(id));
+    const resolvedOrganizationId =
+      req.permissionOrganizationId ||
+      Number(organizationId);
+
+    return this.teamsService.findAll(
+      resolvedOrganizationId,
+    );
   }
 
+  // =========================================================
+  // GET /teams/:id
+  // =========================================================
+
+  @Get(':id')
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'team',
+    'view',
+  )
+  async findOne(
+    @Param(
+      'id',
+      ParseIntPipe,
+    )
+    id: number,
+  ) {
+    return this.teamsService.findOne(id);
+  }
+
+  // =========================================================
   // POST /teams
+  // =========================================================
+
   @Post()
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'team',
+    'create',
+  )
   async create(
     @Body('team_name') teamName: string,
+    @Body('organization_id') organizationId: number,
   ) {
-    return this.teamsService.create(teamName);
+    return this.teamsService.create(
+      teamName,
+      Number(organizationId),
+    );
   }
 
+  // =========================================================
   // PATCH /teams/:id
+  // =========================================================
+
   @Patch(':id')
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'team',
+    'update',
+  )
   async update(
-    @Param('id') id: string,
-    @Body('team_name') teamName: string,
+    @Param(
+      'id',
+      ParseIntPipe,
+    )
+    id: number,
+
+    @Body('team_name')
+    teamName: string,
   ) {
     return this.teamsService.update(
-      Number(id),
+      id,
       teamName,
     );
   }
 
+  // =========================================================
   // DELETE /teams/:id
+  // =========================================================
+
   @Delete(':id')
+  @UseGuards(
+    JwtAuthGuard,
+    PermissionGuard,
+  )
+  @RequirePermission(
+    'team',
+    'delete',
+  )
   async remove(
-    @Param('id') id: string,
+    @Param(
+      'id',
+      ParseIntPipe,
+    )
+    id: number,
   ) {
-    await this.teamsService.remove(Number(id));
+    await this.teamsService.remove(id);
 
     return {
-      message: 'Team deleted successfully',
+      message:
+        'Team deleted successfully',
     };
   }
 }

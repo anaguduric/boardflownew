@@ -65,8 +65,6 @@ export class OrganizationInvitationsService {
 
     const allowedRoles = [
       'organization owner',
-      'organization admin',
-      'owner',
       'admin',
     ];
 
@@ -75,7 +73,7 @@ export class OrganizationInvitationsService {
       !allowedRoles.includes(roleName)
     ) {
       throw new ForbiddenException(
-        'Samo Organization Owner ili Organization Admin mogu pozivati članove.',
+        'Samo Organization Owner ili Admin mogu pozivati članove.',
       );
     }
 
@@ -105,14 +103,13 @@ export class OrganizationInvitationsService {
       email.trim().toLowerCase();
 
     // ----------------------------------------------------------
-    // 2. Provera organization role
+    // 2. Provera GLOBALNE organization role
     // ----------------------------------------------------------
 
     const role =
       await this.roleRepository.findOne({
         where: {
           role_id: roleId,
-          organization_id: organizationId,
         },
       });
 
@@ -123,7 +120,7 @@ export class OrganizationInvitationsService {
     }
 
     // ----------------------------------------------------------
-    // 3. Provera da korisnik već nije član
+    // 3. Provera da li korisnik već nije član
     // ----------------------------------------------------------
 
     const existingMembers =
@@ -137,7 +134,7 @@ export class OrganizationInvitationsService {
 
     const alreadyMember =
       existingMembers.some(
-        (member) =>
+        member =>
           member.user?.email
             ?.trim()
             .toLowerCase() ===
@@ -390,7 +387,7 @@ export class OrganizationInvitationsService {
     }
 
     // ----------------------------------------------------------
-    // 7. Provera organization role
+    // 7. Provera GLOBALNE organization role
     // ----------------------------------------------------------
 
     const role =
@@ -398,9 +395,6 @@ export class OrganizationInvitationsService {
         where: {
           role_id:
             invitation.role_id,
-
-          organization_id:
-            invitation.organization_id,
         },
       });
 

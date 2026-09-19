@@ -7,12 +7,16 @@ import { Status } from './status.entity';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
 
+import { PermissionsModule } from '../permissions/permissions.module';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Task,
       Status,
     ]),
+
+    PermissionsModule,
   ],
 
   controllers: [

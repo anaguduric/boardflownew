@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import {
   FaUserShield,
-  FaPlus,
   FaArrowLeft,
   FaSpinner,
   FaEdit,
@@ -11,7 +10,6 @@ import {
 
 import { useAuth } from '../../context/AuthContext';
 
-import CreateOrganizationRole from './CreateOrganizationRole';
 import EditOrganizationRole from './EditOrganizationRole';
 
 import './OrganizationRoles.css';
@@ -37,9 +35,6 @@ function OrganizationRoles() {
 
   const [error, setError] =
     useState('');
-
-  const [showCreateModal, setShowCreateModal] =
-    useState(false);
 
   const [editingRole, setEditingRole] =
     useState(null);
@@ -86,7 +81,11 @@ function OrganizationRoles() {
 
         if (!res.ok) {
 
+          const data = await res.json()
+            .catch(() => null);
+
           throw new Error(
+            data?.message ||
             `HTTP error: ${res.status}`
           );
 
@@ -103,11 +102,39 @@ function OrganizationRoles() {
         );
 
 
-        setRoles(
+        /*
+         * Role redosled držimo fiksnim.
+         *
+         * Ovo znači da se role na stranici
+         * uvek prikazuju ovim redom:
+         *
+         * Owner
+         * Admin
+         * Project Manager
+         * Member
+         * Viewer
+         */
+
+        const roleOrder = {
+          Owner: 1,
+          Admin: 2,
+          'Project Manager': 3,
+          Member: 4,
+          Viewer: 5,
+        };
+
+
+        const sortedRoles =
           Array.isArray(data)
-            ? data
-            : []
-        );
+            ? [...data].sort(
+                (a, b) =>
+                  (roleOrder[a.name] || 999) -
+                  (roleOrder[b.name] || 999)
+              )
+            : [];
+
+
+        setRoles(sortedRoles);
 
 
       } catch (err) {
@@ -117,7 +144,9 @@ function OrganizationRoles() {
           err
         );
 
+
         setError(
+          err.message ||
           'Roles could not be loaded.'
         );
 
@@ -137,33 +166,6 @@ function OrganizationRoles() {
 
 
   // =========================================================
-  // CREATE ROLE
-  // =========================================================
-
-  const handleRoleCreated = (
-    newRole
-  ) => {
-
-    console.log(
-      'Kreirana nova rola:',
-      newRole
-    );
-
-
-    setRoles(
-      (prevRoles) => [
-        ...prevRoles,
-        newRole,
-      ]
-    );
-
-
-    setShowCreateModal(false);
-
-  };
-
-
-  // =========================================================
   // OPEN EDIT MODAL
   // =========================================================
 
@@ -177,9 +179,7 @@ function OrganizationRoles() {
     );
 
 
-    setEditingRole(
-      role
-    );
+    setEditingRole(role);
 
   };
 
@@ -381,32 +381,11 @@ function OrganizationRoles() {
 
           </div>
 
-
-          {/* ===================================================
-              CREATE ROLE
-          ==================================================== */}
-
-          <button
-            type="button"
-            className="organization-role-create-button"
-            onClick={() =>
-              setShowCreateModal(true)
-            }
-          >
-
-            <FaPlus />
-
-            <span>
-              Create role
-            </span>
-
-          </button>
-
         </div>
 
 
         {/* =====================================================
-            COUNT
+            ROLE COUNT
         ====================================================== */}
 
         <div className="organization-roles-count">
@@ -440,32 +419,17 @@ function OrganizationRoles() {
 
 
             <h2>
-              No roles yet
+              No roles found
             </h2>
 
 
             <p>
-              Create your first role for this organization.
+              This organization does not have any roles yet.
             </p>
-
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowCreateModal(true)
-              }
-            >
-
-              <FaPlus />
-
-              Create role
-
-            </button>
 
           </div>
 
         ) : (
-
 
           /* ===================================================
              ROLE LIST
@@ -564,29 +528,6 @@ function OrganizationRoles() {
             ))}
 
           </div>
-
-        )}
-
-
-        {/* =====================================================
-            CREATE ROLE MODAL
-        ====================================================== */}
-
-        {showCreateModal && (
-
-          <CreateOrganizationRole
-
-            organizationId={id}
-
-            onClose={() =>
-              setShowCreateModal(false)
-            }
-
-            onCreated={
-              handleRoleCreated
-            }
-
-          />
 
         )}
 

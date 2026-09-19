@@ -1,96 +1,58 @@
 import {
-  BadRequestException,
   Injectable,
-  NotFoundException,
   ForbiddenException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
 import { OrganizationRole } from './organization-role.entity';
-
-import { CreateOrganizationRoleDto } from './dto/create-organization-role.dto';
-
 import { Permission } from '../permissions/permission.entity';
 import { RolePermission } from '../role-permissions/role-permissions.entity';
-import { OrganizationMember } from '../organization-members/organization-member.entity';
 import { User } from '../users/user.entity';
 
 @Injectable()
 export class OrganizationRolesService {
+  private readonly allowedRoleNames = [
+    'Organization Owner',
+    'Admin',
+    'Project Manager',
+    'Member',
+    'Viewer',
+  ];
 
   constructor(
     @InjectRepository(OrganizationRole)
-    private readonly roleRepository:
-      Repository<OrganizationRole>,
+    private readonly organizationRoleRepository: Repository<OrganizationRole>,
 
     @InjectRepository(Permission)
-    private readonly permissionRepository:
-      Repository<Permission>,
+    private readonly permissionRepository: Repository<Permission>,
 
     @InjectRepository(RolePermission)
-    private readonly rolePermissionRepository:
-      Repository<RolePermission>,
-
-    @InjectRepository(OrganizationMember)
-    private readonly organizationMemberRepository:
-      Repository<OrganizationMember>,
+    private readonly rolePermissionRepository: Repository<RolePermission>,
 
     @InjectRepository(User)
-    private readonly userRepository:
-      Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
-
   // =========================================================
-  // GET ROLES FOR ORGANIZATION
+  // GET ORGANIZATION ROLES
   // =========================================================
 
   async getOrganizationRoles(
     organizationId: number,
   ) {
+    // organizationId is intentionally not used.
+    // Roles are GLOBAL.
 
-    const roles =
-      await this.roleRepository.find({
-        where: {
-          organization_id:
-            organizationId,
-        },
-
-        order: {
-          role_id: 'ASC',
-        },
-      });
-
-
-    return roles.map((role) => ({
-
-      role_id:
-        role.role_id,
-
-      organization_id:
-        role.organization_id,
-
-      name:
-        role.name,
-
-      description:
-        role.description,
-
-      is_default:
-        role.is_default,
-
-      created_at:
-        role.created_at,
-
-      updated_at:
-        role.updated_at,
-
-    }));
-
+    return this.organizationRoleRepository.find({
+      order: {
+        role_id: 'ASC',
+      },
+    });
   }
-
 
   // =========================================================
   // GET SINGLE ROLE
@@ -100,55 +62,24 @@ export class OrganizationRolesService {
     organizationId: number,
     roleId: number,
   ) {
+    // organizationId is intentionally not used.
+    // Role is GLOBAL.
 
     const role =
-      await this.roleRepository.findOne({
+      await this.organizationRoleRepository.findOne({
         where: {
-          role_id:
-            roleId,
-
-          organization_id:
-            organizationId,
+          role_id: roleId,
         },
       });
 
-
     if (!role) {
-
       throw new NotFoundException(
-        'Organization role not found.',
+        'Role not found.',
       );
-
     }
 
-
-    return {
-
-      role_id:
-        role.role_id,
-
-      organization_id:
-        role.organization_id,
-
-      name:
-        role.name,
-
-      description:
-        role.description,
-
-      is_default:
-        role.is_default,
-
-      created_at:
-        role.created_at,
-
-      updated_at:
-        role.updated_at,
-
-    };
-
+    return role;
   }
-
 
   // =========================================================
   // CREATE ROLE
@@ -156,107 +87,13 @@ export class OrganizationRolesService {
 
   async createOrganizationRole(
     organizationId: number,
-    dto: CreateOrganizationRoleDto,
+    name: string,
+    description?: string,
   ) {
-
-    const existingRole =
-      await this.roleRepository.findOne({
-        where: {
-          organization_id:
-            organizationId,
-
-          name:
-            dto.name,
-        },
-      });
-
-
-    if (existingRole) {
-
-      throw new BadRequestException(
-        'Role with this name already exists in this organization.',
-      );
-
-    }
-
-
-    // -------------------------------------------------------
-    // DEFAULT ROLE
-    // -------------------------------------------------------
-
-    if (dto.is_default === true) {
-
-      await this.roleRepository.update(
-        {
-          organization_id:
-            organizationId,
-        },
-        {
-          is_default:
-            false,
-        },
-      );
-
-    }
-
-
-    // -------------------------------------------------------
-    // CREATE
-    // -------------------------------------------------------
-
-    const role =
-      this.roleRepository.create({
-
-        organization_id:
-          organizationId,
-
-        name:
-          dto.name,
-
-        description:
-          dto.description ||
-          null,
-
-        is_default:
-          dto.is_default ??
-          false,
-
-      });
-
-
-    const savedRole =
-      await this.roleRepository.save(
-        role,
-      );
-
-
-    return {
-
-      role_id:
-        savedRole.role_id,
-
-      organization_id:
-        savedRole.organization_id,
-
-      name:
-        savedRole.name,
-
-      description:
-        savedRole.description,
-
-      is_default:
-        savedRole.is_default,
-
-      created_at:
-        savedRole.created_at,
-
-      updated_at:
-        savedRole.updated_at,
-
-    };
-
+    throw new ForbiddenException(
+      'Organization roles are predefined and cannot be created.',
+    );
   }
-
 
   // =========================================================
   // UPDATE ROLE
@@ -265,241 +102,90 @@ export class OrganizationRolesService {
   async updateOrganizationRole(
     organizationId: number,
     roleId: number,
-    data: {
-      name?: string;
-      description?: string | null;
-      is_default?: boolean;
-    },
+    description?: string | null,
   ) {
-
     const role =
-      await this.roleRepository.findOne({
+      await this.organizationRoleRepository.findOne({
         where: {
-          role_id:
-            roleId,
-
-          organization_id:
-            organizationId,
+          role_id: roleId,
         },
       });
 
-
     if (!role) {
-
       throw new NotFoundException(
-        'Organization role not found.',
+        'Role not found.',
       );
-
     }
-
-
-    // -------------------------------------------------------
-    // PROVERA IMENA
-    // -------------------------------------------------------
 
     if (
-      data.name &&
-      data.name.trim() !== role.name
+      !this.allowedRoleNames.includes(
+        role.name,
+      )
     ) {
-
-      const existingRole =
-        await this.roleRepository.findOne({
-          where: {
-            organization_id:
-              organizationId,
-
-            name:
-              data.name.trim(),
-          },
-        });
-
-
-      if (
-        existingRole &&
-        existingRole.role_id !== roleId
-      ) {
-
-        throw new BadRequestException(
-          'Role with this name already exists in this organization.',
-        );
-
-      }
-
-    }
-
-
-    // -------------------------------------------------------
-    // DEFAULT ROLE
-    // -------------------------------------------------------
-
-    if (data.is_default === true) {
-
-      await this.roleRepository.update(
-        {
-          organization_id:
-            organizationId,
-        },
-        {
-          is_default:
-            false,
-        },
+      throw new BadRequestException(
+        'Invalid organization role.',
       );
-
     }
 
+    // Role names are fixed.
+    // Only description can be changed.
 
-    // -------------------------------------------------------
-    // UPDATE
-    // -------------------------------------------------------
-
-    if (data.name !== undefined) {
-
-      role.name =
-        data.name.trim();
-
-    }
-
-
-    if (
-      data.description !== undefined
-    ) {
-
+    if (description !== undefined) {
       role.description =
-        data.description?.trim() ||
-        null;
-
+        description?.trim() || null;
     }
 
+    // All five roles are predefined/default roles.
+    role.is_default = true;
 
-    if (
-      data.is_default !== undefined
-    ) {
-
-      role.is_default =
-        data.is_default;
-
-    }
-
-
-    const savedRole =
-      await this.roleRepository.save(
-        role,
-      );
-
-
-    return {
-
-      role_id:
-        savedRole.role_id,
-
-      organization_id:
-        savedRole.organization_id,
-
-      name:
-        savedRole.name,
-
-      description:
-        savedRole.description,
-
-      is_default:
-        savedRole.is_default,
-
-      created_at:
-        savedRole.created_at,
-
-      updated_at:
-        savedRole.updated_at,
-
-    };
-
+    return this.organizationRoleRepository.save(
+      role,
+    );
   }
-
 
   // =========================================================
   // GET ALL PERMISSIONS
   // =========================================================
 
   async getPermissions() {
-
     return this.permissionRepository.find({
-
       order: {
-        module: 'ASC',
         permission_id: 'ASC',
       },
-
     });
-
   }
 
-
   // =========================================================
-  // GET PERMISSIONS FOR ROLE
+  // GET ROLE PERMISSIONS
   // =========================================================
 
   async getRolePermissions(
     organizationId: number,
     roleId: number,
   ) {
-
     const role =
-      await this.roleRepository.findOne({
+      await this.organizationRoleRepository.findOne({
         where: {
-          role_id:
-            roleId,
-
-          organization_id:
-            organizationId,
+          role_id: roleId,
         },
       });
-
 
     if (!role) {
-
       throw new NotFoundException(
-        'Organization role not found.',
+        'Role not found.',
       );
-
     }
 
-
-    const rolePermissions =
-      await this.rolePermissionRepository.find({
-        where: {
-          role_id:
-            roleId,
-        },
-      });
-
-
-    const permissionIds =
-      rolePermissions.map(
-        (item) =>
-          item.permission_id,
-      );
-
-
-    if (permissionIds.length === 0) {
-      return [];
-    }
-
-
-    return this.permissionRepository.find({
-      where: permissionIds.map(
-        (permission_id) => ({
-          permission_id,
-        }),
-      ),
-
+    return this.rolePermissionRepository.find({
+      where: {
+        role_id: roleId,
+      },
+      relations: ['permission'],
       order: {
-        module: 'ASC',
         permission_id: 'ASC',
       },
-
     });
-
   }
-
 
   // =========================================================
   // UPDATE ROLE PERMISSIONS
@@ -510,287 +196,183 @@ export class OrganizationRolesService {
     roleId: number,
     permissionIds: number[],
   ) {
-
     const role =
-      await this.roleRepository.findOne({
+      await this.organizationRoleRepository.findOne({
         where: {
-          role_id:
-            roleId,
-
-          organization_id:
-            organizationId,
+          role_id: roleId,
         },
       });
 
-
     if (!role) {
-
       throw new NotFoundException(
-        'Organization role not found.',
+        'Role not found.',
       );
-
     }
 
+    if (
+      !this.allowedRoleNames.includes(
+        role.name,
+      )
+    ) {
+      throw new BadRequestException(
+        'Invalid organization role.',
+      );
+    }
 
-    // -------------------------------------------------------
-    // PROVERA PERMISSION ID-eva
-    // -------------------------------------------------------
-
-    const uniquePermissionIds =
-      [
-        ...new Set(
-          permissionIds || [],
-        ),
-      ];
-
+    // ---------------------------------------------------------
+    // Organization Owner always gets ALL permissions
+    // ---------------------------------------------------------
 
     if (
-      uniquePermissionIds.length > 0
+      role.name === 'Organization Owner'
     ) {
-
-      const permissions =
+      const allPermissions =
         await this.permissionRepository.find({
-          where:
-            uniquePermissionIds.map(
-              (permission_id) => ({
-                permission_id,
-              }),
-            ),
+          order: {
+            permission_id: 'ASC',
+          },
         });
 
+      permissionIds =
+        allPermissions.map(
+          permission =>
+            permission.permission_id,
+        );
+    }
+
+    // ---------------------------------------------------------
+    // Remove duplicates
+    // ---------------------------------------------------------
+
+    permissionIds = [
+      ...new Set(
+        permissionIds.map(
+          Number,
+        ),
+      ),
+    ];
+
+    // ---------------------------------------------------------
+    // Verify permissions exist
+    // ---------------------------------------------------------
+
+    if (permissionIds.length > 0) {
+      const permissions =
+        await this.permissionRepository.find({
+          where: {
+            permission_id: In(
+              permissionIds,
+            ),
+          },
+        });
 
       if (
         permissions.length !==
-        uniquePermissionIds.length
+        permissionIds.length
       ) {
-
         throw new BadRequestException(
           'One or more permissions do not exist.',
         );
-
       }
-
     }
 
-
-    // -------------------------------------------------------
-    // OBRI STARE PERMISSIONS
-    // -------------------------------------------------------
+    // ---------------------------------------------------------
+    // Replace role permissions
+    // ---------------------------------------------------------
 
     await this.rolePermissionRepository.delete({
-      role_id:
-        roleId,
+      role_id: roleId,
     });
 
+    // ---------------------------------------------------------
+    // Save new permissions
+    // ---------------------------------------------------------
 
-    // -------------------------------------------------------
-    // DODAJ NOVE
-    // -------------------------------------------------------
-
-    if (
-      uniquePermissionIds.length > 0
-    ) {
-
+    if (permissionIds.length > 0) {
       const rolePermissions =
-        uniquePermissionIds.map(
-          (permissionId) =>
+        permissionIds.map(
+          permissionId =>
             this.rolePermissionRepository.create({
-
-              role_id:
-                roleId,
-
+              role_id: roleId,
               permission_id:
                 permissionId,
-
             }),
         );
-
 
       await this.rolePermissionRepository.save(
         rolePermissions,
       );
-
     }
 
-
-    // -------------------------------------------------------
-    // RETURN
-    // -------------------------------------------------------
+    // ---------------------------------------------------------
+    // Return updated permissions
+    // ---------------------------------------------------------
 
     return this.getRolePermissions(
       organizationId,
       roleId,
     );
-
   }
 
-
   // =========================================================
-  // ADMIN - ALL ORGANIZATION ROLES
+  // ADMIN - GET ALL GLOBAL ROLES
   // =========================================================
 
   async getAdminRoles(
-    adminUserId: number,
+    userId: number,
   ) {
-
-    // -------------------------------------------------------
-    // CHECK SUPER ADMIN
-    // -------------------------------------------------------
-
-    const admin =
+    const user =
       await this.userRepository.findOne({
         where: {
-          user_id:
-            adminUserId,
+          user_id: userId,
         },
-
-        relations: [
-          'role',
-        ],
+        relations: ['role'],
       });
 
-
-    console.log(
-      'ADMIN USER ID:',
-      adminUserId,
-    );
-
-    console.log(
-      'ADMIN ROLE:',
-      admin?.role?.role_name,
-    );
-
-
-    if (!admin) {
-
+    if (!user) {
       throw new NotFoundException(
-        'Admin user not found',
+        'User does not exist.',
       );
-
     }
-
-
-    const roleName =
-      admin.role?.role_name
-        ?.trim()
-        .toUpperCase()
-        .replace(/\s+/g, '_');
-
-
-    console.log(
-      'NORMALIZED ROLE:',
-      roleName,
-    );
-
 
     if (
-      roleName !==
-      'SUPER_ADMIN'
+      !user.role ||
+      user.role.role_name !== 'SUPER_ADMIN'
     ) {
-
       throw new ForbiddenException(
-        'Only Super Admin can access this resource',
+        'Only super admins can access this endpoint.',
       );
-
     }
 
-
-    // -------------------------------------------------------
-    // GET ALL ORGANIZATION ROLES
-    // -------------------------------------------------------
-
     const roles =
-      await this.roleRepository.find({
-
-        relations: [
-          'organization',
-        ],
-
+      await this.organizationRoleRepository.find({
+        relations: ['members'],
         order: {
-          role_id: 'DESC',
+          role_id: 'ASC',
         },
-
       });
 
+    return roles.map(role => ({
+      role_id:
+        role.role_id,
 
-    // -------------------------------------------------------
-    // GET MEMBER COUNTS + ORGANIZATION
-    // -------------------------------------------------------
+      name:
+        role.name,
 
-    const result =
-      await Promise.all(
+      description:
+        role.description,
 
-        roles.map(
-          async (role) => {
+      is_default:
+        role.is_default,
 
-            const memberCount =
-              await this.organizationMemberRepository.count({
-                where: {
-                  role_id:
-                    role.role_id,
+      member_count:
+        role.members?.length ?? 0,
 
-                  status:
-                    'ACTIVE',
-                },
-              });
+      created_at:
+        role.created_at,
 
-
-            return {
-
-              role_id:
-                role.role_id,
-
-              name:
-                role.name,
-
-              description:
-                role.description,
-
-              is_default:
-                role.is_default,
-
-              organization_id:
-                role.organization_id,
-
-              organization:
-                role.organization
-                  ? {
-
-                      organization_id:
-                        role.organization
-                          .organization_id,
-
-                      name:
-                        role.organization
-                          .name,
-
-                      status:
-                        role.organization
-                          .status,
-
-                    }
-
-                  : null,
-
-              member_count:
-                memberCount,
-
-              created_at:
-                role.created_at,
-
-              updated_at:
-                role.updated_at,
-
-            };
-
-          },
-        ),
-
-      );
-
-
-    return result;
-
+      updated_at:
+        role.updated_at,
+    }));
   }
-
 }

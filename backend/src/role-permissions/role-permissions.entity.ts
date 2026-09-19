@@ -10,7 +10,7 @@ import {
 import { OrganizationRole } from '../organization-roles/organization-role.entity';
 import { Permission } from '../permissions/permission.entity';
 
-@Entity('role_permissions')
+@Entity('organizationrolepermissions')
 export class RolePermission {
 
   @PrimaryGeneratedColumn({

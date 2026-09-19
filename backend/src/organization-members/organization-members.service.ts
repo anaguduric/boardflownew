@@ -51,7 +51,6 @@ export class OrganizationMemberService {
     organizationId: number,
     userId: number,
   ) {
-    // Provera da li korisnik pripada organizaciji
     await this.checkOrganizationMembership(
       organizationId,
       userId,
@@ -76,9 +75,11 @@ export class OrganizationMemberService {
 
       user_id: member.user_id,
 
-      username: member.user?.username ?? null,
+      username:
+        member.user?.username ?? null,
 
-      email: member.user?.email ?? null,
+      email:
+        member.user?.email ?? null,
 
       role: member.role
         ? {
@@ -105,7 +106,6 @@ export class OrganizationMemberService {
     membershipId: number,
     userId: number,
   ) {
-    // Provera da li korisnik pripada organizaciji
     await this.checkOrganizationMembership(
       organizationId,
       userId,
@@ -130,13 +130,17 @@ export class OrganizationMemberService {
     }
 
     return {
-      membership_id: member.membership_id,
+      membership_id:
+        member.membership_id,
 
-      user_id: member.user_id,
+      user_id:
+        member.user_id,
 
-      username: member.user?.username ?? null,
+      username:
+        member.user?.username ?? null,
 
-      email: member.user?.email ?? null,
+      email:
+        member.user?.email ?? null,
 
       role: member.role
         ? {
@@ -146,11 +150,14 @@ export class OrganizationMemberService {
           }
         : null,
 
-      status: member.status,
+      status:
+        member.status,
 
-      joined_at: member.joined_at,
+      joined_at:
+        member.joined_at,
 
-      left_at: member.left_at,
+      left_at:
+        member.left_at,
     };
   }
 }
