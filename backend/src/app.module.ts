@@ -19,6 +19,7 @@ import { TaskCommentsModule } from './task-comments/task-comments.module';
 import { TeamsModule } from './teams/teams.module';
 import { TeamMembersModule } from './team-members/team-members.module';
 import { RoleMembersModule } from './role-members/role-members.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { RoleMembersModule } from './role-members/role-members.module';
     TeamsModule,
     TeamMembersModule,
     RoleMembersModule,
+    ChatModule,
     AuthModule,
   ],
 })

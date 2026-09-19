@@ -25,6 +25,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminUsers from "./components/admin/AdminUsers";
 import AdminOrganizations from "./components/admin/AdminOrganizations";
 import AdminRoles from "./components/admin/AdminRoles";
+import Chat from './components/chat/Chat';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/admin/users" element={<AdminUsers />}/>
         <Route path="/admin/organizations" element={<AdminOrganizations />}/>
         <Route path="/admin/roles" element={<AdminRoles />}/>
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </>
   );

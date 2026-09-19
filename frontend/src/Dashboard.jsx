@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
+
 import {
   FaArrowRight,
   FaCalendarAlt,
@@ -11,13 +13,14 @@ import {
   FaUser,
   FaExclamationTriangle,
   FaComments,
-  FaUserFriends,
-  FaProjectDiagram,
+  FaEnvelope,
 } from "react-icons/fa";
 
 import { useAuth } from "./context/AuthContext";
 import GoogleCalendar from "./GoogleCalendar";
 import "./Dashboard.css";
+
+const API_URL = "http://localhost:3000";
 
 export default function Dashboard() {
   const { user, token } = useAuth();
@@ -40,6 +43,24 @@ export default function Dashboard() {
 
   /*
   ============================================================
+  CHAT
+  ============================================================
+  */
+
+  const [chatConversations, setChatConversations] =
+    useState([]);
+
+  const [loadingChat, setLoadingChat] =
+    useState(false);
+
+  const [chatUnreadCount, setChatUnreadCount] =
+    useState(0);
+
+  const [chatNotification, setChatNotification] =
+    useState(false);
+
+  /*
+  ============================================================
   CONNECT GOOGLE CALENDAR
   ============================================================
   */
@@ -47,7 +68,7 @@ export default function Dashboard() {
   const connectGoogleCalendar = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/google-calendar/auth",
+        `${API_URL}/google-calendar/auth`,
         {
           method: "GET",
           headers: {
@@ -89,7 +110,7 @@ export default function Dashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/google-calendar/events",
+        `${API_URL}/google-calendar/events`,
         {
           method: "GET",
           headers: {
@@ -168,7 +189,7 @@ export default function Dashboard() {
     const checkGoogleCalendar = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/google-calendar/status",
+          `${API_URL}/google-calendar/status`,
           {
             method: "GET",
             headers: {
@@ -205,6 +226,306 @@ export default function Dashboard() {
 
   /*
   ============================================================
+  LOAD CHAT CONVERSATIONS
+  ============================================================
+  */
+
+  const loadChatConversations = async () => {
+    if (!token || !user) {
+      return;
+    }
+
+    try {
+      setLoadingChat(true);
+
+      const response = await fetch(
+        `${API_URL}/chat/conversations`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to load chat conversations"
+        );
+      }
+
+      const data = await response.json();
+
+      const conversations = Array.isArray(data)
+        ? data
+        : [];
+
+      const normalizedConversations =
+        conversations.map((conversation) => ({
+          ...conversation,
+          is_group: Boolean(
+            Number(conversation.is_group)
+          ),
+        }));
+
+      setChatConversations(
+        normalizedConversations
+      );
+
+      /*
+      ----------------------------------------------------------
+      DETECT NEW MESSAGES
+      ----------------------------------------------------------
+      */
+
+      const currentUserId =
+        user?.id != null
+          ? Number(user.id)
+          : user?.user_id != null
+            ? Number(user.user_id)
+            : null;
+
+      const conversationsWithMessages =
+        normalizedConversations.filter(
+          (conversation) =>
+            conversation.last_message
+        );
+
+      const unreadConversations =
+        conversationsWithMessages.filter(
+          (conversation) => {
+            const lastMessage =
+              conversation.last_message;
+
+            return (
+              currentUserId !== null &&
+              Number(lastMessage.user_id) !==
+                currentUserId
+            );
+          }
+        );
+
+      setChatUnreadCount(
+        unreadConversations.length
+      );
+
+      setChatNotification(
+        unreadConversations.length > 0
+      );
+    } catch (error) {
+      console.error(
+        "Chat conversations error:",
+        error
+      );
+
+      setChatConversations([]);
+      setChatUnreadCount(0);
+      setChatNotification(false);
+    } finally {
+      setLoadingChat(false);
+    }
+  };
+
+  /*
+  ============================================================
+  LOAD CHAT DATA
+  ============================================================
+  */
+
+  useEffect(() => {
+    if (!user || !token) {
+      return;
+    }
+
+    loadChatConversations();
+
+    /*
+    ----------------------------------------------------------
+    PERIODIC REFRESH
+    ----------------------------------------------------------
+    */
+
+    const interval = setInterval(() => {
+      loadChatConversations();
+    }, 15000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [user, token]);
+
+  /*
+  ============================================================
+  CHAT SOCKET NOTIFICATIONS
+  ============================================================
+  */
+
+  useEffect(() => {
+    if (!user || !token) {
+      return;
+    }
+
+    const socket = io(API_URL, {
+      auth: {
+        token,
+      },
+    });
+
+    socket.on("connect", () => {
+      console.log(
+        "Dashboard chat socket connected:",
+        socket.id
+      );
+    });
+
+    socket.on("new_message", (data) => {
+      const currentUserId =
+        user?.id != null
+          ? Number(user.id)
+          : user?.user_id != null
+            ? Number(user.user_id)
+            : null;
+
+      /*
+      ----------------------------------------------------------
+      IGNORE OUR OWN MESSAGES
+      ----------------------------------------------------------
+      */
+
+      if (
+        currentUserId !== null &&
+        Number(data.user_id) === currentUserId
+      ) {
+        return;
+      }
+
+      /*
+      ----------------------------------------------------------
+      NEW MESSAGE NOTIFICATION
+      ----------------------------------------------------------
+      */
+
+      setChatNotification(true);
+
+      setChatUnreadCount((previous) => {
+        return previous + 1;
+      });
+
+      /*
+      ----------------------------------------------------------
+      REFRESH CONVERSATIONS
+      ----------------------------------------------------------
+      */
+
+      loadChatConversations();
+    });
+
+    socket.on("disconnect", () => {
+      console.log(
+        "Dashboard chat socket disconnected"
+      );
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error(
+        "Dashboard chat socket error:",
+        error
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user, token]);
+
+  /*
+  ============================================================
+  GET LATEST CHAT
+  ============================================================
+  */
+
+  const latestChat =
+    chatConversations
+      .filter(
+        (conversation) =>
+          conversation.last_message
+      )
+      .sort((a, b) => {
+        const dateA = new Date(
+          a.last_message?.timestamp || 0
+        );
+
+        const dateB = new Date(
+          b.last_message?.timestamp || 0
+        );
+
+        return dateB - dateA;
+      })[0] || null;
+
+  /*
+  ============================================================
+  CHAT PREVIEW TEXT
+  ============================================================
+  */
+
+  const getChatPreview = () => {
+    if (loadingChat) {
+      return "Loading messages...";
+    }
+
+    if (!latestChat) {
+      return "No messages yet";
+    }
+
+    const lastMessage =
+      latestChat.last_message;
+
+    if (!lastMessage?.message) {
+      return "No messages yet";
+    }
+
+    const currentUserId =
+      user?.id != null
+        ? Number(user.id)
+        : user?.user_id != null
+          ? Number(user.user_id)
+          : null;
+
+    const isMine =
+      currentUserId !== null &&
+      Number(lastMessage.user_id) ===
+        currentUserId;
+
+    if (isMine) {
+      return `You: ${lastMessage.message}`;
+    }
+
+    return `${
+      lastMessage.username || "New message"
+    }: ${lastMessage.message}`;
+  };
+
+  /*
+  ============================================================
+  CHAT TIME
+  ============================================================
+  */
+
+  const getChatTime = () => {
+    if (!latestChat?.last_message?.timestamp) {
+      return "";
+    }
+
+    return new Date(
+      latestChat.last_message.timestamp
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  /*
+  ============================================================
   GUEST / LANDING PAGE
   ============================================================
   */
@@ -212,8 +533,6 @@ export default function Dashboard() {
   if (!user) {
     return (
       <main className="landing-page">
-
-        {/* HERO */}
 
         <section className="landing-hero">
 
@@ -230,9 +549,9 @@ export default function Dashboard() {
             </h1>
 
             <p className="landing-description">
-              BoardFlow helps teams organize projects, manage tasks,
-              collaborate with teammates and keep everything
-              in one place.
+              BoardFlow helps teams organize projects,
+              manage tasks, collaborate with teammates
+              and keep everything in one place.
             </p>
 
             <div className="landing-buttons">
@@ -254,8 +573,6 @@ export default function Dashboard() {
             </div>
 
           </div>
-
-          {/* DASHBOARD PREVIEW */}
 
           <div className="landing-preview">
 
@@ -376,8 +693,6 @@ export default function Dashboard() {
 
         </section>
 
-        {/* FEATURES */}
-
         <section className="landing-features">
 
           <div className="landing-section-header">
@@ -463,8 +778,6 @@ export default function Dashboard() {
 
         </section>
 
-        {/* CTA */}
-
         <section className="landing-cta">
 
           <h2>
@@ -498,10 +811,6 @@ export default function Dashboard() {
   return (
     <main className="dashboard">
 
-      {/* ======================================================
-          HEADER
-      ====================================================== */}
-
       <section className="dashboard-header">
 
         <div className="dashboard-header-content">
@@ -530,10 +839,6 @@ export default function Dashboard() {
 
       </section>
 
-
-      {/* ======================================================
-          STATISTICS
-      ====================================================== */}
 
       <section className="cards-grid">
 
@@ -639,19 +944,9 @@ export default function Dashboard() {
       </section>
 
 
-      {/* ======================================================
-          MAIN DASHBOARD AREA
-      ====================================================== */}
-
       <section className="dashboard-main-layout">
 
-        {/* ====================================================
-            LEFT COLUMN
-        ==================================================== */}
-
         <div className="dashboard-main-left">
-
-          {/* TASK PROGRESS */}
 
           <div className="dashboard-widget task-progress-widget">
 
@@ -737,8 +1032,6 @@ export default function Dashboard() {
 
           </div>
 
-
-          {/* CALENDAR */}
 
           <div className="dashboard-widget calendar-widget">
 
@@ -832,8 +1125,6 @@ export default function Dashboard() {
 
           </div>
 
-
-          {/* PROJECT OVERVIEW */}
 
           <div className="dashboard-widget">
 
@@ -978,8 +1269,6 @@ export default function Dashboard() {
           </div>
 
 
-          {/* MY TASKS */}
-
           <div className="dashboard-widget">
 
             <div className="widget-header">
@@ -1101,8 +1390,6 @@ export default function Dashboard() {
           </div>
 
 
-          {/* RECENT PROJECTS */}
-
           <div className="dashboard-widget">
 
             <div className="widget-header">
@@ -1212,13 +1499,7 @@ export default function Dashboard() {
         </div>
 
 
-        {/* ====================================================
-            RIGHT COLUMN
-        ==================================================== */}
-
         <div className="dashboard-main-right">
-
-          {/* UPCOMING EVENTS */}
 
           <div className="dashboard-widget events-widget">
 
@@ -1430,7 +1711,9 @@ export default function Dashboard() {
           </div>
 
 
-          {/* QUICK ACCESS */}
+          {/* ==================================================
+              CHAT
+          ================================================== */}
 
           <div className="dashboard-widget quick-access-widget">
 
@@ -1438,11 +1721,11 @@ export default function Dashboard() {
 
               <div>
                 <h2>
-                  Quick Access
+                  Chat
                 </h2>
 
                 <p>
-                  Jump to your workspace
+                  Your conversations
                 </p>
               </div>
 
@@ -1453,104 +1736,58 @@ export default function Dashboard() {
 
               <Link
                 to="/chat"
-                className="quick-access-card"
+                className={`quick-access-card ${
+                  chatNotification
+                    ? "has-notification"
+                    : ""
+                }`}
               >
 
                 <div className="quick-access-icon purple">
                   <FaComments />
                 </div>
 
-                <div>
-                  <strong>
-                    Chat
-                  </strong>
+                <div className="quick-access-card-content">
+
+                  <div className="quick-access-title-row">
+
+                    <strong>
+                      Chat
+                    </strong>
+
+                    {chatNotification && (
+                      <span className="quick-access-notification-dot">
+                        <FaEnvelope />
+                      </span>
+                    )}
+
+                  </div>
 
                   <span>
-                    Messages
+                    {chatNotification
+                      ? `${chatUnreadCount} ${
+                          chatUnreadCount === 1
+                            ? "new message"
+                            : "new messages"
+                        }`
+                      : getChatPreview()}
                   </span>
+
                 </div>
 
-                <span className="quick-access-arrow">
-                  <FaArrowRight />
-                </span>
+                <div className="quick-access-card-meta">
 
-              </Link>
+                  {getChatTime() && (
+                    <small>
+                      {getChatTime()}
+                    </small>
+                  )}
 
-
-              <Link
-                to="/teams"
-                className="quick-access-card"
-              >
-
-                <div className="quick-access-icon blue">
-                  <FaUsers />
-                </div>
-
-                <div>
-                  <strong>
-                    Teams
-                  </strong>
-
-                  <span>
-                    Your teams
+                  <span className="quick-access-arrow">
+                    <FaArrowRight />
                   </span>
+
                 </div>
-
-                <span className="quick-access-arrow">
-                  <FaArrowRight />
-                </span>
-
-              </Link>
-
-
-              <Link
-                to="/projects"
-                className="quick-access-card"
-              >
-
-                <div className="quick-access-icon green">
-                  <FaProjectDiagram />
-                </div>
-
-                <div>
-                  <strong>
-                    Projects
-                  </strong>
-
-                  <span>
-                    Your projects
-                  </span>
-                </div>
-
-                <span className="quick-access-arrow">
-                  <FaArrowRight />
-                </span>
-
-              </Link>
-
-
-              <Link
-                to="/members"
-                className="quick-access-card"
-              >
-
-                <div className="quick-access-icon orange">
-                  <FaUserFriends />
-                </div>
-
-                <div>
-                  <strong>
-                    Members
-                  </strong>
-
-                  <span>
-                    Organization
-                  </span>
-                </div>
-
-                <span className="quick-access-arrow">
-                  <FaArrowRight />
-                </span>
 
               </Link>
 
@@ -1558,8 +1795,6 @@ export default function Dashboard() {
 
           </div>
 
-
-          {/* TEAM OVERVIEW */}
 
           <div className="dashboard-widget">
 
