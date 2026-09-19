@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller';
 import { MailService } from './mail.service';
 
 import { UsersModule } from '../users/users.module';
+import { UserProfilesModule } from '../userprofiles/userprofiles.module';
 
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -24,6 +25,8 @@ import { JwtStrategy } from './jwt.strategy';
     TypeOrmModule.forFeature([User]),
 
     UsersModule,
+
+    UserProfilesModule,
 
     PassportModule,
 

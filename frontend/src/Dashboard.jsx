@@ -13,6 +13,8 @@ import {
   FaUser,
   FaExclamationTriangle,
   FaComments,
+  FaUserFriends,
+  FaProjectDiagram,
   FaEnvelope,
 } from "react-icons/fa";
 
@@ -1712,7 +1714,7 @@ export default function Dashboard() {
 
 
           {/* ==================================================
-              CHAT
+              QUICK ACCESS
           ================================================== */}
 
           <div className="dashboard-widget quick-access-widget">
@@ -1721,11 +1723,11 @@ export default function Dashboard() {
 
               <div>
                 <h2>
-                  Chat
+                  Quick Access
                 </h2>
 
                 <p>
-                  Your conversations
+                  Jump to your workspace
                 </p>
               </div>
 
@@ -1733,6 +1735,8 @@ export default function Dashboard() {
 
 
             <div className="quick-access-grid">
+
+              {/* CHAT */}
 
               <Link
                 to="/chat"
@@ -1788,6 +1792,96 @@ export default function Dashboard() {
                   </span>
 
                 </div>
+
+              </Link>
+
+
+              {/* TEAMS */}
+
+              <Link
+                to="/teams"
+                className="quick-access-card"
+              >
+
+                <div className="quick-access-icon blue">
+                  <FaUsers />
+                </div>
+
+                <div className="quick-access-card-content">
+
+                  <strong>
+                    Teams
+                  </strong>
+
+                  <span>
+                    Your teams
+                  </span>
+
+                </div>
+
+                <span className="quick-access-arrow">
+                  <FaArrowRight />
+                </span>
+
+              </Link>
+
+
+              {/* PROJECTS */}
+
+              <Link
+                to="/projects"
+                className="quick-access-card"
+              >
+
+                <div className="quick-access-icon green">
+                  <FaProjectDiagram />
+                </div>
+
+                <div className="quick-access-card-content">
+
+                  <strong>
+                    Projects
+                  </strong>
+
+                  <span>
+                    Your projects
+                  </span>
+
+                </div>
+
+                <span className="quick-access-arrow">
+                  <FaArrowRight />
+                </span>
+
+              </Link>
+
+
+              {/* MEMBERS */}
+
+              <Link
+                to="/members"
+                className="quick-access-card"
+              >
+
+                <div className="quick-access-icon orange">
+                  <FaUserFriends />
+                </div>
+
+                <div className="quick-access-card-content">
+
+                  <strong>
+                    Members
+                  </strong>
+
+                  <span>
+                    Organization
+                  </span>
+
+                </div>
+
+                <span className="quick-access-arrow">
+                  <FaArrowRight />
+                </span>
 
               </Link>
 

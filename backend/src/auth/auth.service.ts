@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
+import { UserProfilesService } from '../userprofiles/userprofiles.service';
+
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from './mail.service';
 
@@ -14,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
+    private readonly userProfilesService: UserProfilesService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
@@ -27,7 +30,21 @@ export class AuthService {
     email: string,
     password: string,
   ) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('');
+    console.log('========================================');
+    console.log('🔥 REGISTER POČEO');
+    console.log('========================================');
+
+    console.log(
+      '1️⃣ Pre bcrypt.hash()',
+    );
+
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
+
+    console.log(
+      '2️⃣ Password hash završen',
+    );
 
     const otp = Math.floor(
       100000 + Math.random() * 900000,
@@ -37,15 +54,29 @@ export class AuthService {
       Date.now() + 2 * 60 * 1000,
     );
 
-    const user = await this.usersService.create({
-      username,
-      email,
-      password: hashedPassword,
-      otp,
-      otp_expiry,
-      status: 'unverified',
-      role_id: 4,
-    });
+    console.log(
+      '3️⃣ Pre usersService.create()',
+    );
+
+    const user =
+      await this.usersService.create({
+        username,
+        email,
+        password: hashedPassword,
+        otp,
+        otp_expiry,
+        status: 'unverified',
+        role_id: 4,
+      });
+
+    console.log(
+      '4️⃣ usersService.create() ZAVRŠEN',
+    );
+
+    console.log(
+      'USER:',
+      user,
+    );
 
     if (!user) {
       throw new Error(
@@ -53,13 +84,49 @@ export class AuthService {
       );
     }
 
+    console.log(
+      '5️⃣ USER ID:',
+      user.user_id,
+    );
+
+    console.log(
+      '6️⃣ PRE POZIVA createProfile()',
+    );
+
+    await this.userProfilesService.createProfile(
+      user.user_id,
+    );
+
+    console.log(
+      '7️⃣ POSLE POZIVA createProfile()',
+    );
+
+    console.log(
+      '8️⃣ Pre sendOtp()',
+    );
+
     await this.mailService.sendOtp(
       email,
       otp,
     );
 
+    console.log(
+      '9️⃣ sendOtp() završen',
+    );
+
+    console.log(
+      '========================================',
+    );
+    console.log(
+      '✅ REGISTER ZAVRŠEN',
+    );
+    console.log(
+      '========================================',
+    );
+
     return {
-      message: 'Uspešno registrovan, OTP poslat',
+      message:
+        'Uspešno registrovan, OTP poslat',
       userId: user.user_id,
     };
   }
@@ -73,7 +140,9 @@ export class AuthService {
     otp: string,
   ) {
     const user =
-      await this.usersService.findById(userId);
+      await this.usersService.findById(
+        userId,
+      );
 
     if (!user) {
       throw new NotFoundException(
@@ -89,7 +158,8 @@ export class AuthService {
 
     if (
       !user.otp_expiry ||
-      new Date() > new Date(user.otp_expiry)
+      new Date() >
+        new Date(user.otp_expiry)
     ) {
       throw new UnauthorizedException(
         'OTP je istekao',
@@ -106,7 +176,8 @@ export class AuthService {
     );
 
     return {
-      message: 'Korisnik je verifikovan',
+      message:
+        'Korisnik je verifikovan',
     };
   }
 
@@ -116,7 +187,9 @@ export class AuthService {
 
   async resendOtp(userId: number) {
     const user =
-      await this.usersService.findById(userId);
+      await this.usersService.findById(
+        userId,
+      );
 
     if (!user) {
       throw new NotFoundException(
@@ -158,7 +231,9 @@ export class AuthService {
     password: string,
   ) {
     const user =
-      await this.usersService.findByEmail(email);
+      await this.usersService.findByEmail(
+        email,
+      );
 
     if (!user) {
       throw new UnauthorizedException(
@@ -166,10 +241,10 @@ export class AuthService {
       );
     }
 
-    // PHP $2y$ → Node $2b$
     const hash =
       user.password.startsWith('$2y$')
-        ? '$2b$' + user.password.slice(4)
+        ? '$2b$' +
+          user.password.slice(4)
         : user.password;
 
     const isMatch =
@@ -184,8 +259,9 @@ export class AuthService {
       );
     }
 
-    // Korisnik mora biti verifikovan
-    if (user.status !== 'verified') {
+    if (
+      user.status !== 'verified'
+    ) {
       throw new UnauthorizedException(
         'Nalog nije verifikovan. Proverite email i unesite OTP kod.',
       );
@@ -206,12 +282,14 @@ export class AuthService {
         username: user.username,
         email: user.email,
 
-         role: user.role
-        ? {
-        role_id: user.role.role_id,
-        name: user.role.role_name,
-      }
-    : null,
+        role: user.role
+          ? {
+              role_id:
+                user.role.role_id,
+              name:
+                user.role.role_name,
+            }
+          : null,
       },
     };
   }
@@ -237,9 +315,10 @@ export class AuthService {
 
     let hash = user.password;
 
-    // PHP $2y$ → Node $2b$
     if (hash.startsWith('$2y$')) {
-      hash = '$2b$' + hash.slice(4);
+      hash =
+        '$2b$' +
+        hash.slice(4);
     }
 
     const isMatch =
@@ -254,7 +333,9 @@ export class AuthService {
       );
     }
 
-    if (user.status !== 'verified') {
+    if (
+      user.status !== 'verified'
+    ) {
       throw new UnauthorizedException(
         'Nalog nije verifikovan',
       );
@@ -276,11 +357,13 @@ export class AuthService {
         email: user.email,
 
         role: user.role
-      ? {
-          role_id: user.role.role_id,
-          name: user.role.role_name,
-        }
-      : null,
+          ? {
+              role_id:
+                user.role.role_id,
+              name:
+                user.role.role_name,
+            }
+          : null,
       },
     };
   }

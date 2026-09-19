@@ -1,71 +1,150 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+
 import { User } from '../users/user.entity';
-import {OneToOne} from 'typeorm'
-import {JoinColumn } from 'typeorm'
 
 @Entity('userprofiles')
 export class UserProfile {
-  @PrimaryGeneratedColumn({ name: 'profile_id' })
+  @PrimaryGeneratedColumn({
+    name: 'profile_id',
+  })
   profileId!: number;
 
-  @Column({ type: 'text' })
+  @Column({
+    type: 'text',
+  })
   bio!: string;
 
-  @Column({ name: 'profile_pic', type: 'longblob' })
-  profilePic!: Buffer;
+  @Column({
+    name: 'profile_pic',
+    type: 'longblob',
+    nullable: true,
+  })
+  profilePic!: Buffer | null;
 
-  @Column({ nullable: true })
-  position!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  position!: string | null;
 
-  @Column({ nullable: true })
-  organization!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  organization!: string | null;
 
-  @Column({ nullable: true })
-  department!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  department!: string | null;
 
-  @Column({ name: 'team_lead', nullable: true })
-  teamLead!: string;
+  @Column({
+    name: 'team_lead',
+    type: 'varchar',
+    nullable: true,
+  })
+  teamLead!: string | null;
 
-  @Column({ name: 'work_phone', nullable: true })
-  workPhone!: string;
+  @Column({
+    name: 'work_phone',
+    type: 'varchar',
+    nullable: true,
+  })
+  workPhone!: string | null;
 
-  @Column({ name: 'started_at', type: 'date', nullable: true })
-  startedAt!: Date;
+  @Column({
+    name: 'started_at',
+    type: 'date',
+    nullable: true,
+  })
+  startedAt!: Date | null;
 
-  @Column({ nullable: true })
-  country!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  country!: string | null;
 
-  @Column({ nullable: true })
-  city!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  city!: string | null;
 
-  @Column({ nullable: true })
-  address!: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  address!: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  languages!: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  languages!: string | null;
 
-  @Column({ name: 'programming_languages', type: 'text', nullable: true })
-  programmingLanguages!: string;
+  @Column({
+    name: 'programming_languages',
+    type: 'text',
+    nullable: true,
+  })
+  programmingLanguages!: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  skills!: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  skills!: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  certifications!: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  certifications!: string | null;
 
-  @Column({ name: 'driver_license', default: false })
+  @Column({
+    name: 'driver_license',
+    type: 'boolean',
+    default: false,
+  })
   driverLicense!: boolean;
 
-  @Column({ name: 'offset_x', type: 'float', default: 0 })
+  @Column({
+    name: 'offset_x',
+    type: 'float',
+    default: 0,
+  })
   offsetX!: number;
 
-  @Column({ name: 'offset_y', type: 'float', default: 0 })
+  @Column({
+    name: 'offset_y',
+    type: 'float',
+    default: 0,
+  })
   offsetY!: number;
 
-  @Column({ type: 'float', default: 1 })
+  @Column({
+    type: 'float',
+    default: 1,
+  })
   scale!: number;
 
-  @OneToOne(() => User, user => user.profile, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
+  @OneToOne(
+    () => User,
+    user => user.profile,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({
+    name: 'user_id',
+  })
   user!: User;
-}
+} 
